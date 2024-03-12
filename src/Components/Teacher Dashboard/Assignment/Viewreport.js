@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import { getQuestions } from '../../../ApiClient';
-import { Col, Row, Card, Badge } from 'react-bootstrap';
-import TeacherSidebar from '../TeacherSidebar';
+import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+import { getQuestions } from "../../../ApiClient";
+import { Col, Row, Card, Badge } from "react-bootstrap";
+import TeacherSidebar from "../TeacherSidebar";
 
 const Viewreport = () => {
   const location = useLocation();
@@ -27,7 +27,7 @@ const Viewreport = () => {
         setQuestionsData({
           loading: false,
           data: null,
-          error: 'Error fetching questions data',
+          error: "Error fetching questions data",
         });
       }
     };
@@ -37,85 +37,130 @@ const Viewreport = () => {
 
   return (
     <div className="vh-100 d-flex flex-column justify-content-start align-items-center">
-      <Row className="w-100">
-        <Col md={3} className="mt-5">
-          <TeacherSidebar />
-        </Col>
-        <Col md={9} className="mt-5">
-          <Card className="w-100">
-            <Card.Body style={{ backgroundColor: 'white', borderRadius: '8px', marginTop: "50px" }}>
-              <h2 className="mb-4">Assignment Questions</h2>
-              {questionsData.loading && <p>Loading...</p>}
-              {questionsData.data && (
-                <div>
-                  {questionsData.data &&
-                    questionsData.data.assignment_details &&
-                    questionsData.data.assignment_details.map((assignmentDetail, index) => (
-                      <Card
-                        key={index}
-                        className="mb-4"
-                        style={{ backgroundColor: 'white', borderRadius: '8px' }}
+      <Card className="w-100">
+        <Card.Body
+          style={{
+            backgroundColor: "white",
+            borderRadius: "8px",
+            marginTop: "50px",
+          }}
+        >
+          <h2 className="mb-4">Assignment Questions</h2>
+          {questionsData.loading && <p>Loading...</p>}
+          {questionsData.data && (
+            <div>
+              {questionsData.data &&
+                questionsData.data.assignment_details &&
+                questionsData.data.assignment_details.map(
+                  (assignmentDetail, index) => (
+                    <Card
+                      key={index}
+                      className="mb-4"
+                      style={{ backgroundColor: "white", borderRadius: "8px" }}
+                    >
+                      <Card.Body
+                        style={{
+                          backgroundColor: "#bbfbf5",
+                          borderRadius: "8px",
+                        }}
                       >
-                        <Card.Body
-                          style={{ backgroundColor: '#bbfbf5', borderRadius: '8px' }}
-                        >
-                          {/* <h3 className="mb-3">Assignment Details</h3> */}
-                          {assignmentDetail.assignment_data && (
-                            <div>
-                              {Object.keys(assignmentDetail.assignment_data).map((key) => (
-                                <div key={key} style={{ borderBottom: '2px solid #ccc', marginBottom: '20px' }}>
-                                  <p style={{ fontWeight: 'bold', marginBottom: '8px' }}>
-                                    Type: {assignmentDetail.assignment_data[key].type}
+                        {/* <h3 className="mb-3">Assignment Details</h3> */}
+                        {assignmentDetail.assignment_data && (
+                          <div>
+                            {Object.keys(assignmentDetail.assignment_data).map(
+                              (key) => (
+                                <div
+                                  key={key}
+                                  style={{
+                                    borderBottom: "2px solid #ccc",
+                                    marginBottom: "20px",
+                                  }}
+                                >
+                                  <p
+                                    style={{
+                                      fontWeight: "bold",
+                                      marginBottom: "8px",
+                                    }}
+                                  >
+                                    Type:{" "}
+                                    {assignmentDetail.assignment_data[key].type}
                                   </p>
-                                  <p style={{ fontWeight: 'bold', marginBottom: '8px' }}>
-                                    Marks: {assignmentDetail.assignment_data[key].marks}
+                                  <p
+                                    style={{
+                                      fontWeight: "bold",
+                                      marginBottom: "8px",
+                                    }}
+                                  >
+                                    Marks:{" "}
+                                    {
+                                      assignmentDetail.assignment_data[key]
+                                        .marks
+                                    }
                                   </p>
-                                  <p style={{ fontWeight: 'bold', marginBottom: '8px' }}>
-                                    Question: {assignmentDetail.assignment_data[key].question}
+                                  <p
+                                    style={{
+                                      fontWeight: "bold",
+                                      marginBottom: "8px",
+                                    }}
+                                  >
+                                    Question:{" "}
+                                    {
+                                      assignmentDetail.assignment_data[key]
+                                        .question
+                                    }
                                   </p>
                                   <p>
-                                    Answer: {assignmentDetail.assignment_data[key].answer}
+                                    Answer:{" "}
+                                    {
+                                      assignmentDetail.assignment_data[key]
+                                        .answer
+                                    }
                                   </p>
-                                  {assignmentDetail.assignment_data[key].type !== 'Fill the Blank' && (
-                                    <p style={{ fontWeight: 'bold', marginTop: '8px' }}>
-                                      All Options:{' '}
-                                      {assignmentDetail.assignment_data[key].all_options.map(
-                                        (option, index) => (
-                                          <Badge
-                                            key={index}
-                                            pill
-                                            variant="primary"
-                                            className="mr-2"
-                                            style={{
-                                              marginRight: '5px',
-                                              backgroundColor: '#3498db',
-                                              color: 'white',
-                                              borderRadius: '5px',
-                                              padding: '5px 10px',
-                                            }}
-                                          >
-                                            {option}
-                                          </Badge>
-                                        )
-                                      )}
+                                  {assignmentDetail.assignment_data[key]
+                                    .type !== "Fill the Blank" && (
+                                    <p
+                                      style={{
+                                        fontWeight: "bold",
+                                        marginTop: "8px",
+                                      }}
+                                    >
+                                      All Options:{" "}
+                                      {assignmentDetail.assignment_data[
+                                        key
+                                      ].all_options.map((option, index) => (
+                                        <Badge
+                                          key={index}
+                                          pill
+                                          variant="primary"
+                                          className="mr-2"
+                                          style={{
+                                            marginRight: "5px",
+                                            backgroundColor: "#3498db",
+                                            color: "white",
+                                            borderRadius: "5px",
+                                            padding: "5px 10px",
+                                          }}
+                                        >
+                                          {option}
+                                        </Badge>
+                                      ))}
                                     </p>
                                   )}
-
                                 </div>
-                              ))}
-                            </div>
-                          )}
-                        </Card.Body>
-                      </Card>
-                    ))}
-                </div>
-              )}
+                              )
+                            )}
+                          </div>
+                        )}
+                      </Card.Body>
+                    </Card>
+                  )
+                )}
+            </div>
+          )}
 
-              {questionsData.error && <p>{questionsData.error}</p>}
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
+          {questionsData.error && <p>{questionsData.error}</p>}
+        </Card.Body>
+      </Card>
     </div>
   );
 };

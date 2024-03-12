@@ -49,7 +49,7 @@ const LoginPage = (props) => {
           let user = localStorage.setItem("UserData", JSON.stringify(data));
           props.onHide();
           if (data.role === 'ADMIN' || data.role === 'PRINCIPAL') {
-            navigate('/principalDashboard/Dashboard');
+            navigate('/principalDashboard/dashboard');
           }
           else if (data.role === 'TEACHER') {
             navigate({

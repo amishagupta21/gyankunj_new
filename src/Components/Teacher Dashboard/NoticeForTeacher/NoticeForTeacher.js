@@ -1,32 +1,29 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from "react";
 import { Row, Col, ButtonGroup, Dropdown, Card, Button } from "react-bootstrap";
-import TeacherSidebar from '../TeacherSidebar';
+import TeacherSidebar from "../TeacherSidebar";
 import seeAll from "../../../Images/icon_chevron_see_all.svg";
-import { viewNotice } from '../../../ApiClient';
-import moment from 'moment'
+import { viewNotice } from "../../../ApiClient";
+import moment from "moment";
 import { FaAngleDown } from "react-icons/fa";
 import { FaAngleUp } from "react-icons/fa";
 
-
-
 const NoticeForTeacher = () => {
+  const userDetails = JSON.parse(localStorage.getItem("UserData"));
 
-    const userDetails = JSON.parse(localStorage.getItem('UserData'))
+  const [allNotice, setAllNotice] = useState({});
+  const [hideResponse, setHideResponse] = useState([]);
+  const [sectionExpanded, setSectionExpanded] = useState(false);
 
-    const [allNotice, setAllNotice] = useState({})
-    const [hideResponse, setHideResponse] = useState([]);
-    const [sectionExpanded, setSectionExpanded] = useState(false);
-
-    useEffect(() => {
-      allNotices();
-    }, [])
+  useEffect(() => {
+    allNotices();
+  }, []);
 
   const allNotices = () => {
-    const role = "teacher"
+    const role = "teacher";
     viewNotice(role)
-    .then((res) => setAllNotice(res.data))
-    .catch((err) => console.log("Notices err - ", err))
-  }
+      .then((res) => setAllNotice(res.data))
+      .catch((err) => console.log("Notices err - ", err));
+  };
 
   const showResponseHandler = (id) => {
     // allNotices();
@@ -47,29 +44,22 @@ const NoticeForTeacher = () => {
     }
   };
 
-
-    return(
-        <>
-        <Row>
-            <Col md={3} style={{marginTop:"91px", width:"20%"}}>
-                <TeacherSidebar />     
-            </Col>
-            <Col md={9} style={{width:"80%"}}>
-        <div className='resourcesHeader'>
-        <Row
-          style={{
-            height: "74px",
-            boxShadow: "0px 3px 6px #B4B3B329",
-            position: "relative",
-            left: "12px",
-            width: "100%",
-          }}
-        >
-            <Col md={7}>
-            <h4>Notice</h4>
-            </Col>
-            <Col md={2} className="teacherRoutingDD">
-            {/* <span>
+  return (
+    <div className="resourcesHeader">
+      <Row
+        style={{
+          height: "74px",
+          boxShadow: "0px 3px 6px #B4B3B329",
+          position: "relative",
+          left: "12px",
+          width: "100%",
+        }}
+      >
+        <Col md={7}>
+          <h4>Notice</h4>
+        </Col>
+        <Col md={2} className="teacherRoutingDD">
+          {/* <span>
                   <Dropdown>
                     <Dropdown.Toggle className="dropdownHead" id="dropdown-basic">
                     Sort By
@@ -82,9 +72,9 @@ const NoticeForTeacher = () => {
                     </Dropdown.Menu>
                   </Dropdown>
                 </span> */}
-            </Col>
-        </Row>
-        {/* {allNotice?.status == "failure" ? (<Row style={{height: "93px"}}>
+        </Col>
+      </Row>
+      {/* {allNotice?.status == "failure" ? (<Row style={{height: "93px"}}>
           <Col md={12} style={{paddingTop: "30px"}}>
             <span className='failureMessage'>{allNotice.message}</span>
           </Col>
@@ -106,92 +96,74 @@ const NoticeForTeacher = () => {
         )
         } */}
 
-
-{allNotice?.status == "failure" ? (
-                <Row style={{ height: "93px" }}>
-                  <Col md={12} style={{ paddingTop: "30px" }}>
-                    <span className="failureMessage">{allNotice.message}</span>
+      {allNotice?.status == "failure" ? (
+        <Row style={{ height: "93px" }}>
+          <Col md={12} style={{ paddingTop: "30px" }}>
+            <span className="failureMessage">{allNotice.message}</span>
+          </Col>
+        </Row>
+      ) : (
+        <div>
+          {allNotice?.notices?.map((notice, indx) => {
+            console.log("notice - ", notice);
+            return (
+              <fieldset>
+                <Row className="lessonData">
+                  <Col md={1} style={{ textAlign: "left" }}>
+                    {hideResponse?.includes(notice?.notice_id) ? (
+                      <FaAngleUp
+                        style={{ height: "25px", width: "25px", color: "blue" }}
+                        onClick={() => hideResponseHandler(notice?.notice_id)}
+                      />
+                    ) : (
+                      <FaAngleDown
+                        style={{ height: "25px", width: "25px", color: "blue" }}
+                        onClick={() => showResponseHandler(notice?.notice_id)}
+                      />
+                    )}
                   </Col>
-                </Row>
-              ) : (
-                    <div>
-                    {
-                      allNotice?.notices?.map((notice, indx) => {
-                        console.log("notice - ", notice)
-                          return (
-                            <fieldset>
-                              <Row className="lessonData">
-                                <Col md={1} style={{ textAlign: "left" }}>
-                                {hideResponse?.includes(notice?.notice_id) ? (
-                          <FaAngleUp
-                            style={{ height: "25px", width: "25px", color:"blue" }}
-                            onClick={() =>
-                              hideResponseHandler(notice?.notice_id)
-                            }
-                          />
-                        ) : (
-                          <FaAngleDown
-                            style={{ height: "25px", width: "25px", color:"blue" }}
-                            onClick={() =>
-                              showResponseHandler(notice?.notice_id)
-                            }
-                          />
-                        )}
-                                </Col>
-                                
-                                <Col
-                            md={11}
-                            className={
-                              !hideResponse.includes(notice?.notice_id)
-                                ? "noticeStyle"
-                                : "noticeStyleExpanded"
-                            }
-                          >
-                            {
-                              <h6 className="noticeHeader">
-                                {notice?.notice_subject}
-                              </h6>
-                            }
-                            
-                            
-                              <p className="noticeTime">
-                                {moment(notice?.published_at).format(
-                                  "DD-MMM-YYYY"
-                                )}
-                              </p>
-                            
-                            {hideResponse.includes(notice?.notice_id) && <Row>
-                            <Col md={12}>
-                              <h6 className='descriptionHeader'>Description :</h6>
-                              <p className='descriptionData'>{notice?.notice_data}</p>
-                            </Col>
-                          </Row>}
-                          </Col>
-                          {/* <Row>
+
+                  <Col
+                    md={11}
+                    className={
+                      !hideResponse.includes(notice?.notice_id)
+                        ? "noticeStyle"
+                        : "noticeStyleExpanded"
+                    }
+                  >
+                    {<h6 className="noticeHeader">{notice?.notice_subject}</h6>}
+
+                    <p className="noticeTime">
+                      {moment(notice?.published_at).format("DD-MMM-YYYY")}
+                    </p>
+
+                    {hideResponse.includes(notice?.notice_id) && (
+                      <Row>
+                        <Col md={12}>
+                          <h6 className="descriptionHeader">Description :</h6>
+                          <p className="descriptionData">
+                            {notice?.notice_data}
+                          </p>
+                        </Col>
+                      </Row>
+                    )}
+                  </Col>
+                  {/* <Row>
                             <Col md={12}>
                               <h6>Description :</h6>
                               <p>{notice?.notice_data}</p>
                             </Col>
                           </Row> */}
-                                
-                                
-                              </Row>
-                            </fieldset>
-                          );
-                        }
-                      )}
-                  </div>
-                //   );
-                // })
-              )}
-        
-        
+                </Row>
+              </fieldset>
+            );
+          })}
         </div>
-        </Col>
-        </Row>
-        
-        </>
-    )
-}
+        //   );
+        // })
+      )}
+    </div>
+  );
+};
 
 export default NoticeForTeacher;

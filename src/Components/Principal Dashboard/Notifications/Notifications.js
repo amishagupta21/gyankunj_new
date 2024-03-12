@@ -6,7 +6,7 @@ import { viewNotification } from "../../../ApiClient";
 import moment from "moment";
 import { FaAngleDown } from "react-icons/fa";
 import { FaAngleUp } from "react-icons/fa";
-import Select from 'react-select'
+import Select from "react-select";
 
 const NotificationsForTeacher = () => {
   const userDetails = JSON.parse(localStorage.getItem("UserData"));
@@ -14,8 +14,8 @@ const NotificationsForTeacher = () => {
   const [notificationData, setNotificationData] = useState({});
   const [hideResponse, setHideResponse] = useState([]);
   const [sectionExpanded, setSectionExpanded] = useState(false);
-  const [selectedRole, setSelectedRole] = useState('')
-  const [initaialSelectRole, setInitialSelectedRole] = useState('principal')
+  const [selectedRole, setSelectedRole] = useState("");
+  const [initaialSelectRole, setInitialSelectedRole] = useState("principal");
 
   const userName = userDetails?.user_id;
 
@@ -24,14 +24,19 @@ const NotificationsForTeacher = () => {
   }, [selectedRole]);
 
   const roleOptions = [
-    {value: "principal", label: "Self"},
-    {value: "teacher", label: "Teacher"},
-    {value: "student", label: "Student"},
-   ]
+    { value: "principal", label: "Self" },
+    { value: "teacher", label: "Teacher" },
+    { value: "student", label: "Student" },
+  ];
 
   const allNotification = () => {
     const userId = userName;
-    const role = selectedRole == "teacher" ? "teacher" : selectedRole == "student" ? "student" : "principal";
+    const role =
+      selectedRole == "teacher"
+        ? "teacher"
+        : selectedRole == "student"
+        ? "student"
+        : "principal";
     viewNotification(userId, role)
       .then((res) => setNotificationData(res.data))
       .catch((err) => console.log("Notices err - ", err));
@@ -56,130 +61,114 @@ const NotificationsForTeacher = () => {
   };
 
   const handleRoleChange = (e) => {
-    setSelectedRole(e.value)
-  }
+    setSelectedRole(e.value);
+  };
 
-  console.log("notificationData - ", notificationData)
+  console.log("notificationData - ", notificationData);
 
   return (
-    <>
-      <Row>
-        <Col md={3} style={{ marginTop: "91px", width: "20%" }}>
-          <PrincipalSidebar />
+    <div className="resourcesHeader">
+      <Row
+        style={{
+          height: "74px",
+          boxShadow: "0px 3px 6px #B4B3B329",
+          position: "relative",
+          left: "12px",
+          width: "100%",
+        }}
+      >
+        <Col md={9}>
+          <h4>Notification</h4>
         </Col>
-        <Col md={9} style={{ width: "80%" }}>
-          <div className="resourcesHeader">
-            <Row
-              style={{
-                height: "74px",
-                boxShadow: "0px 3px 6px #B4B3B329",
-                position: "relative",
-                left: "12px",
-                width: "100%",
-              }}
-            >
-              <Col md={9}>
-                <h4>Notification</h4>
-              </Col>
-              <Col md={3} className="teacherRoutingDD">
-              <Select placeholder="Select Role" options={roleOptions} onChange={e => handleRoleChange(e)} isSearchable={false} />
-              </Col>
-            </Row>
-
-            {
-              <div>
-                {notificationData?.notifications?.map((notification, indx) => {
-                  console.log("notification - ", notification);
-                  return (
-                    <fieldset>
-                      <Row className="lessonData">
-                        <Col md={1} style={{ textAlign: "left" }}>
-                          {hideResponse?.includes(
-                            notification?.notification_id
-                          ) ? (
-                            <FaAngleUp
-                              style={{
-                                height: "25px",
-                                width: "25px",
-                                color: "blue",
-                              }}
-                              onClick={() =>
-                                hideResponseHandler(
-                                  notification?.notification_id
-                                )
-                              }
-                            />
-                          ) : (
-                            <FaAngleDown
-                              style={{
-                                height: "25px",
-                                width: "25px",
-                                color: "blue",
-                              }}
-                              onClick={() =>
-                                showResponseHandler(
-                                  notification?.notification_id
-                                )
-                              }
-                            />
-                          )}
-                        </Col>
-
-                        <Col
-                          md={11}
-                          className={
-                            !hideResponse.includes(
-                              notification?.notification_id
-                            )
-                              ? "noticeStyle"
-                              : "noticeStyleExpanded"
-                          }
-                        >
-                          {
-                            <h6 className="noticeHeader">
-                              {notification?.operation}
-                            </h6>
-                          }
-
-                          {/* <p className="noticeTime">
-                                {moment(notification?.published_at).format(
-                                  "DD-MMM-YYYY"
-                                )}
-                              </p> */}
-
-                          {hideResponse.includes(
-                            notification?.notification_id
-                          ) && (
-                            <Row>
-                              <Col md={12}>
-                                <h6 className="descriptionHeader">
-                                  Description :
-                                </h6>
-                                <p className="descriptionData">
-                                  {notification?.notification_info}
-                                </p>
-                              </Col>
-                            </Row>
-                          )}
-                        </Col>
-                        {/* <Row>
-                            <Col md={12}>
-                              <h6>Description :</h6>
-                              <p>{notice?.notice_data}</p>
-                            </Col>
-                          </Row> */}
-                      </Row>
-                    </fieldset>
-                  );
-                })}
-              </div>
-              //   );
-              // })
-            }
-          </div>
+        <Col md={3} className="teacherRoutingDD">
+          <Select
+            placeholder="Select Role"
+            options={roleOptions}
+            onChange={(e) => handleRoleChange(e)}
+            isSearchable={false}
+          />
         </Col>
       </Row>
-    </>
+
+      {
+        <div>
+          {notificationData?.notifications?.map((notification, indx) => {
+            console.log("notification - ", notification);
+            return (
+              <fieldset>
+                <Row className="lessonData">
+                  <Col md={1} style={{ textAlign: "left" }}>
+                    {hideResponse?.includes(notification?.notification_id) ? (
+                      <FaAngleUp
+                        style={{
+                          height: "25px",
+                          width: "25px",
+                          color: "blue",
+                        }}
+                        onClick={() =>
+                          hideResponseHandler(notification?.notification_id)
+                        }
+                      />
+                    ) : (
+                      <FaAngleDown
+                        style={{
+                          height: "25px",
+                          width: "25px",
+                          color: "blue",
+                        }}
+                        onClick={() =>
+                          showResponseHandler(notification?.notification_id)
+                        }
+                      />
+                    )}
+                  </Col>
+
+                  <Col
+                    md={11}
+                    className={
+                      !hideResponse.includes(notification?.notification_id)
+                        ? "noticeStyle"
+                        : "noticeStyleExpanded"
+                    }
+                  >
+                    {
+                      <h6 className="noticeHeader">
+                        {notification?.operation}
+                      </h6>
+                    }
+
+                    {/* <p className="noticeTime">
+                        {moment(notification?.published_at).format(
+                          "DD-MMM-YYYY"
+                        )}
+                      </p> */}
+
+                    {hideResponse.includes(notification?.notification_id) && (
+                      <Row>
+                        <Col md={12}>
+                          <h6 className="descriptionHeader">Description :</h6>
+                          <p className="descriptionData">
+                            {notification?.notification_info}
+                          </p>
+                        </Col>
+                      </Row>
+                    )}
+                  </Col>
+                  {/* <Row>
+                    <Col md={12}>
+                      <h6>Description :</h6>
+                      <p>{notice?.notice_data}</p>
+                    </Col>
+                  </Row> */}
+                </Row>
+              </fieldset>
+            );
+          })}
+        </div>
+        //   );
+        // })
+      }
+    </div>
   );
 };
 

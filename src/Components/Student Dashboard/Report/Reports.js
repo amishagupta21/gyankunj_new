@@ -1,13 +1,21 @@
-import React, { useEffect } from 'react';
-import { Row, Col, ButtonGroup, ToggleButton, Dropdown, Table, ProgressBar, Button } from "react-bootstrap";
+import React, { useEffect } from "react";
+import {
+  Row,
+  Col,
+  ButtonGroup,
+  ToggleButton,
+  Dropdown,
+  Table,
+  ProgressBar,
+  Button,
+} from "react-bootstrap";
 import { useState } from "react";
-import {getReports} from '../../../ApiClient'
-import Select from 'react-select'
-import SadImg from '../../../Images/SadImg.png'
-import StudentSidebar from '../StudentSidebar';
+import { getReports } from "../../../ApiClient";
+import Select from "react-select";
+import SadImg from "../../../Images/SadImg.png";
+import StudentSidebar from "../StudentSidebar";
 
 const StudentReportSection = () => {
-
   // const [grade, setGrade] = useState('')
   // const [section, setSection] = useState('')
   // const [interval, setInterval] = useState('')
@@ -24,7 +32,7 @@ const StudentReportSection = () => {
   //   getReports(grade_id, section_id)
   //   .then((res) => console.log('Report Response - ', res.data))
   //   .then((err) => console.log('Report Err - ', err))
-  // } 
+  // }
 
   // const gradeOptions = [
   //   {value: "1", label: 1},
@@ -59,28 +67,21 @@ const StudentReportSection = () => {
   //   setSection(e.value)
   // }
 
-
-    return (
-        <>
-        <Row>
-            <Col md={3} style={{marginTop:"91px", width:"20%"}}>
-                <StudentSidebar />     
-            </Col>
-            <Col md={9} style={{width:"80%"}}>
-        <div className="reportSection">
+  return (
+    <div className="reportSection">
       <Row
-          style={{
-            height: "74px",
-            boxShadow: "0px 3px 6px #B4B3B329",
-            position: "relative",
-            left: "12px",
-            width: "100%",
-          }}
-        >
-            <Col md={4}>
-            <h4>Report</h4>
-            </Col>
-            {/* <Col md={2}>
+        style={{
+          height: "74px",
+          boxShadow: "0px 3px 6px #B4B3B329",
+          position: "relative",
+          left: "12px",
+          width: "100%",
+        }}
+      >
+        <Col md={4}>
+          <h4>Report</h4>
+        </Col>
+        {/* <Col md={2}>
             <span>Section</span>
             <Select className='reportHeading' placeholder="Select Section" options={SectionOption} onChange={e => handleSectionChange(e)} isSearchable={false} />
                 
@@ -98,8 +99,8 @@ const StudentReportSection = () => {
             <Col md={2}>
             <Button variant="outline-primary" style={{marginTop: "19px"}} onClick={getReportsData}>Check Reports</Button>
             </Col> */}
-        </Row>
-        {/* <div className="routineSection">
+      </Row>
+      {/* <div className="routineSection">
             <div>
               <Row>
                 <Col md={2}>
@@ -166,23 +167,28 @@ const StudentReportSection = () => {
               </tbody>
             </Table>
           </div> */}
-          <Row>
-            <Col md={12}>
-              <h1 style={{ position:"relative", top: "100px", color: "#0071FF", font: "normal normal normal 29px/26px Roboto"}}>Since you are new here, it will take some time to prepare your report card!!</h1>
-            </Col>
-          </Row>
-          <Row>
-            <Col md={12}>
-              <img src = {SadImg} style={{ position:"relative", top: "150px"}} />
-            </Col>
-          </Row>
-        
-      </div>
-      </Col>
+      <Row>
+        <Col md={12}>
+          <h1
+            style={{
+              position: "relative",
+              top: "100px",
+              color: "#0071FF",
+              font: "normal normal normal 29px/26px Roboto",
+            }}
+          >
+            Since you are new here, it will take some time to prepare your
+            report card!!
+          </h1>
+        </Col>
       </Row>
-        
-        </>
-    )
-}
+      <Row>
+        <Col md={12}>
+          <img src={SadImg} style={{ position: "relative", top: "150px" }} />
+        </Col>
+      </Row>
+    </div>
+  );
+};
 
 export default StudentReportSection;

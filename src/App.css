@@ -1,47 +1,77 @@
-
-.App {
-  text-align: center;
-  overflow-x: hidden;
-  background-color: #F6F1F1;
+.app {
+  height: 100vh;
+  width: 100vw;
 }
 
-a{
+.app .main-header {
+  height: 100px;
+}
+
+.app .main-body {
+  height: calc(100% - 100px);
+  display: flex;
+}
+
+.app .main-body .main-sidebar {
+  width: 270px;
+}
+.app .main-body .main-sidebar.side-small {
+  width: 80px;
+}
+
+.app .main-body .main-container {
+  width: calc(100% - 270px);
+  overflow: auto;
+}
+.app .main-body .main-container.cont-big {
+  width: calc(100% - 80px);
+}
+
+a {
   text-underline-offset: none;
 }
 
-/* @import '../node_modules/react-pro-sidebar/dist/scss/styles.scss'; */
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.btn-primary {
+  background-color: rgb(30 121 182);
+  border: 1px solid rgb(30 121 182);
+  border-radius: 6px;
+  padding: 8px 20px;
+  color: #fff;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.btn-primary:hover {
+  background-color: rgb(53 98 129);
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.dropdown-toggle::after {
+  display: none; /* Hide the pseudo-element */
 }
 
-.App-link {
-  color: #61dafb;
+/* Style the scrollbar */
+/* Vertical scrollbar */
+::-webkit-scrollbar {
+  width: 8px; /* Width of the vertical scrollbar */
+  height: 8px; /* Height of the horizontal scrollbar */
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* Horizontal scrollbar */
+::-webkit-scrollbar:horizontal {
+  height: 8px; /* Height of the horizontal scrollbar */
+  width: 8px; /* Width of the vertical scrollbar */
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Color of the track */
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888; /* Color of the scroll thumb */
+  border-radius: 4px; /* Rounded corners */
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555; /* Color of the scroll thumb on hover */
 }
