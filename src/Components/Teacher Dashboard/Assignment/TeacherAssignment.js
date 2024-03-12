@@ -7,18 +7,26 @@ import { MdPublish } from "react-icons/md";
 import { BsFillPeopleFill, BsEyeFill } from "react-icons/bs";
 import { AiFillDelete } from "react-icons/ai";
 import SaveAssignment from "./SaveAssignment";
-import { getGradeDetails, fetchAllSubjects, assignmentList, viewAssignemnt, publishAssignmentData, getQuestions, deleteAssignment } from '../../../ApiClient'
+import {
+  getGradeDetails,
+  fetchAllSubjects,
+  assignmentList,
+  viewAssignemnt,
+  publishAssignmentData,
+  getQuestions,
+  deleteAssignment,
+} from "../../../ApiClient";
 import CreateNewAssignment from "./CreateNewAssignment";
-import { FaCheck } from 'react-icons/fa';
+import { FaCheck } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import CustomToast from "./Toast";
 import "./teacher.css";
-import { Modal } from 'react-bootstrap';
+import { Modal } from "react-bootstrap";
 import { Pagination } from "react-bootstrap";
-import SubmissionsComponent from "./SubmissionsComponent"
+import SubmissionsComponent from "./SubmissionsComponent";
 
 const TeacherAssignment = () => {
-  const userDetails = JSON.parse(localStorage.getItem('UserData'))
+  const userDetails = JSON.parse(localStorage.getItem("UserData"));
   const id = userDetails?.user_id;
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -43,14 +51,19 @@ const TeacherAssignment = () => {
   const handleSort = (column) => {
     setSortOrder((prev) => ({
       column,
-      direction: prev.column === column ? (prev.direction === "asc" ? "desc" : "asc") : "asc",
+      direction:
+        prev.column === column
+          ? prev.direction === "asc"
+            ? "desc"
+            : "asc"
+          : "asc",
     }));
   };
   const sortedAssignments = Array.isArray(filteredAssignments[0])
     ? [...filteredAssignments[0]].sort((a, b) => {
-      const isAsc = sortOrder.direction === "asc" ? 1 : -1;
-      return a[sortOrder.column].localeCompare(b[sortOrder.column]) * isAsc;
-    })
+        const isAsc = sortOrder.direction === "asc" ? 1 : -1;
+        return a[sortOrder.column].localeCompare(b[sortOrder.column]) * isAsc;
+      })
     : [];
   const handleDeleteConfirmation = (id) => {
     setSelectedAssignmentId(id);
@@ -78,13 +91,13 @@ const TeacherAssignment = () => {
     subject: "",
     type: "",
     status: "",
-    grade: ""
+    grade: "",
   });
   const [show, setShow] = useState(false);
   const [data, setData] = useState({
     name: "",
-    message: ""
-  })
+    message: "",
+  });
 
   const handleFilterChange = (e) => {
     setFilters((prev) => ({
@@ -98,42 +111,39 @@ const TeacherAssignment = () => {
     if (result.data.status === "success") {
       if (result.data.assignment_details[0].assignment_data !== "") {
         return true;
-      }
-      else return false;
-    }
-    else return false;
-  }
+      } else return false;
+    } else return false;
+  };
   const publishAssignment = async (id) => {
-    if (await Is_questions(id) === true) {
+    if ((await Is_questions(id)) === true) {
       const result = await publishAssignmentData(id);
 
       setData({
         name: "Publish",
-        message: "Your operation has success!"
-      })
-      setShow(true)
+        message: "Your operation has success!",
+      });
+      setShow(true);
       setPublishflag(!publishflag);
-    }
-    else {
+    } else {
       setData({
         name: "Publish",
-        message: "Sorry,There is no questions in this Assignment"
-      })
-      setShow(true)
+        message: "Sorry,There is no questions in this Assignment",
+      });
+      setShow(true);
       setPublishflag(!publishflag);
     }
-  }
+  };
   const deleteAssign = async (id) => {
     const result = await deleteAssignment(id);
     if (result.data.status === "success") {
       setData({
         name: "Delete",
-        message: "Your operation has success!"
-      })
-      setShow(true)
+        message: "Your operation has success!",
+      });
+      setShow(true);
       setDeleteflag(!deleteflag);
     }
-  }
+  };
   const handleSearch = (e) => {
     setSearchInput(e.target.value);
   };
@@ -147,9 +157,8 @@ const TeacherAssignment = () => {
 
         if (searchInput) {
           const searchInputLowerCase = searchInput.toLowerCase();
-          tempArr = tempAssignments.filter(
-            (item) =>
-              item.assignment_name.toLowerCase().includes(searchInputLowerCase)
+          tempArr = tempAssignments.filter((item) =>
+            item.assignment_name.toLowerCase().includes(searchInputLowerCase)
           );
         }
 
@@ -181,7 +190,6 @@ const TeacherAssignment = () => {
       }
     })();
   }, [deleteflag, publishflag, searchInput]);
-
 
   useEffect(() => {
     if (assignments.data.length > 0) {
@@ -224,14 +232,15 @@ const TeacherAssignment = () => {
     }
   }, [filters]);
 
-
-
   const [currentPage, setCurrentPage] = useState(1);
   const assignmentsPerPage = 10;
 
   const indexOfLastAssignment = currentPage * assignmentsPerPage;
   const indexOfFirstAssignment = indexOfLastAssignment - assignmentsPerPage;
-  const currentAssignments = sortedAssignments.slice(indexOfFirstAssignment, indexOfLastAssignment);
+  const currentAssignments = sortedAssignments.slice(
+    indexOfFirstAssignment,
+    indexOfLastAssignment
+  );
 
   const handlePageChange = (pageNumber) => setCurrentPage(pageNumber);
   const [selectedAssignmentDetails, setSelectedAssignmentDetails] = useState({
@@ -240,196 +249,224 @@ const TeacherAssignment = () => {
     subject: "",
   });
 
-
-
   const totalPages = Math.ceil(sortedAssignments.length / assignmentsPerPage);
   return (
     <>
-      <Row>
-        <Col md={3} className="mt-5">
-          <TeacherSidebar />
-        </Col>
-        <Col md={9}>
-          <div className="report-section p-4 shadow" style={{ marginTop: "90px" }}>
-            <Row className="mb-4">
-              <Col md={9}>
-                <h4>Assignment</h4>
-              </Col>
-              <Col md={3} className="d-flex justify-content-end align-items-center">
-                <Button variant="outline-primary" onClick={() => navigate('/teacherDashboard/CreateAssignment')}>
-                  + Create New
-                </Button>
-              </Col>
-            </Row>
-            <Row className="mb-4">
-              <Col md={3} className="d-flex justify-content-start align-items-center">
-                <Form.Control
-                  type="text"
-                  placeholder="Search Assignment Name"
-                  value={searchInput}
-                  onChange={handleSearch}
-                />
-              </Col>
-              <Col md={9} className="d-flex justify-content-end">
-                <div className="d-flex align-items-center">
-                  <Form.Label className="mr-2" style={{ marginRight: '10px',fontWeight: 'bold', fontSize: '18px' }}>Status:</Form.Label>
-                  <Form.Control
-                    as="select"
-                    name="status"
-                    value={filters.status}
-                    onChange={handleFilterChange}
-                    style={{ marginRight: '10px', width: '150px' }}
-                  >
-                    <option value="">Select Status</option>
-                    <option value="published">Published</option>
-                    <option value="draft">Draft</option>
-                  </Form.Control>
-                </div>
-                <div className="d-flex align-items-center ml-4">
-                  <Form.Label className="mr-2" style={{ marginRight: '10px', fontWeight: 'bold', fontSize: '18px' }}>Type:</Form.Label>
-                  <Form.Control
-                    as="select"
-                    name="type"
-                    value={filters.type}
-                    onChange={handleFilterChange}
-                    style={{ width: '150px' }}
-                  >
-                    <option value="">Select Type</option>
-                    {filterOptions.types.map((type) => (
-                      <option key={type} value={type}>
-                        {type}
-                      </option>
-                    ))}
-                  </Form.Control>
-                </div>
-              </Col>
-            </Row>
-
-
-
-            <Table responsive striped bordered hover className="mb-4 ">
-              <thead>
-                <tr>
-                  <th onClick={() => handleSort("assignment_name")} className="assignment-header">
-                    Assignment Name {sortOrder.column === "assignment_name" && sortOrder.direction === "asc" && <FaCheck />}
-                    {sortOrder.column === "assignment_name" && sortOrder.direction === "desc" && <FaCheck />}
-                  </th>
-                  <th>Grade</th>
-                  <th>Section</th>
-                  <th>Subject</th>
-                  <th>Chapter</th>
-                  <th>Type</th>
-                  <th>Duration/mins</th>
-                  <th>Status</th>
-                  <th className="actions-header">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {currentAssignments.map((item) => (
-                  <tr key={item?.assignment_id}>
-                    <td>{item?.assignment_name}</td>
-                    <td>{item?.grade}</td>
-                    <td>{item?.section_name}</td>
-                    <td>{item?.subject_name}</td>
-                    <td>{item?.chapter_number}</td>
-                    <td>{item?.assignment_type_name}</td>
-                    <td>{item?.assignment_duration}</td>
-                    <td>
-                      {item?.is_published ? (
-                        <Badge bg="primary">Publish</Badge>
-                      ) : (
-                        <Badge bg="secondary">draft</Badge>
-                      )}
-                    </td>
-                    <td className="d-flex gap-2">
-                      {!item?.is_published && (
-                        <>
-                          <BiSolidEdit
-                            className="cursor-pointer h-6 w-6 text-[#676d71]"
-                            title="Edit"
-                            onClick={() => navigate('/teacherDashboard/Addquestions', { state: item?.assignment_id })}
-                          />
-                          <MdPublish
-                            className="cursor-pointer h-6 w-6 text-[#676d71]"
-                            title="Publish"
-                            onClick={() => publishAssignment(item?.assignment_id)}
-                          />
-                          <AiFillDelete
-                            className="cursor-pointer h-6 w-6 text-[#676d71]"
-                            title="Delete"
-                            onClick={() => handleDeleteConfirmation(item?.assignment_id)}
-                          />
-                        </>
-                      )}
-                      {item?.is_published && (
-                        <>
-                          <BsEyeFill
-                            className="cursor-pointer h-6 w-6 text-[#676d71]"
-                            title="View"
-                            onClick={() => {
-                              if (item?.assignment_id) {
-                                navigate(`/teacherDashboard/SubmissionsReport/${item?.assignment_id}`, { state: { assignment_id: item?.assignment_id } });
-                              }
-                            }}
-                          />
-
-
-
-
-                          <BsFillPeopleFill
-                            className="cursor-pointer h-6 w-6 text-[#676d71]"
-                            title="See Submissions"
-                            onClick={() => navigate(`/teacherDashboard/Submissions/${item?.assignment_id}`)}
-                          />
-                          {/* <BsFillPeopleFill className="cursor-pointer h-6 w-6 text-[#676d71]" title="See Submissions" /> */}
-                        </>
-                      )}
-                    </td>
-                  </tr>
+      <div className="report-section p-4 shadow" style={{ marginTop: "90px" }}>
+        <Row className="mb-4">
+          <Col md={9}>
+            <h4>Assignment</h4>
+          </Col>
+          <Col md={3} className="d-flex justify-content-end align-items-center">
+            <Button
+              variant="outline-primary"
+              onClick={() => navigate("/teacherDashboard/createAssignment")}
+            >
+              + Create New
+            </Button>
+          </Col>
+        </Row>
+        <Row className="mb-4">
+          <Col
+            md={3}
+            className="d-flex justify-content-start align-items-center"
+          >
+            <Form.Control
+              type="text"
+              placeholder="Search Assignment Name"
+              value={searchInput}
+              onChange={handleSearch}
+            />
+          </Col>
+          <Col md={9} className="d-flex justify-content-end">
+            <div className="d-flex align-items-center">
+              <Form.Label
+                className="mr-2"
+                style={{
+                  marginRight: "10px",
+                  fontWeight: "bold",
+                  fontSize: "18px",
+                }}
+              >
+                Status:
+              </Form.Label>
+              <Form.Control
+                as="select"
+                name="status"
+                value={filters.status}
+                onChange={handleFilterChange}
+                style={{ marginRight: "10px", width: "150px" }}
+              >
+                <option value="">Select Status</option>
+                <option value="published">Published</option>
+                <option value="draft">Draft</option>
+              </Form.Control>
+            </div>
+            <div className="d-flex align-items-center ml-4">
+              <Form.Label
+                className="mr-2"
+                style={{
+                  marginRight: "10px",
+                  fontWeight: "bold",
+                  fontSize: "18px",
+                }}
+              >
+                Type:
+              </Form.Label>
+              <Form.Control
+                as="select"
+                name="type"
+                value={filters.type}
+                onChange={handleFilterChange}
+                style={{ width: "150px" }}
+              >
+                <option value="">Select Type</option>
+                {filterOptions.types.map((type) => (
+                  <option key={type} value={type}>
+                    {type}
+                  </option>
                 ))}
-              </tbody>
-            </Table>
-            <Pagination>
-              <Pagination.Prev
-                onClick={() => handlePageChange(currentPage - 1)}
-                disabled={currentPage === 1}
-              />
-              {Array.from({ length: totalPages }, (_, index) => (
-                <Pagination.Item
-                  key={index + 1}
-                  active={currentPage === index + 1}
-                  onClick={() => handlePageChange(index + 1)}
-                >
-                  {index + 1}
-                </Pagination.Item>
-              ))}
-              <Pagination.Next
-                onClick={() => handlePageChange(currentPage + 1)}
-                disabled={currentPage === totalPages}
-              />
-            </Pagination>
-            <Modal show={showDeleteConfirmation} onHide={handleDeleteCancel}>
-              <Modal.Header closeButton>
-                <Modal.Title>Delete Confirmation</Modal.Title>
-              </Modal.Header>
-              <Modal.Body>
-                Are you sure you want to delete this assignment?
-              </Modal.Body>
-              <Modal.Footer>
-                <Button variant="secondary" onClick={handleDeleteCancel}>
-                  Cancel
-                </Button>
-                <Button variant="danger" onClick={handleDeleteConfirm}>
-                  Delete
-                </Button>
-              </Modal.Footer>
-            </Modal>
-          </div>
-        </Col>
-      </Row>
+              </Form.Control>
+            </div>
+          </Col>
+        </Row>
+
+        <Table responsive striped bordered hover className="mb-4 ">
+          <thead>
+            <tr>
+              <th
+                onClick={() => handleSort("assignment_name")}
+                className="assignment-header"
+              >
+                Assignment Name{" "}
+                {sortOrder.column === "assignment_name" &&
+                  sortOrder.direction === "asc" && <FaCheck />}
+                {sortOrder.column === "assignment_name" &&
+                  sortOrder.direction === "desc" && <FaCheck />}
+              </th>
+              <th>Grade</th>
+              <th>Section</th>
+              <th>Subject</th>
+              <th>Chapter</th>
+              <th>Type</th>
+              <th>Duration/mins</th>
+              <th>Status</th>
+              <th className="actions-header">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {currentAssignments.map((item) => (
+              <tr key={item?.assignment_id}>
+                <td>{item?.assignment_name}</td>
+                <td>{item?.grade}</td>
+                <td>{item?.section_name}</td>
+                <td>{item?.subject_name}</td>
+                <td>{item?.chapter_number}</td>
+                <td>{item?.assignment_type_name}</td>
+                <td>{item?.assignment_duration}</td>
+                <td>
+                  {item?.is_published ? (
+                    <Badge bg="primary">Publish</Badge>
+                  ) : (
+                    <Badge bg="secondary">draft</Badge>
+                  )}
+                </td>
+                <td className="d-flex gap-2">
+                  {!item?.is_published && (
+                    <>
+                      <BiSolidEdit
+                        className="cursor-pointer h-6 w-6 text-[#676d71]"
+                        title="Edit"
+                        onClick={() =>
+                          navigate("/teacherDashboard/addquestions", {
+                            state: item?.assignment_id,
+                          })
+                        }
+                      />
+                      <MdPublish
+                        className="cursor-pointer h-6 w-6 text-[#676d71]"
+                        title="Publish"
+                        onClick={() => publishAssignment(item?.assignment_id)}
+                      />
+                      <AiFillDelete
+                        className="cursor-pointer h-6 w-6 text-[#676d71]"
+                        title="Delete"
+                        onClick={() =>
+                          handleDeleteConfirmation(item?.assignment_id)
+                        }
+                      />
+                    </>
+                  )}
+                  {item?.is_published && (
+                    <>
+                      <BsEyeFill
+                        className="cursor-pointer h-6 w-6 text-[#676d71]"
+                        title="View"
+                        onClick={() => {
+                          if (item?.assignment_id) {
+                            navigate(
+                              `/teacherDashboard/submissionsReport/${item?.assignment_id}`,
+                              { state: { assignment_id: item?.assignment_id } }
+                            );
+                          }
+                        }}
+                      />
+
+                      <BsFillPeopleFill
+                        className="cursor-pointer h-6 w-6 text-[#676d71]"
+                        title="See Submissions"
+                        onClick={() =>
+                          navigate(
+                            `/teacherDashboard/submissions/${item?.assignment_id}`
+                          )
+                        }
+                      />
+                      {/* <BsFillPeopleFill className="cursor-pointer h-6 w-6 text-[#676d71]" title="See Submissions" /> */}
+                    </>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+        <Pagination>
+          <Pagination.Prev
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+          />
+          {Array.from({ length: totalPages }, (_, index) => (
+            <Pagination.Item
+              key={index + 1}
+              active={currentPage === index + 1}
+              onClick={() => handlePageChange(index + 1)}
+            >
+              {index + 1}
+            </Pagination.Item>
+          ))}
+          <Pagination.Next
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+          />
+        </Pagination>
+        <Modal show={showDeleteConfirmation} onHide={handleDeleteCancel}>
+          <Modal.Header closeButton>
+            <Modal.Title>Delete Confirmation</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            Are you sure you want to delete this assignment?
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleDeleteCancel}>
+              Cancel
+            </Button>
+            <Button variant="danger" onClick={handleDeleteConfirm}>
+              Delete
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      </div>
       <CustomToast show={show} setShow={setShow} data={data} />
     </>
-
   );
 };
 

@@ -26,14 +26,14 @@ import * as myConstant from "../fileConstant";
 import { useEffect, useState } from "react";
 
 const loadIndex = {
-  "/principalDashboard/Dashboard": 0,
+  "/principalDashboard/dashboard": 0,
   "/principalDashboard/masterRoutine": 1,
-  "/principalDashboard/LessonPlan": 2,
-  "/principalDashboard/AttendanceOverview": 3,
-  "/principalDashboard/Reports": 4,
-  "/principalDashboard/Resources": 5,
-  "/principalDashboard/Announcements": 6,
-  "/principalDashboard/Notifications": 7,
+  "/principalDashboard/lessonPlan": 2,
+  "/principalDashboard/attendanceOverview": 3,
+  "/principalDashboard/reports": 4,
+  "/principalDashboard/resources": 5,
+  "/principalDashboard/announcements": 6,
+  "/principalDashboard/notifications": 7,
 };
 
 const PrincipalSidebar = () => {

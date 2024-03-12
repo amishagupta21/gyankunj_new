@@ -303,7 +303,7 @@ const AssignmentSheet = (props) => {
       })
       .then(data => {
         console.log('Assignment submitted successfully:', data);
-        window.location.href = "/studentDashboard/Assignment";
+        window.location.href = "/studentDashboard/assignments";
       })
       .catch(error => {
         console.error('Error submitting assignment:', error);
@@ -381,7 +381,7 @@ const AssignmentSheet = (props) => {
 
       .then(data => {
         console.log('Progress saved successfully:', data);
-        window.location.href = "/studentDashboard/Assignment";
+        window.location.href = "/studentDashboard/assignments";
       })
       .catch(error => {
         console.error('Error saving progress:', error);

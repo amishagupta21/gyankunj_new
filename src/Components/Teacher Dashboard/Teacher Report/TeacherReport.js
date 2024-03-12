@@ -1,31 +1,24 @@
-import React from 'react'
-import TeacherSidebar from '../TeacherSidebar'
+import React from "react";
+import TeacherSidebar from "../TeacherSidebar";
 import { Row, Col } from "react-bootstrap";
-import SadImg from '../../../Images/SadImg.png'
+import SadImg from "../../../Images/SadImg.png";
 
 const TeacherReport = () => {
-    return (
-        <>
-
-        <Row>
-            <Col md={3}  style={{marginTop:"91px", width:"20%"}}>
-                <TeacherSidebar />
-            </Col>
-            <Col md={9} style={{width:"80%"}}>
-            <div className="reportSection">
+  return (
+    <div className="reportSection">
       <Row
-          style={{
-            height: "74px",
-            boxShadow: "0px 3px 6px #B4B3B329",
-            position: "relative",
-            left: "12px",
-            width: "100%",
-          }}
-        >
-            <Col md={4}>
-            <h4>Report</h4>
-            </Col>
-            {/* <Col md={2}>
+        style={{
+          height: "74px",
+          boxShadow: "0px 3px 6px #B4B3B329",
+          position: "relative",
+          left: "12px",
+          width: "100%",
+        }}
+      >
+        <Col md={4}>
+          <h4>Report</h4>
+        </Col>
+        {/* <Col md={2}>
             <span>Section</span>
             <Select className='reportHeading' placeholder="Select Section" options={SectionOption} onChange={e => handleSectionChange(e)} isSearchable={false} />
                 
@@ -43,8 +36,8 @@ const TeacherReport = () => {
             <Col md={2}>
             <Button variant="outline-primary" style={{marginTop: "19px"}} onClick={getReportsData}>Check Reports</Button>
             </Col> */}
-        </Row>
-        {/* <div className="routineSection">
+      </Row>
+      {/* <div className="routineSection">
             <div>
               <Row>
                 <Col md={2}>
@@ -111,23 +104,28 @@ const TeacherReport = () => {
               </tbody>
             </Table>
           </div> */}
-          <Row>
-            <Col md={12}>
-              <h1 style={{ position:"relative", top: "100px", color: "#0071FF", font: "normal normal normal 29px/26px Roboto"}}>Since you are new here, it will take some time to prepare your report card!!</h1>
-            </Col>
-          </Row>
-          <Row>
-            <Col md={12}>
-              <img src = {SadImg} style={{ position:"relative", top: "150px"}} />
-            </Col>
-          </Row>
-        
-      </div>
-            </Col>
-        </Row>
-        
-        </>
-    )
-}
+      <Row>
+        <Col md={12}>
+          <h1
+            style={{
+              position: "relative",
+              top: "100px",
+              color: "#0071FF",
+              font: "normal normal normal 29px/26px Roboto",
+            }}
+          >
+            Since you are new here, it will take some time to prepare your
+            report card!!
+          </h1>
+        </Col>
+      </Row>
+      <Row>
+        <Col md={12}>
+          <img src={SadImg} style={{ position: "relative", top: "150px" }} />
+        </Col>
+      </Row>
+    </div>
+  );
+};
 
-export default TeacherReport
+export default TeacherReport;
