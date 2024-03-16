@@ -55,10 +55,26 @@ const AddQuestions = () => {
     };
 
     const handlePublish = async () => {
-        const temp = { ...questions };
+        debugger;
+        let requestPayload = {};
+        const tempQues = [...questions];
+        if(tempQues && tempQues.length > 0){
+            tempQues.map((item, index) => {
+                if(item.type === "Single Select"){
+                    item.type = "multiple_choice(radio)";
+                }
+                else if(item.type === "Multi Select"){
+                    item.type = "multiple_choice(checkbox)";
+                }
+                else if(item.type === "Fill the Blank"){
+                    item.type = "fill_in_the_blanks";
+                }
+                requestPayload[`question_number_${index+1}`] = item;
+            })
+        }
         const result = {
             assignment_id: id,
-            assignment_data: temp,
+            assignment_data: requestPayload,
         };
 
         try {

@@ -105,6 +105,7 @@ const saveAssignmentModule = () => {
     },
     "assignment_id": props.assignmentIdData,
   }
+  debugger;
   SaveAssignmentData(data)
   .then((res) => {
     setEnablePublish(true)

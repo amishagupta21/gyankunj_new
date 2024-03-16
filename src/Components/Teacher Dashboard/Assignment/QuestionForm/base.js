@@ -73,6 +73,7 @@ const BaseQuestion = (props) => {
   };
 
   const handleSubmit = (e) => {
+    debugger;
     if (fill && isQuestionIncomplete) {
       setIsQuestionValid(false);
       e.preventDefault();
@@ -101,8 +102,8 @@ const BaseQuestion = (props) => {
         type: type,
         marks: marks,
         all_options: [],
-        answer: data.answer,
-        test_answer: "",
+        correct_answer: data.answer,
+        // test_answer: "",
       };
       console.log(temp);
       props.handle(temp);
@@ -116,8 +117,8 @@ const BaseQuestion = (props) => {
         type: type,
         marks: marks,
         all_options: ttt,
-        answer: data.answer,
-        test_answer: "",
+        correct_answer: data.answer,
+        // test_answer: "",
       };
       props.handle(temp);
       console.log(temp);
@@ -134,8 +135,8 @@ const BaseQuestion = (props) => {
         type: type,
         marks: marks,
         all_options: ttt,
-        answer: ans,
-        test_answer: [],
+        correct_answer: ans,
+        // test_answer: [],
       };
       props.handle(temp);
       console.log(temp);

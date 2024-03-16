@@ -32,8 +32,8 @@ const AnswerTypeSubjective = (props) => {
         question: props.question.question,
         all_options: props.question.all_options,
         marks: props.question.marks,
-        answer: props.question.answer,
-        test_answer : testanswer,
+        correct_answer: props.question.answer,
+        // test_answer : testanswer,
         
       }
       console.log("Data",data)
