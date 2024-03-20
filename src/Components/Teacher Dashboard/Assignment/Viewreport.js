@@ -113,11 +113,11 @@ const Viewreport = () => {
                                     Answer:{" "}
                                     {
                                       assignmentDetail.assignment_data[key]
-                                        .answer
+                                        .correct_answer
                                     }
                                   </p>
                                   {assignmentDetail.assignment_data[key]
-                                    .type !== "Fill the Blank" && (
+                                    .type !== "fill_in_the_blanks" && (
                                     <p
                                       style={{
                                         fontWeight: "bold",

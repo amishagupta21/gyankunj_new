@@ -303,7 +303,7 @@ const AssignmentSheet = (props) => {
       })
       .then(data => {
         console.log('Assignment submitted successfully:', data);
-        window.location.href = "/studentDashboard/assignments";
+        // window.location.href = "/studentDashboard/assignments";
       })
       .catch(error => {
         console.error('Error submitting assignment:', error);
@@ -351,7 +351,6 @@ const AssignmentSheet = (props) => {
     };
 
     const accessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdWJsaWNfaWQiOiI0ODJjOTgxNS1iOWQ0LTRlNGYtOGJiNi0zOTRjODUyZDM1NWUiLCJleHAiOjI2NTMxMzc2MDV9.JPYYukYqWOulGx_JBHehSzKMpFalemeBxJsL6jDkWjA';  // Replace 'your-access-token' with the actual access token
-
     fetch('http://13.200.112.20:5005/submit_assignment', {
       method: 'PUT',
       headers: {
@@ -381,7 +380,7 @@ const AssignmentSheet = (props) => {
 
       .then(data => {
         console.log('Progress saved successfully:', data);
-        window.location.href = "/studentDashboard/assignments";
+        // window.location.href = "/studentDashboard/assignments";
       })
       .catch(error => {
         console.error('Error saving progress:', error);
@@ -508,7 +507,7 @@ const AssignmentSheet = (props) => {
                         <strong>Elapsed Time:</strong> {formatTime(timers[index].elapsedTime / 1000)}
                       </div>
                     )}
-                    {question.type === "Single Select" && (
+                    {question.type === "multiple_choice(radio)" && (
                       <div className="options-container">
                         <p><strong>Options:</strong></p>
                         <ul className="options-list single-select">
@@ -542,7 +541,7 @@ const AssignmentSheet = (props) => {
                       </div>
                     )}
 
-                    {question.type === "Multi Select" && (
+                    {question.type === "multiple_choice(checkbox)" && (
                       <div className="options-container">
                         <p><strong>Options:</strong></p>
                         <ul className="options-list multi-select">
@@ -582,7 +581,7 @@ const AssignmentSheet = (props) => {
                       </div>
                     )}
 
-                    {(question.type === "Fill the Blank" || question.type === "Write Answer") && (
+                    {(question.type === "fill_in_the_blanks" || question.type === "Write Answer") && (
                       <div className="answer-container">
                         <p><strong>Answer:</strong></p>
                         <textarea

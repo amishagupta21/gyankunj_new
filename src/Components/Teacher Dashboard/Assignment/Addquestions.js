@@ -59,10 +59,16 @@ const AddQuestions = () => {
   };
 
   const handlePublish = async () => {
-    const temp = { ...questions };
+    let requestPayload = {};
+    const tempQues = [...questions];
+    if (tempQues && tempQues.length > 0) {
+      tempQues.map((item, index) => {
+        requestPayload[`question_number_${index + 1}`] = item;
+      });
+    }
     const result = {
       assignment_id: id,
-      assignment_data: temp,
+      assignment_data: requestPayload,
     };
 
     try {
@@ -72,14 +78,14 @@ const AddQuestions = () => {
         const publishRes = await publishAssignmentData(id);
 
         if (publishRes.data.status === "success") {
-          navigate("/teacherDashboard/Assignment");
+          navigate("/teacherDashboard/assignments");
         } else {
           console.log("ERR", publishRes.data.status);
-          navigate("/teacherDashboard/Assignment");
+          navigate("/teacherDashboard/assignments");
         }
       } else {
         console.log("ERR", saveRes.data.status);
-        navigate("/teacherDashboard/Assignment");
+        navigate("/teacherDashboard/assignments");
       }
     } catch (error) {
       console.error(error);

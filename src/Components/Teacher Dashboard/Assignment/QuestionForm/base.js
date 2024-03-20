@@ -35,7 +35,7 @@ const BaseQuestion = (props) => {
     setData({
       question: "",
       marks: "",
-      answer: "",
+      correct_answer: "",
       options: [{ id: uuid(), value: "", trigger: false }],
     })
     setShowQuestionModal(true)
@@ -43,7 +43,7 @@ const BaseQuestion = (props) => {
   const [data, setData] = useState({
     question: "",
     marks: "",
-    answer: "",
+    correct_answer: "",
     options: [{ id: uuid(), value: "", trigger: false }],
   });
 
@@ -67,7 +67,7 @@ const BaseQuestion = (props) => {
     setData({
       question: "",
       marks: "",
-      answer: "",
+      correct_answer: "",
       options: [{ id: uuid(), value: "", trigger: false }],
     });
   };
@@ -85,7 +85,7 @@ const BaseQuestion = (props) => {
       e.preventDefault();
       return;
     }
-    if (single && data.answer.trim() === '') {
+    if (single && data.correct_answer.trim() === '') {
       alert('Please select a correct answer!');
       e.preventDefault();
       return;
@@ -101,8 +101,7 @@ const BaseQuestion = (props) => {
         type: type,
         marks: marks,
         all_options: [],
-        answer: data.answer,
-        test_answer: "",
+        correct_answer: data.correct_answer,
       };
       console.log(temp);
       props.handle(temp);
@@ -116,8 +115,7 @@ const BaseQuestion = (props) => {
         type: type,
         marks: marks,
         all_options: ttt,
-        answer: data.answer,
-        test_answer: "",
+        correct_answer: data.correct_answer,
       };
       props.handle(temp);
       console.log(temp);
@@ -134,8 +132,7 @@ const BaseQuestion = (props) => {
         type: type,
         marks: marks,
         all_options: ttt,
-        answer: ans,
-        test_answer: [],
+        correct_answer: ans,
       };
       props.handle(temp);
       console.log(temp);
@@ -147,7 +144,7 @@ const BaseQuestion = (props) => {
         type: type,
         marks: marks,
         all_options: data.options,
-        answer: ans,
+        correct_answer: ans,
       };
       console.log(temp);
       props.handle(temp);
@@ -166,7 +163,7 @@ const BaseQuestion = (props) => {
   const handleotherAnswer = (e) => {
     setData({
       ...data,
-      answer: e.target.value,
+      correct_answer: e.target.value,
     });
   };
   const handleMarks = (e) => {
@@ -216,7 +213,7 @@ const BaseQuestion = (props) => {
       question: "",
       type: "",
       marks: "",
-      answer: "",
+      correct_answer: "",
       options: [{ id: uuid(), value: "", trigger: false }],
     });
     setSingle(false);
@@ -239,33 +236,33 @@ const BaseQuestion = (props) => {
   const handleAnswer = (e) => {
     setData({
       ...data,
-      answer: e.target.value,
+      correct_answer: e.target.value,
     });
   };
   const handleType = (e) => {
     const selectedType = e.target.value;
 
     switch (selectedType) {
-      case "Single Select":
+      case "multiple_choice(radio)":
         setSingle(true);
         setMulti(false);
         setfill(false);
         setOther(false);
-        setType("Single Select");
+        setType("multiple_choice(radio)");
         break;
-      case "Multi Select":
+      case "multiple_choice(checkbox)":
         setSingle(false);
         setMulti(true);
         setfill(false);
         setOther(false);
-        setType("Multi Select");
+        setType("multiple_choice(checkbox)");
         break;
-      case "Fill the Blank":
+      case "fill_in_the_blanks":
         setSingle(false);
         setMulti(false);
         setfill(true);
         setOther(false);
-        setType("Fill the Blank");
+        setType("fill_in_the_blanks");
         break;
       case "Write Answer":
         setSingle(false);
@@ -313,9 +310,9 @@ const BaseQuestion = (props) => {
                           value={type}
                         >
                           <option value="">Select Type</option>
-                          <option value="Single Select">Single Select</option>
-                          <option value="Multi Select">Multi Select</option>
-                          <option value="Fill the Blank">Fill the Blank</option>
+                          <option value="multiple_choice(radio)">Single Select</option>
+                          <option value="multiple_choice(checkbox)">Multi Select</option>
+                          <option value="fill_in_the_blanks">Fill the Blank</option>
                           <option value="Write Answer">Write Answer</option>
                         </Form.Select>
 
@@ -493,7 +490,7 @@ const BaseQuestion = (props) => {
                   ) : (
                     <></>
                   )}
-                  <Form.Group className="mb-3" controlId="answer">
+                  <Form.Group className="mb-3" controlId="correct_answer">
                     {other ? (
                       <Row>
                         <Col md={12}>
@@ -504,7 +501,7 @@ const BaseQuestion = (props) => {
                             size="sm"
                             className="input"
                             required
-                            value={data.answer}
+                            value={data.correct_answer}
                             onChange={(e) => handleotherAnswer(e)}
                             autoComplete="off"
                           />

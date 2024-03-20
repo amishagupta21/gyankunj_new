@@ -18,7 +18,7 @@ const Question = ({ data, index, handleEdit }) => {
       return;
     }
 
-    if (!editedData.answer || (Array.isArray(editedData.answer) && editedData.answer.length === 0)) {
+    if (!editedData.correct_answer || (Array.isArray(editedData.correct_answer) && editedData.correct_answer.length === 0)) {
       setValidationError("Answer cannot be empty");
       return;
     }
@@ -33,14 +33,14 @@ const Question = ({ data, index, handleEdit }) => {
     const updatedOptions = [...editedData.all_options];
     updatedOptions.splice(opIndex, 1);
 
-    const updatedAnswer = Array.isArray(editedData.answer)
-      ? editedData.answer.filter((option) => option !== editedData.all_options[opIndex])
+    const updatedAnswer = Array.isArray(editedData.correct_answer)
+      ? editedData.correct_answer.filter((option) => option !== editedData.all_options[opIndex])
       : [];
 
     setEditedData({
       ...editedData,
       all_options: updatedOptions,
-      answer: updatedAnswer,
+      correct_answer: updatedAnswer,
     });
   };
 
@@ -77,22 +77,22 @@ const Question = ({ data, index, handleEdit }) => {
                 </Col>
               </Col>
               <Col md={4}>
-                {editedData.type === "Single Select" ? (
+                {editedData.type === "multiple_choice(radio)" ? (
                   <Form.Check
                     type="radio"
                     label="Correct"
-                    checked={editedData.answer.includes(option)}
+                    checked={editedData.correct_answer.includes(option)}
                     onChange={() => {
-                      setEditedData({ ...editedData, answer: [option] });
+                      setEditedData({ ...editedData, correct_answer: [option] });
                     }}
                   />
                 ) : (
                   <Form.Check
                     type="checkbox"
                     label="Correct"
-                    checked={editedData.answer.includes(option)}
+                    checked={editedData.correct_answer.includes(option)}
                     onChange={() => {
-                      const updatedAnswers = [...editedData.answer];
+                      const updatedAnswers = [...editedData.correct_answer];
                       const index = updatedAnswers.indexOf(option);
 
                       if (index !== -1) {
@@ -101,7 +101,7 @@ const Question = ({ data, index, handleEdit }) => {
                         updatedAnswers.push(option);
                       }
 
-                      setEditedData({ ...editedData, answer: updatedAnswers });
+                      setEditedData({ ...editedData, correct_answer: updatedAnswers });
                     }}
                   />
                 )}
@@ -142,14 +142,14 @@ const Question = ({ data, index, handleEdit }) => {
             <Form.Label style={{ fontWeight: 'bold' }}>Check Answer:</Form.Label>
             <Form.Control
   type="text"
-  value={Array.isArray(editedData.answer) ? editedData.answer.join(", ") : editedData.answer}
-  onChange={(e) => setEditedData({ ...editedData, answer: e.target.value })}
+  value={Array.isArray(editedData.correct_answer) ? editedData.correct_answer.join(", ") : editedData.correct_answer}
+  onChange={(e) => setEditedData({ ...editedData, correct_answer: e.target.value })}
 />
 
           </Form.Group>
 
-          {editedData.type === "Single Select" && renderOptions()}
-          {editedData.type === "Multi Select" && renderOptions()}
+          {editedData.type === "multiple_choice(radio)" && renderOptions()}
+          {editedData.type === "multiple_choice(checkbox)" && renderOptions()}
 
           <Form.Group className="mb-3">
             <Form.Label style={{ fontWeight: 'bold' }}>Edit Marks:</Form.Label>
@@ -201,12 +201,12 @@ const Question = ({ data, index, handleEdit }) => {
               <span className="questiondetail" style={{ fontWeight: 'bold' }}>Answer:</span>
             </Col>
             <Col md={10}>
-              {Array.isArray(data.answer)
-                ? data.answer.map((i) => <span key={i} className="me-2">{i}.</span>)
-                : data.answer}
+              {Array.isArray(data.correct_answer)
+                ? data.correct_answer.map((i) => <span key={i} className="me-2">{i}.</span>)
+                : data.correct_answer}
             </Col>
           </Row>
-          {["Single Select", "Multi Select"].includes(data.type) && (
+          {["multiple_choice(radio)", "multiple_choice(checkbox)"].includes(data.type) && (
             <Row className="mb-3">
               <Col md={2}>
                 <span className="questiondetail" style={{ fontWeight: 'bold' }}>All Options:</span>
