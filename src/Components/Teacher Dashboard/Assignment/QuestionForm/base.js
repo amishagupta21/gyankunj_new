@@ -130,10 +130,7 @@ const BaseQuestion = (props) => {
         correct_answer: ans,
       };
       props.handle(temp);
-      console.log(temp);
     } else if (fill === true) {
-      debugger;
-      const ans = [];
       const ttt = [];
       data.options.map((item) => {
         ttt.push(item.value);
@@ -142,8 +139,8 @@ const BaseQuestion = (props) => {
         question: questionName,
         type: type,
         marks: marks,
-        all_options: ttt.join(),
-        correct_answer: ans,
+        all_options: [],
+        correct_answer: ttt,
       };
       props.handle(temp);
     }
@@ -264,12 +261,12 @@ const BaseQuestion = (props) => {
         setOther(false);
         setType("fill_in_the_blanks");
         break;
-      case "Write Answer":
+      case "subjective":
         setSingle(false);
         setMulti(false);
         setfill(false);
         setOther(true);
-        setType("Write Answer");
+        setType("subjective");
         break;
     }
 
@@ -319,7 +316,7 @@ const BaseQuestion = (props) => {
                           <option value="fill_in_the_blanks">
                             Fill the Blank
                           </option>
-                          <option value="Write Answer">Write Answer</option>
+                          <option value="subjective">Write Answer</option>
                         </Form.Select>
                       </Form.Group>
                     </Col>

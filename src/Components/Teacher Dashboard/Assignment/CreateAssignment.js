@@ -159,7 +159,7 @@ const CreateAssignment = () => {
   return (
     <div className="create-assignment-container">
       <div className="create-assignment-content">
-        <div className="header">
+        <div className="border-bottom d-flex justify-content-between mt-5 py-2">
           <h4>Create Assignment</h4>
           <Button
             variant="outline-primary"

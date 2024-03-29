@@ -149,7 +149,7 @@ const EvaluteAssignmentReport = () => {
                       : null}
                   </p>
                   {evaluationData.student_response[questionNumber].type ===
-                    "Write Answer" && (
+                    "subjective" && (
                     <div className="write-answer-marks">
                       <Form.Group
                         controlId={`marksForWriteAnswer_${questionNumber}`}
