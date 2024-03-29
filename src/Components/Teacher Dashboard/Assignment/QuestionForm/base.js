@@ -246,26 +246,26 @@ const BaseQuestion = (props) => {
     const selectedType = e.target.value;
 
     switch (selectedType) {
-      case "Single Select":
+      case "multiple_choice(radio)":
         setSingle(true);
         setMulti(false);
         setfill(false);
         setOther(false);
-        setType("Single Select");
+        setType("multiple_choice(radio)");
         break;
-      case "Multi Select":
+      case "multiple_choice(checkbox)":
         setSingle(false);
         setMulti(true);
         setfill(false);
         setOther(false);
-        setType("Multi Select");
+        setType("multiple_choice(checkbox)");
         break;
-      case "Fill the Blank":
+      case "fill_in_the_blanks":
         setSingle(false);
         setMulti(false);
         setfill(true);
         setOther(false);
-        setType("Fill the Blank");
+        setType("fill_in_the_blanks");
         break;
       case "Write Answer":
         setSingle(false);
@@ -313,9 +313,9 @@ const BaseQuestion = (props) => {
                           value={type}
                         >
                           <option value="">Select Type</option>
-                          <option value="Single Select">Single Select</option>
-                          <option value="Multi Select">Multi Select</option>
-                          <option value="Fill the Blank">Fill the Blank</option>
+                          <option value="multiple_choice(radio)">Single Select</option>
+                          <option value="multiple_choice(checkbox)">Multi Select</option>
+                          <option value="fill_in_the_blanks">Fill the Blank</option>
                           <option value="Write Answer">Write Answer</option>
                         </Form.Select>
 

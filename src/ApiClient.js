@@ -53,6 +53,12 @@ const attendanceOverview = (grade, section) => {
 const getReports = (grade, section, userType) => {
     return apiInstance.get(`/view_report?grade_id=${grade}&section_id=${section}&user_type=${userType}`)
 }
+const getAllChapterName = (grade, section) => {
+    return apiInstance.get(`/get_subject_chapters?grade_id=${grade}&section_id=${section}`)
+}
+const getSubjectData = () => {
+    return apiInstance.get(`/get_all_subjects`)
+}
 
 const getResources = (grade, section, subject) => {
     return apiInstance.get(`/get_content?grade_id=${grade}&section_id=${section}&subject_id=${subject}`)
@@ -183,6 +189,8 @@ const evaluteAssignment = (AssignmentId, student) => {
 export {
     //loginUser,
     evaluteAssignment,
+    getSubjectData,
+    getAllChapterName,
     deleteAssignment,
     getQuestions,
     createMasterRoutine,

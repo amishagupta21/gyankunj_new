@@ -258,7 +258,9 @@ const AssignmentSheet = (props) => {
     }
 
     const assignmentData = assignlist.map((question, index) => {
-      const questionId = `question_number_${index + 1}`;
+      const questionId = `${index}`;
+      // const questionId = `question_number_${index + 1}`;
+
       const startTime = timers[index]?.startTime;
       const endTime = timers[index]?.endTime;
       const elapsedTime = timers[index].elapsedTime;
@@ -267,10 +269,12 @@ const AssignmentSheet = (props) => {
         [questionId]: {
           type: question.type,
           question: question.question,
-          selected_answer: userAnswers[questionId],
+          selected_answer:"4",
+          // selected_answer: userAnswers[questionId],
           all_options: question.all_options,
           marks: question.marks,
           time_taken: questionTimeTaken
+          // time_taken: "5mins"
         }
       };
     });
@@ -303,7 +307,7 @@ const AssignmentSheet = (props) => {
       })
       .then(data => {
         console.log('Assignment submitted successfully:', data);
-        window.location.href = "/studentDashboard/assignments";
+        // window.location.href = "/studentDashboard/Assignment";
       })
       .catch(error => {
         console.error('Error submitting assignment:', error);
@@ -381,7 +385,7 @@ const AssignmentSheet = (props) => {
 
       .then(data => {
         console.log('Progress saved successfully:', data);
-        window.location.href = "/studentDashboard/assignments";
+        window.location.href = "/studentDashboard/Assignment";
       })
       .catch(error => {
         console.error('Error saving progress:', error);
@@ -508,11 +512,12 @@ const AssignmentSheet = (props) => {
                         <strong>Elapsed Time:</strong> {formatTime(timers[index].elapsedTime / 1000)}
                       </div>
                     )}
-                    {question.type === "Single Select" && (
+                    {question.type === "multiple_choice(radio)" && (
                       <div className="options-container">
                         <p><strong>Options:</strong></p>
                         <ul className="options-list single-select">
                           {question.all_options.map((option, idx) => (
+                            
                             <li key={idx}>
                               <label className="option-label">
                                 <input
