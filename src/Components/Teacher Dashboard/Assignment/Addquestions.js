@@ -41,7 +41,11 @@ const AddQuestions = () => {
     let requestPayload = {};
     const tempQues = [...questions];
     if (tempQues && tempQues.length > 0) {
+      debugger;
       tempQues.map((item, index) => {
+        if(item.type === 'fill_in_the_blanks'){
+          item.correct_answer = item.correct_answer.join();
+        }
         requestPayload[`question_number_${index + 1}`] = item;
       });
     }
@@ -69,6 +73,9 @@ const AddQuestions = () => {
     const tempQues = [...questions];
     if (tempQues && tempQues.length > 0) {
       tempQues.map((item, index) => {
+        if(item.type === 'fill_in_the_blanks'){
+          item.correct_answer = item.correct_answer.join();
+        }
         requestPayload[`question_number_${index + 1}`] = item;
       });
     }
