@@ -234,7 +234,6 @@ const AssignmentSheet = (props) => {
 
 
   const handleUserAnswerChange = (value, questionId) => {
-    debugger;
     setUserAnswers(prevState => ({
       ...prevState,
       [questionId]: value
@@ -250,7 +249,6 @@ const AssignmentSheet = (props) => {
   };
 
   const submitAssignment = () => {
-    debugger;
     if (show.index !== "") {
       const newTimers = [...timers];
       newTimers[show.index].endTime = Date.now();
@@ -287,7 +285,6 @@ const AssignmentSheet = (props) => {
       assignment_id: props.assignmentId,
       submit_data: true
     };
-    debugger; 
     const accessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdWJsaWNfaWQiOiI0ODJjOTgxNS1iOWQ0LTRlNGYtOGJiNi0zOTRjODUyZDM1NWUiLCJleHAiOjI2NTMxMzc2MDV9.JPYYukYqWOulGx_JBHehSzKMpFalemeBxJsL6jDkWjA'; // Replace 'your-access-token' with the actual access token
 
     fetch('http://13.200.112.20:5005/submit_assignment', {

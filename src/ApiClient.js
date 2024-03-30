@@ -180,6 +180,13 @@ const evaluteAssignment = (AssignmentId, student) => {
     return apiInstance.get(`/evaluate_student_assignment?assignment_id=${AssignmentId}&student_id=${student}`)
 }
 
+const getAllChapterName = (grade, section) => {
+    return apiInstance.get(`/get_subject_chapters?grade_id=${grade}&section_id=${section}`)
+}
+const getSubjectData = () => {
+    return apiInstance.get(`/get_all_subjects`)
+}
+
 export {
     //loginUser,
     evaluteAssignment,
@@ -220,5 +227,7 @@ export {
     createAssignment,
     SaveAssignmentData,
     publishAssignmentData,
-    loadAssignmentData
+    loadAssignmentData,
+    getAllChapterName,
+    getSubjectData
 }
