@@ -50,7 +50,7 @@ const Question = ({ data, index, key }) => {
               {data.marks} marks
             </p>
           </div>
-          <p className="text-green-500 font-bold">A: {data.answer}</p>
+          <p className="text-green-500 font-bold">A: {data.correct_answer}</p>
         </div>
       );
     default:

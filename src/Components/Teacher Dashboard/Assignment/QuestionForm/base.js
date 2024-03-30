@@ -7,7 +7,6 @@ import { BsPlus, BsPlusSquareDotted } from "react-icons/bs";
 import { BsTrash } from "react-icons/bs";
 import { SaveAssignmentData } from "../../../../ApiClient";
 
-
 import "./index.css";
 
 const BaseQuestion = (props) => {
@@ -28,27 +27,26 @@ const BaseQuestion = (props) => {
   const [isQuestionIncomplete, setIsQuestionIncomplete] = useState(false);
   const [isQuestionValid, setIsQuestionValid] = useState(true);
   const handleClose = () => {
-    setDataToInitial()
+    setDataToInitial();
     setShowQuestionModal(false);
-  }
+  };
   const handleShow = () => {
     setData({
       question: "",
       marks: "",
-      answer: "",
+      correct_answer: "",
       options: [{ id: uuid(), value: "", trigger: false }],
-    })
-    setShowQuestionModal(true)
+    });
+    setShowQuestionModal(true);
   };
   const [data, setData] = useState({
     question: "",
     marks: "",
-    answer: "",
+    correct_answer: "",
     options: [{ id: uuid(), value: "", trigger: false }],
   });
 
-
-  useEffect(() => { }, [marks, questionName, type]);
+  useEffect(() => {}, [marks, questionName, type]);
 
   const setDataToInitial = () => {
     setQuestionName("");
@@ -67,7 +65,7 @@ const BaseQuestion = (props) => {
     setData({
       question: "",
       marks: "",
-      answer: "",
+      correct_answer: "",
       options: [{ id: uuid(), value: "", trigger: false }],
     });
   };
@@ -78,33 +76,28 @@ const BaseQuestion = (props) => {
       e.preventDefault();
       return;
     }
-    const isOptionFieldEmpty = data.options.some((option) => option.value.trim() === '');
+    const isOptionFieldEmpty = data.options.some(
+      (option) => option.value.trim() === ""
+    );
 
     if ((fill || single || multi) && isOptionFieldEmpty) {
-      alert('Option field should not be empty!');
+      alert("Option field should not be empty!");
       e.preventDefault();
       return;
     }
-    if (single && data.answer.trim() === '') {
-      alert('Please select a correct answer!');
+    if (single && data.correct_answer.trim() === "") {
+      alert("Please select a correct answer!");
       e.preventDefault();
       return;
     }
-    const form = document.getElementById("form");
-    // if (form.checkValidity() === false) {
-    //   e.preventDefault();
-    //   e.stopPropagation();
-    // } else {
     if (other === true) {
       const temp = {
         question: questionName,
         type: type,
         marks: marks,
         all_options: [],
-        answer: data.answer,
-        test_answer: "",
+        correct_answer: data.correct_answer,
       };
-      console.log(temp);
       props.handle(temp);
     } else if (single === true) {
       const ttt = [];
@@ -116,59 +109,59 @@ const BaseQuestion = (props) => {
         type: type,
         marks: marks,
         all_options: ttt,
-        answer: data.answer,
-        test_answer: "",
+        correct_answer: data.correct_answer,
       };
       props.handle(temp);
-      console.log(temp);
     } else if (multi === true) {
       const ans = [];
       const ttt = [];
       data.options.map((item) => {
         ttt.push(item.value);
       });
-      const correct_options = data.options.filter((item) => item.trigger === true);
+      const correct_options = data.options.filter(
+        (item) => item.trigger === true
+      );
       correct_options.map((item) => ans.push(item.value));
       const temp = {
         question: questionName,
         type: type,
         marks: marks,
         all_options: ttt,
-        answer: ans,
-        test_answer: [],
+        correct_answer: ans,
       };
       props.handle(temp);
-      console.log(temp);
     } else if (fill === true) {
-      const ans = [];
-      data.options.map((item) => ans.push(item.value));
+      const ttt = [];
+      data.options.map((item) => {
+        ttt.push(item.value);
+      });
       const temp = {
         question: questionName,
         type: type,
         marks: marks,
-        all_options: data.options,
-        answer: ans,
+        all_options: [],
+        correct_answer: ttt,
       };
-      console.log(temp);
       props.handle(temp);
     }
-    setDataToInitial()
-    setShowQuestionModal(false)
-
-    // handleCancel();
+    setDataToInitial();
+    setShowQuestionModal(false);
   };
+
   const handleQuestionname = (e) => {
     const questionValue = e.target.value;
     setIsQuestionIncomplete(!questionValue.includes("__"));
     setQuestionName(questionValue);
     setIsQuestionValid(true);
   };
+
   const handleotherAnswer = (e) => {
     setData({
       ...data,
-      answer: e.target.value,
+      correct_answer: e.target.value,
     });
   };
+
   const handleMarks = (e) => {
     const inputValue = e.target.value;
     const numericRegex = /^[0-9]*$/;
@@ -180,13 +173,14 @@ const BaseQuestion = (props) => {
 
   const addOptions = () => {
     if ((single || multi) && data.options.length !== 4) {
-      const isOptionFieldEmpty = data.options.some((option) => option.value.trim() === '');
+      const isOptionFieldEmpty = data.options.some(
+        (option) => option.value.trim() === ""
+      );
 
       if (isOptionFieldEmpty) {
-        alert('Option field should not be empty!');
+        alert("Option field should not be empty!");
         return;
       }
-
       setData({
         ...data,
         options: [
@@ -216,7 +210,7 @@ const BaseQuestion = (props) => {
       question: "",
       type: "",
       marks: "",
-      answer: "",
+      correct_answer: "",
       options: [{ id: uuid(), value: "", trigger: false }],
     });
     setSingle(false);
@@ -239,40 +233,40 @@ const BaseQuestion = (props) => {
   const handleAnswer = (e) => {
     setData({
       ...data,
-      answer: e.target.value,
+      correct_answer: e.target.value,
     });
   };
   const handleType = (e) => {
     const selectedType = e.target.value;
 
     switch (selectedType) {
-      case "Single Select":
+      case "multiple_choice(radio)":
         setSingle(true);
         setMulti(false);
         setfill(false);
         setOther(false);
-        setType("Single Select");
+        setType("multiple_choice(radio)");
         break;
-      case "Multi Select":
+      case "multiple_choice(checkbox)":
         setSingle(false);
         setMulti(true);
         setfill(false);
         setOther(false);
-        setType("Multi Select");
+        setType("multiple_choice(checkbox)");
         break;
-      case "Fill the Blank":
+      case "fill_in_the_blanks":
         setSingle(false);
         setMulti(false);
         setfill(true);
         setOther(false);
-        setType("Fill the Blank");
+        setType("fill_in_the_blanks");
         break;
-      case "Write Answer":
+      case "subjective":
         setSingle(false);
         setMulti(false);
         setfill(false);
         setOther(true);
-        setType("Write Answer");
+        setType("subjective");
         break;
     }
 
@@ -313,12 +307,17 @@ const BaseQuestion = (props) => {
                           value={type}
                         >
                           <option value="">Select Type</option>
-                          <option value="Single Select">Single Select</option>
-                          <option value="Multi Select">Multi Select</option>
-                          <option value="Fill the Blank">Fill the Blank</option>
-                          <option value="Write Answer">Write Answer</option>
+                          <option value="multiple_choice(radio)">
+                            Single Select
+                          </option>
+                          <option value="multiple_choice(checkbox)">
+                            Multi Select
+                          </option>
+                          <option value="fill_in_the_blanks">
+                            Fill the Blank
+                          </option>
+                          <option value="subjective">Write Answer</option>
                         </Form.Select>
-
                       </Form.Group>
                     </Col>
                     <Col md={6}>
@@ -343,9 +342,17 @@ const BaseQuestion = (props) => {
                         <Form.Label>Question</Form.Label>
                         <Form.Control
                           type="text"
-                          placeholder={fill ? "Enter Question with __" : "Enter Question..."}
+                          placeholder={
+                            fill
+                              ? "Enter Question with __"
+                              : "Enter Question..."
+                          }
                           size="sm"
-                          className={`${(!isQuestionValid || isQuestionIncomplete) ? "is-invalid" : ""}`}
+                          className={`${
+                            !isQuestionValid || isQuestionIncomplete
+                              ? "is-invalid"
+                              : ""
+                          }`}
                           style={{ borderColor: fill ? "red" : "blue" }}
                           onChange={(e) => handleQuestionname(e)}
                           value={questionName}
@@ -369,7 +376,9 @@ const BaseQuestion = (props) => {
                             <Form.Group className="mb-3" controlId="marks">
                               <Form.Control
                                 type="text"
-                                onChange={(e) => handleInputChange(i, e.target.value)}
+                                onChange={(e) =>
+                                  handleInputChange(i, e.target.value)
+                                }
                                 placeholder="Enter option..."
                                 size="sm"
                                 className="option"
@@ -392,24 +401,28 @@ const BaseQuestion = (props) => {
                             )}
                           </Col>
                         </Row>
-
                       </>
                     ))
                   ) : (
                     <></>
                   )}
-                  {single && data.options.length !== 4 ? <Row>
-                    <Col>
-                      {other ? (<></>) : (
-                        <Button className="add_button" onClick={() => addOptions()}>
-                          <BsPlus
-                            title="Plus"
-
-                          />Add Option
-                        </Button>
-                      )}
-                    </Col>
-                  </Row> : null}
+                  {single && data.options.length !== 4 ? (
+                    <Row>
+                      <Col>
+                        {other ? (
+                          <></>
+                        ) : (
+                          <Button
+                            className="add_button"
+                            onClick={() => addOptions()}
+                          >
+                            <BsPlus title="Plus" />
+                            Add Option
+                          </Button>
+                        )}
+                      </Col>
+                    </Row>
+                  ) : null}
                   {multi ? (
                     data?.options.map((item, i) => (
                       <Row>
@@ -417,7 +430,9 @@ const BaseQuestion = (props) => {
                           <Form.Group className="mb-3" controlId="marks">
                             <Form.Control
                               type="text"
-                              onChange={(e) => handleInputChange(i, e.target.value)}
+                              onChange={(e) =>
+                                handleInputChange(i, e.target.value)
+                              }
                               placeholder="Enter option..."
                               size="sm"
                               className="option"
@@ -447,18 +462,23 @@ const BaseQuestion = (props) => {
                   ) : (
                     <></>
                   )}
-                  {multi && data.options.length !== 4 ? <Row>
-                    <Col>
-                      {other ? (<></>) : (
-                        <Button className="add_button" onClick={() => addOptions()}>
-                          <BsPlus
-                            title="Plus"
-
-                          />Add Option
-                        </Button>
-                      )}
-                    </Col>
-                  </Row> : null}
+                  {multi && data.options.length !== 4 ? (
+                    <Row>
+                      <Col>
+                        {other ? (
+                          <></>
+                        ) : (
+                          <Button
+                            className="add_button"
+                            onClick={() => addOptions()}
+                          >
+                            <BsPlus title="Plus" />
+                            Add Option
+                          </Button>
+                        )}
+                      </Col>
+                    </Row>
+                  ) : null}
                   {fill ? (
                     data?.options.map((item, i) => (
                       <Row>
@@ -466,7 +486,9 @@ const BaseQuestion = (props) => {
                           <Form.Group className="mb-3" controlId="marks">
                             <Form.Control
                               type="text"
-                              onChange={(e) => handleInputChange(i, e.target.value)}
+                              onChange={(e) =>
+                                handleInputChange(i, e.target.value)
+                              }
                               placeholder="Enter option..."
                               size="sm"
                               className="option"
@@ -493,7 +515,7 @@ const BaseQuestion = (props) => {
                   ) : (
                     <></>
                   )}
-                  <Form.Group className="mb-3" controlId="answer">
+                  <Form.Group className="mb-3" controlId="correct_answer">
                     {other ? (
                       <Row>
                         <Col md={12}>
@@ -504,7 +526,7 @@ const BaseQuestion = (props) => {
                             size="sm"
                             className="input"
                             required
-                            value={data.answer}
+                            value={data.correct_answer}
                             onChange={(e) => handleotherAnswer(e)}
                             autoComplete="off"
                           />
@@ -538,12 +560,20 @@ const BaseQuestion = (props) => {
                   </Form.Group>
                   <Row>
                     <Col md={6}>
-                      <Button variant="outline-primary" className="button" onClick={handleCancel}>
+                      <Button
+                        variant="outline-primary"
+                        className="button"
+                        onClick={handleCancel}
+                      >
                         Cancel
                       </Button>
                     </Col>
                     <Col>
-                      <Button onClick={handleSubmit} variant="outline-primary" className="button">
+                      <Button
+                        onClick={handleSubmit}
+                        variant="outline-primary"
+                        className="button"
+                      >
                         Add
                       </Button>
                     </Col>
@@ -556,11 +586,9 @@ const BaseQuestion = (props) => {
             <Button variant="secondary" onClick={handleClose}>
               Close
             </Button>
-
           </Modal.Footer>
         </Modal.Dialog>
       </Modal>
-
     </>
   );
 };

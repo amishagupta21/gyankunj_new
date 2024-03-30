@@ -5,6 +5,8 @@ import "./EvaluteAssignmentReport.css";
 import { Badge, Button } from "react-bootstrap";
 import TeacherSidebar from "../TeacherSidebar";
 import { Col, Row, Table, Form } from "react-bootstrap";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCheck, faTimes } from "@fortawesome/free-solid-svg-icons";
 
 const EvaluteAssignmentReport = () => {
   const { assignmentId, studentId } = useParams();
@@ -64,9 +66,9 @@ const EvaluteAssignmentReport = () => {
                     {evaluationData.student_response[questionNumber].question}
                   </p>
                   {evaluationData.student_response[questionNumber].type !==
-                    "Single Select" &&
+                    "multiple_choice(radio)" &&
                     evaluationData.student_response[questionNumber].type !==
-                      "Multi Select" && (
+                      "multiple_choice(checkbox)" && (
                       <div>
                         <p>
                           <strong style={{ fontWeight: "bold" }}>
@@ -81,7 +83,7 @@ const EvaluteAssignmentReport = () => {
                     )}
                   <p>
                     {evaluationData.student_response[questionNumber].type ===
-                    "Single Select"
+                    "multiple_choice(radio)"
                       ? evaluationData.student_response[
                           questionNumber
                         ].all_options.map((option, index) => (
@@ -111,7 +113,7 @@ const EvaluteAssignmentReport = () => {
                           </div>
                         ))
                       : evaluationData.student_response[questionNumber].type ===
-                        "Multi Select"
+                        "multiple_choice(checkbox)"
                       ? (() => {
                           const selectedAnswers =
                             evaluationData.student_response[questionNumber]
@@ -147,7 +149,7 @@ const EvaluteAssignmentReport = () => {
                       : null}
                   </p>
                   {evaluationData.student_response[questionNumber].type ===
-                    "Write Answer" && (
+                    "subjective" && (
                     <div className="write-answer-marks">
                       <Form.Group
                         controlId={`marksForWriteAnswer_${questionNumber}`}
@@ -184,10 +186,14 @@ const EvaluteAssignmentReport = () => {
                   </p>
                   <p>
                     {evaluationData.student_response[questionNumber]
-                      .is_correct ? (
-                      <span style={{ fontWeight: "bold" }}>Correct: ✔</span>
+                      .is_answer_correct ? (
+                      <span className="text-success fw-bold">
+                        Correct: <FontAwesomeIcon icon={faCheck} />
+                      </span>
                     ) : (
-                      <span style={{ fontWeight: "bold" }}>Incorrect: ✘</span>
+                      <span className="text-danger fw-bold">
+                        Incorrect: <FontAwesomeIcon icon={faTimes} />
+                      </span>
                     )}
                   </p>
                 </div>
@@ -196,27 +202,33 @@ const EvaluteAssignmentReport = () => {
           )}
         </div>
       </div>
-      <Form>
-        <Form.Group controlId="obtainedMarks">
-          <Form.Label style={{ fontWeight: "bold" }}>Obtained Marks</Form.Label>
-          <Form.Control
-            type="text"
-            placeholder="Enter obtained marks"
-            value={obtainedMarks}
-            onChange={handleObtainedMarksChange}
-            style={{ width: "50%", marginLeft: "170px" }}
-          />
-        </Form.Group>
-        {percentage !== null && (
-          <div className="result-section">
-            <h3>Obtained Marks: {obtainedMarks}</h3>
-            <h3>Total Marks: {percentage}%</h3>
-          </div>
-        )}
-        <Button className="mt-3" onClick={handleEvaluateAssignment}>
-          Evaluate Assignment
-        </Button>
-      </Form>
+      <div className="evaluation-report">
+        <div className="section" style={{ width: "100%", margin: "0 auto" }}>
+          <Form>
+            <Form.Group controlId="obtainedMarks">
+              <Form.Label style={{ fontWeight: "bold" }}>
+                Obtained Marks
+              </Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter obtained marks"
+                value={obtainedMarks}
+                onChange={handleObtainedMarksChange}
+                style={{ width: "50%" }}
+              />
+            </Form.Group>
+            {percentage !== null && (
+              <div className="result-section">
+                <h3>Obtained Marks: {obtainedMarks}</h3>
+                <h3>Total Marks: {percentage}%</h3>
+              </div>
+            )}
+            <Button className="mt-3" onClick={handleEvaluateAssignment}>
+              Evaluate Assignment
+            </Button>
+          </Form>
+        </div>
+      </div>
     </>
   );
 };
