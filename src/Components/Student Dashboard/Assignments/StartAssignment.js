@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Button, Form, Modal, Row, Col, Table } from "react-bootstrap";
-import { loadAssignmentData } from '../../../ApiClient'
-import { viewStudentAssignment } from '../../../ApiClient'
-import './studentAssignment.css'
+import { loadAssignmentData } from "../../../ApiClient";
+import { viewStudentAssignment } from "../../../ApiClient";
+import "./studentAssignment.css";
 
 const AssignmentSheet = (props) => {
   console.log("Assignment Status:", props.assignmentStatus);
@@ -14,7 +14,7 @@ const AssignmentSheet = (props) => {
 
   const [show, setShow] = useState({
     show: false,
-    index: ""
+    index: "",
   });
   const [timers, setTimers] = useState([]);
   const [assignmentDuration, setAssignmentDuration] = useState(null);
@@ -37,20 +37,20 @@ const AssignmentSheet = (props) => {
   };
 
   useEffect(() => {
-    if (props.assignmentType === 'Test') {
+    if (props.assignmentType === "Test") {
       setShowInstructionsModal(true);
     } else {
       setInstructionsClosed(true);
     }
   }, []);
 
-  const instructions = "You cannot switch tabs, and we are monitoring your activity.";
+  const instructions =
+    "You cannot switch tabs, and we are monitoring your activity.";
 
   const handleCloseInstructions = () => {
     setShowInstructionsModal(false);
     setInstructionsClosed(true);
   };
-
 
   useEffect(() => {
     if (timeLeft === 14 && props.assignmentType === "Test") {
@@ -89,18 +89,26 @@ const AssignmentSheet = (props) => {
     return () => clearInterval(timer);
   }, [timeLeft]);
 
-  const userDetails = JSON.parse(localStorage.getItem('UserData'));
+  const userDetails = JSON.parse(localStorage.getItem("UserData"));
 
   const fetchAssignmentData = () => {
     const AssignmentId = props.assignmentId;
-    const userId = JSON.parse(localStorage.getItem('UserData'))?.user_id;
+    const userId = JSON.parse(localStorage.getItem("UserData"))?.user_id;
     loadAssignmentData(AssignmentId, userId)
       .then((res) => {
         setAssignmentFullData(res.data.assignment_data);
         setAssignList(Object.values(res.data.assignment_data));
-        setTimers(new Array(Object.values(res.data.assignment_data).length).fill({ startTime: null, endTime: null, elapsedTime: 0 }));
+        setTimers(
+          new Array(Object.values(res.data.assignment_data).length).fill({
+            startTime: null,
+            endTime: null,
+            elapsedTime: 0,
+          })
+        );
         setAssignmentDuration(res.data.assignment_duration);
-        setTimerIntervals(new Array(Object.values(res.data.assignment_data).length).fill(null)); // Initialize timer intervals array
+        setTimerIntervals(
+          new Array(Object.values(res.data.assignment_data).length).fill(null)
+        ); // Initialize timer intervals array
         setTimeLeft(res.data.assignment_duration * 60);
       })
       .catch((err) => console.log("AssignmentData err - ", err));
@@ -111,7 +119,6 @@ const AssignmentSheet = (props) => {
       setTimeLeft(assignmentDuration * 60);
     }
   }, [assignmentDuration]);
-
 
   const handleShowQuestion = (index) => {
     if (show.index !== "") {
@@ -131,12 +138,16 @@ const AssignmentSheet = (props) => {
 
     setShow({
       show: true,
-      index: index
+      index: index,
     });
   };
   const startTimerForQuestion = (index) => {
     const newTimers = [...timers];
-    newTimers[index] = { startTime: Date.now(), endTime: null, elapsedTime: elapsedTimes[index] || 0 };
+    newTimers[index] = {
+      startTime: Date.now(),
+      endTime: null,
+      elapsedTime: elapsedTimes[index] || 0,
+    };
     setTimers(newTimers);
   };
   const handleQuestionCardClick = (index) => {
@@ -157,7 +168,7 @@ const AssignmentSheet = (props) => {
     handleShowQuestion(index);
     setShow({
       show: true,
-      index: index
+      index: index,
     });
   };
 
@@ -191,18 +202,17 @@ const AssignmentSheet = (props) => {
     const minutes = Math.floor((elapsedTime % (1000 * 60 * 60)) / (1000 * 60));
     const seconds = Math.floor((elapsedTime % (1000 * 60)) / 1000);
 
-    let formattedTime = '';
+    let formattedTime = "";
     if (hours > 0) {
-      formattedTime += hours + 'h ';
+      formattedTime += hours + "h ";
     }
     if (minutes > 0 || hours > 0) {
-      formattedTime += minutes + 'm ';
+      formattedTime += minutes + "m ";
     }
-    formattedTime += seconds + 's';
+    formattedTime += seconds + "s";
 
     return formattedTime;
   };
-
 
   const startTimer = (index) => {
     const newTimers = [...timers];
@@ -221,7 +231,6 @@ const AssignmentSheet = (props) => {
     }
   };
 
-
   const formatTime = (seconds) => {
     if (seconds <= 0) {
       return "Time's up!";
@@ -231,38 +240,39 @@ const AssignmentSheet = (props) => {
     return `${minutes} min ${remainingSeconds} seconds`;
   };
 
-
-
   const handleUserAnswerChange = (value, questionId) => {
-    setUserAnswers(prevState => ({
+    setUserAnswers((prevState) => ({
       ...prevState,
-      [questionId]: value
+      [questionId]: value,
     }));
 
-    const questionIndex = parseInt(questionId.split('_').pop()) - 1;
+    const questionIndex = parseInt(questionId.split("_").pop()) - 1;
 
-    setAssignList(prevState => {
+    setAssignList((prevState) => {
       const updatedList = [...prevState];
       updatedList[questionIndex].selected_answer = value;
       return updatedList;
     });
-  };
+  };  
 
-  const submitAssignment = () => {
+  const saveOrSubmitAssignment = (submit) => {
     if (show.index !== "") {
       const newTimers = [...timers];
       newTimers[show.index].endTime = Date.now();
-      const elapsed = newTimers[show.index].endTime - newTimers[show.index].startTime;
+      const elapsed =
+        (newTimers[show.index].endTime - newTimers[show.index].startTime) /
+        1000; // Convert milliseconds to seconds
       newTimers[show.index].elapsedTime += elapsed;
       setTimers(newTimers);
     }
 
+    // Calculate total time taken for all questions
+  const totalTimeTaken = timers.reduce((total, timer) => total + timer.elapsedTime, 0);
+
     const assignmentData = assignlist.map((question, index) => {
       const questionId = `question_number_${index + 1}`;
-      const startTime = timers[index]?.startTime;
-      const endTime = timers[index]?.endTime;
       const elapsedTime = timers[index].elapsedTime;
-      const questionTimeTaken = formatElapsedTime(elapsedTime);
+      const questionTimeTaken = elapsedTime;
       return {
         [questionId]: {
           type: question.type,
@@ -270,124 +280,70 @@ const AssignmentSheet = (props) => {
           selected_answer: question.selected_answer,
           all_options: question.all_options,
           marks: question.marks,
-          time_taken: questionTimeTaken
-        }
+          time_taken: questionTimeTaken,
+        },
       };
     });
-
-    const timeSpent = assignmentDuration * 60 - timeLeft;
-    const overallTime = formatTime(timeSpent);
+    
+    const overallTime = formatElapsedTime(totalTimeTaken);
 
     const requestBody = {
       student_id: userDetails.user_id,
       assignment_data: Object.assign({}, ...assignmentData),
       overall_time: overallTime,
       assignment_id: props.assignmentId,
-      submit_data: true
+      submit_data: submit,
     };
-    const accessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdWJsaWNfaWQiOiI0ODJjOTgxNS1iOWQ0LTRlNGYtOGJiNi0zOTRjODUyZDM1NWUiLCJleHAiOjI2NTMxMzc2MDV9.JPYYukYqWOulGx_JBHehSzKMpFalemeBxJsL6jDkWjA'; // Replace 'your-access-token' with the actual access token
 
-    fetch('http://13.200.112.20:5005/submit_assignment', {
-      method: 'PUT',
+    const accessToken =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdWJsaWNfaWQiOiI0ODJjOTgxNS1iOWQ0LTRlNGYtOGJiNi0zOTRjODUyZDM1NWUiLCJleHAiOjI2NTMxMzc2MDV9.JPYYukYqWOulGx_JBHehSzKMpFalemeBxJsL6jDkWjA"; // Replace 'your-access-token' with the actual access token
+
+    fetch("http://13.200.112.20:5005/submit_assignment", {
+      method: "PUT",
       headers: {
-        'Content-Type': 'application/json',
-        'x-access-tokens': accessToken
+        "Content-Type": "application/json",
+        "x-access-tokens": accessToken,
       },
       body: JSON.stringify(requestBody),
     })
-      .then(response => {
+      .then((response) => {
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error("Network response was not ok");
+        }
+        if (!submit) {
+          props.setAssignmentFullList((prevState) => ({
+            ...prevState,
+            student_assignments: prevState.student_assignments.map(
+              (assignment) => {
+                if (assignment.assignment_id === props.assignmentId) {
+                  return {
+                    ...assignment,
+                    assignment_status: "Inprogress",
+                  };
+                }
+                return assignment;
+              }
+            ),
+          }));
         }
         return response.json();
       })
-      .then(data => {
-        console.log('Assignment submitted successfully:', data);
-        // window.location.href = "/studentDashboard/assignments";
+      .then((data) => {
+        if (submit) {
+          console.log("Assignment submitted successfully:", data);
+        } else {
+          console.log("Progress saved successfully:", data);
+        }
+        window.location.href = "/studentDashboard/assignments";
       })
-      .catch(error => {
-        console.error('Error submitting assignment:', error);
+      .catch((error) => {
+        if (submit) {
+          console.error("Error submitting assignment:", error);
+        } else {
+          console.error("Error saving progress:", error);
+        }
       });
   };
-
-
-
-  const saveProgress = () => {
-    if (show.index !== "") {
-      const newTimers = [...timers];
-      newTimers[show.index].endTime = Date.now();
-      const elapsed = newTimers[show.index].endTime - newTimers[show.index].startTime;
-      newTimers[show.index].elapsedTime += elapsed;
-      setTimers(newTimers);
-    }
-
-    const assignmentData = assignlist.map((question, index) => {
-      const questionId = `question_number_${index + 1}`;
-      const startTime = timers[index]?.startTime;
-      const endTime = timers[index]?.endTime;
-      const elapsedTime = timers[index].elapsedTime;
-      const questionTimeTaken = formatElapsedTime(elapsedTime);
-      return {
-        [questionId]: {
-          type: question.type,
-          question: question.question,
-          selected_answer: question.selected_answer,
-          all_options: question.all_options,
-          marks: question.marks,
-          time_taken: questionTimeTaken
-        }
-      };
-    });
-
-    const timeSpent = assignmentDuration * 60 - timeLeft;
-    const overallTime = formatTime(timeSpent);
-
-    const requestBody = {
-      student_id: userDetails.user_id,
-      assignment_data: Object.assign({}, ...assignmentData),
-      overall_time: overallTime,
-      assignment_id: props.assignmentId,
-      submit_data: false
-    };
-
-    const accessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdWJsaWNfaWQiOiI0ODJjOTgxNS1iOWQ0LTRlNGYtOGJiNi0zOTRjODUyZDM1NWUiLCJleHAiOjI2NTMxMzc2MDV9.JPYYukYqWOulGx_JBHehSzKMpFalemeBxJsL6jDkWjA';  // Replace 'your-access-token' with the actual access token
-    fetch('http://13.200.112.20:5005/submit_assignment', {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-access-tokens': accessToken
-      },
-      body: JSON.stringify(requestBody),
-    })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        props.setAssignmentFullList(prevState => ({
-          ...prevState,
-          student_assignments: prevState.student_assignments.map(assignment => {
-            if (assignment.assignment_id === props.assignmentId) {
-              return {
-                ...assignment,
-                assignment_status: "Inprogress"
-              };
-            }
-            return assignment;
-          })
-        }));
-        return response.json();
-      })
-
-      .then(data => {
-        console.log('Progress saved successfully:', data);
-        // window.location.href = "/studentDashboard/assignments";
-      })
-      .catch(error => {
-        console.error('Error saving progress:', error);
-      });
-
-  };
-
 
   useEffect(() => {
     if (timeLeft === 14 && props.assignmentType === "Test") {
@@ -397,9 +353,6 @@ const AssignmentSheet = (props) => {
       }, 3000);
     }
   }, [timeLeft, props.assignmentType]);
-
-
-
 
   return (
     <>
@@ -412,17 +365,25 @@ const AssignmentSheet = (props) => {
           centered
           style={{ backgroundColor: "#E1E9F3" }}
         >
-          <Modal.Header closeButton style={{
-            background: "#7A9ABF 0% 0% no-repeat padding-box",
-            borderRadius: "4px 4px 0px 0px",
-            opacity: "1",
-          }}>
+          <Modal.Header
+            closeButton
+            style={{
+              background: "#7A9ABF 0% 0% no-repeat padding-box",
+              borderRadius: "4px 4px 0px 0px",
+              opacity: "1",
+            }}
+          >
             <Col md={8} className="assignmentName">
               Name of the assignment: <b>{props?.assignmentName}</b>
             </Col>
             <Col md={4} className="assignmentName">
               {!props.assignmentStatus && props.assignmentType !== "Test" && (
-                <Button variant="primary" onClick={saveProgress}>Save Progress</Button>
+                <Button
+                  variant="primary"
+                  onClick={() => saveOrSubmitAssignment(false)}
+                >
+                  Save Progress
+                </Button>
               )}
             </Col>
 
@@ -431,7 +392,6 @@ const AssignmentSheet = (props) => {
                 <p>Your assignment will be auto-submitted in a few seconds.</p>
               </div>
             )}
-
           </Modal.Header>
           <Modal.Body>
             <Modal.Body>
@@ -442,19 +402,23 @@ const AssignmentSheet = (props) => {
                       <div className="duration-container">
                         {timeLeft > 0 ? (
                           <>
-                            <div className="duration-text">Duration: {formatTime(timeLeft)}</div>
+                            <div className="duration-text">
+                              Duration: {formatTime(timeLeft)}
+                            </div>
                           </>
                         ) : (
                           <div>Time's up!</div>
                         )}
-
-
                       </div>
                     </Col>
                     {timeLeft > 0 && (
                       <Col md={10} className="progress-ring">
                         <div className="progress-ring">
-                          <svg className="progress-circle" width="60" height="60">
+                          <svg
+                            className="progress-circle"
+                            width="60"
+                            height="60"
+                          >
                             <circle
                               className="progress-circle"
                               stroke="#4CAF50"
@@ -465,7 +429,11 @@ const AssignmentSheet = (props) => {
                               cy="30"
                               style={{
                                 strokeDasharray: 2 * Math.PI * 26,
-                                strokeDashoffset: `calc(${2 * Math.PI * 26} - (${2 * Math.PI * 26} * ${timeLeft} / (${assignmentDuration * 60})))`
+                                strokeDashoffset: `calc(${
+                                  2 * Math.PI * 26
+                                } - (${2 * Math.PI * 26} * ${timeLeft} / (${
+                                  assignmentDuration * 60
+                                })))`,
                               }}
                             />
                           </svg>
@@ -485,16 +453,18 @@ const AssignmentSheet = (props) => {
               <Modal.Header closeButton>
                 <Modal.Title>Time Warning</Modal.Title>
               </Modal.Header>
-              <Modal.Body>
-                Hurry up! Only 14 seconds remaining.
-              </Modal.Body>
+              <Modal.Body>Hurry up! Only 14 seconds remaining.</Modal.Body>
               <Modal.Footer>
                 {/* <Button variant="secondary" onClick={() => setShowTimeWarning(false)}>OK</Button> */}
               </Modal.Footer>
             </Modal>
             <div className="card-container">
               {assignlist?.map((question, index) => (
-                <div key={index} className="question-card" onClick={() => handleQuestionCardClick(index)}>
+                <div
+                  key={index}
+                  className="question-card"
+                  onClick={() => handleQuestionCardClick(index)}
+                >
                   <div className="question-text">
                     Q.{index + 1} {question?.question}
                   </div>
@@ -504,12 +474,15 @@ const AssignmentSheet = (props) => {
                     </div>
                     {timers[index] && (
                       <div className="elapsed-time">
-                        <strong>Elapsed Time:</strong> {formatTime(timers[index].elapsedTime / 1000)}
+                        <strong>Elapsed Time:</strong>{" "}
+                        {formatTime(timers[index].elapsedTime / 1000)}
                       </div>
                     )}
                     {question.type === "multiple_choice(radio)" && (
                       <div className="options-container">
-                        <p><strong>Options:</strong></p>
+                        <p>
+                          <strong>Options:</strong>
+                        </p>
                         <ul className="options-list single-select">
                           {question.all_options.map((option, idx) => (
                             <li key={idx}>
@@ -519,19 +492,29 @@ const AssignmentSheet = (props) => {
                                   type="radio"
                                   name={`question-${index}`}
                                   value={option}
-                                  checked={userAnswers[`question_number_${index + 1}`] === option || question.selected_answer === option}
+                                  checked={
+                                    userAnswers[
+                                      `question_number_${index + 1}`
+                                    ] === option ||
+                                    question.selected_answer === option
+                                  }
                                   onChange={(e) => {
-                                    handleUserAnswerChange(e.target.value, `question_number_${index + 1}`);
+                                    handleUserAnswerChange(
+                                      e.target.value,
+                                      `question_number_${index + 1}`
+                                    );
                                     const newSelectedAnswer = e.target.value;
-                                    setAssignList(prevState => {
+                                    setAssignList((prevState) => {
                                       const updatedList = [...prevState];
-                                      updatedList[index].selected_answer = newSelectedAnswer;
+                                      updatedList[index].selected_answer =
+                                        newSelectedAnswer;
                                       return updatedList;
                                     });
                                   }}
                                 />
                                 <span className="option-text">{option}</span>
-                                {userAnswers[`question_number_${index + 1}`] === option && (
+                                {userAnswers[`question_number_${index + 1}`] ===
+                                  option && (
                                   <span className="selected-indicator"></span>
                                 )}
                               </label>
@@ -543,7 +526,9 @@ const AssignmentSheet = (props) => {
 
                     {question.type === "multiple_choice(checkbox)" && (
                       <div className="options-container">
-                        <p><strong>Options:</strong></p>
+                        <p>
+                          <strong>Options:</strong>
+                        </p>
                         <ul className="options-list multi-select">
                           {question.all_options.map((option, idx) => (
                             <li key={idx}>
@@ -553,27 +538,49 @@ const AssignmentSheet = (props) => {
                                   type="checkbox"
                                   name={`question-${index}`}
                                   value={option}
-                                  checked={userAnswers[`question_number_${index + 1}`]?.includes(option) || (question.selected_answer && question.selected_answer.includes(option))}
+                                  checked={
+                                    userAnswers[
+                                      `question_number_${index + 1}`
+                                    ]?.includes(option) ||
+                                    (question.selected_answer &&
+                                      question.selected_answer.includes(option))
+                                  }
                                   onChange={(e) => {
                                     const isChecked = e.target.checked;
                                     const option = e.target.value;
                                     let updatedOptions;
 
                                     if (isChecked) {
-                                      updatedOptions = [...(userAnswers[`question_number_${index + 1}`] || []), option];
+                                      updatedOptions = [
+                                        ...(userAnswers[
+                                          `question_number_${index + 1}`
+                                        ] || []),
+                                        option,
+                                      ];
                                     } else {
-                                      updatedOptions = (userAnswers[`question_number_${index + 1}`] || []).filter(selectedOption => selectedOption !== option);
+                                      updatedOptions = (
+                                        userAnswers[
+                                          `question_number_${index + 1}`
+                                        ] || []
+                                      ).filter(
+                                        (selectedOption) =>
+                                          selectedOption !== option
+                                      );
                                     }
 
                                     // console.log("Updated options:", updatedOptions);
 
-                                    handleUserAnswerChange(updatedOptions, `question_number_${index + 1}`);
+                                    handleUserAnswerChange(
+                                      updatedOptions,
+                                      `question_number_${index + 1}`
+                                    );
                                   }}
                                 />
                                 <span className="option-text">{option}</span>
-                                {question.selected_answer && question.selected_answer.includes(option) && (
-                                  <span className="selected-indicator"></span>
-                                )}
+                                {question.selected_answer &&
+                                  question.selected_answer.includes(option) && (
+                                    <span className="selected-indicator"></span>
+                                  )}
                               </label>
                             </li>
                           ))}
@@ -581,16 +588,27 @@ const AssignmentSheet = (props) => {
                       </div>
                     )}
 
-                    {(question.type === "fill_in_the_blanks" || question.type === "subjective") && (
+                    {(question.type === "fill_in_the_blanks" ||
+                      question.type === "subjective") && (
                       <div className="answer-container">
-                        <p><strong>Answer:</strong></p>
+                        <p>
+                          <strong>Answer:</strong>
+                        </p>
                         <textarea
                           className="answer-textarea"
                           rows={4}
                           cols={50}
                           placeholder="Type your answer here..."
-                          value={userAnswers[`question_number_${index + 1}`] || question.selected_answer}
-                          onChange={(e) => handleUserAnswerChange(e.target.value, `question_number_${index + 1}`)}
+                          value={
+                            userAnswers[`question_number_${index + 1}`] ||
+                            question.selected_answer
+                          }
+                          onChange={(e) =>
+                            handleUserAnswerChange(
+                              e.target.value,
+                              `question_number_${index + 1}`
+                            )
+                          }
                           disabled={areFieldsDisabled()}
                         />
                       </div>
@@ -599,14 +617,17 @@ const AssignmentSheet = (props) => {
                 </div>
               ))}
             </div>
-
           </Modal.Body>
           <Modal.Footer>
             {!props.assignmentStatus && (
-              <Button variant="outline-primary" onClick={submitAssignment}>Submit Assignment</Button>
+              <Button
+                variant="outline-primary"
+                onClick={() => saveOrSubmitAssignment(true)}
+              >
+                Submit Assignment
+              </Button>
             )}
           </Modal.Footer>
-
         </Modal>
       )}
       <Modal
@@ -617,16 +638,15 @@ const AssignmentSheet = (props) => {
         <Modal.Header closeButton>
           <Modal.Title>Test Instructions</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
-          {instructions}
-        </Modal.Body>
+        <Modal.Body>{instructions}</Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseInstructions}>Close</Button>
+          <Button variant="secondary" onClick={handleCloseInstructions}>
+            Close
+          </Button>
         </Modal.Footer>
       </Modal>
     </>
   );
-
 };
 
 export default AssignmentSheet;

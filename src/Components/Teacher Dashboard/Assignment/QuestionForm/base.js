@@ -515,27 +515,8 @@ const BaseQuestion = (props) => {
                   ) : (
                     <></>
                   )}
-                  <Form.Group className="mb-3" controlId="correct_answer">
-                    {other ? (
-                      <Row>
-                        <Col md={12}>
-                          <Form.Label>Answer</Form.Label>
-                          <Form.Control
-                            type="text"
-                            placeholder="Enter Answer"
-                            size="sm"
-                            className="input"
-                            required
-                            value={data.correct_answer}
-                            onChange={(e) => handleotherAnswer(e)}
-                            autoComplete="off"
-                          />
-                        </Col>
-                      </Row>
-                    ) : (
-                      <></>
-                    )}
-                    {single ? (
+                  {single ? (
+                    <Form.Group className="mb-3" controlId="correct_answer">
                       <Row>
                         <Col md={12}>
                           <Form.Select
@@ -554,10 +535,10 @@ const BaseQuestion = (props) => {
                           </Form.Select>
                         </Col>
                       </Row>
-                    ) : (
-                      <></>
-                    )}
-                  </Form.Group>
+                    </Form.Group>
+                  ) : (
+                    <></>
+                  )}
                   <Row>
                     <Col md={6}>
                       <Button

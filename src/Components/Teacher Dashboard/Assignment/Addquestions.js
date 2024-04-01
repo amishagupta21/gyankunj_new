@@ -24,7 +24,9 @@ const AddQuestions = () => {
 
   const getQueries = async (id) => {
     const res = await getQuestions(id);
-    setQuestionList(res.data.assignment_details[0].assignment_data);
+    if(res?.data?.assignment_details && res?.data?.assignment_details.length > 0){
+      setQuestionList(res?.data?.assignment_details[0]?.assignment_data); 
+    }
   };
 
   useEffect(() => {
@@ -37,43 +39,12 @@ const AddQuestions = () => {
 
   const handleBack = () => navigate("/teacherDashboard/assignments");
 
-  const handleSave = async () => {
-    let requestPayload = {};
-    const tempQues = [...questions];
-    if (tempQues && tempQues.length > 0) {
-      debugger;
-      tempQues.map((item, index) => {
-        if(item.type === 'fill_in_the_blanks'){
-          item.correct_answer = item.correct_answer.join();
-        }
-        requestPayload[`question_number_${index + 1}`] = item;
-      });
-    }
-    const result = {
-      assignment_id: id,
-      assignment_data: requestPayload,
-    };
-
-    try {
-      const res = await SaveAssignmentData(result);
-
-      if (res.data.status === "success") {
-        navigate("/teacherDashboard/assignments");
-      } else {
-        console.log("ERR", res.data.status);
-        navigate("/teacherDashboard/assignments");
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const handlePublish = async () => {
+  const handlePublish = async (isPublish) => {
     let requestPayload = {};
     const tempQues = [...questions];
     if (tempQues && tempQues.length > 0) {
       tempQues.map((item, index) => {
-        if(item.type === 'fill_in_the_blanks'){
+        if(item.type === 'fill_in_the_blanks' && typeof item.correct_answer !== 'string'){
           item.correct_answer = item.correct_answer.join();
         }
         requestPayload[`question_number_${index + 1}`] = item;
@@ -88,12 +59,16 @@ const AddQuestions = () => {
       const saveRes = await SaveAssignmentData(result);
 
       if (saveRes.data.status === "success") {
-        const publishRes = await publishAssignmentData(id);
-
-        if (publishRes.data.status === "success") {
-          navigate("/teacherDashboard/assignments");
-        } else {
-          console.log("ERR", publishRes.data.status);
+        if(isPublish){
+          const publishRes = await publishAssignmentData(id);
+          if (publishRes.data.status === "success") {
+            navigate("/teacherDashboard/assignments");
+          } else {
+            console.log("ERR", publishRes.data.status);
+            navigate("/teacherDashboard/assignments");
+          } 
+        }
+        else{
           navigate("/teacherDashboard/assignments");
         }
       } else {
@@ -135,10 +110,10 @@ const AddQuestions = () => {
           <Button variant="outline-primary" onClick={handleBack}>
             Back
           </Button>
-          <Button variant="outline-primary mx-3" onClick={handleSave}>
+          <Button variant="outline-primary mx-3" onClick={() => handlePublish(false)}>
             Save
           </Button>
-          <Button variant="outline-primary" onClick={handlePublish}>
+          <Button variant="outline-primary" onClick={() => handlePublish(true)}>
             Publish
           </Button>
         </div>
