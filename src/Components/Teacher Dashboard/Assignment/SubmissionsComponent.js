@@ -3,7 +3,7 @@ import axios from "axios";
 import { getAllStudentsAssignmentReport } from "../../../ApiClient";
 import { Col, Row, Table } from "react-bootstrap";
 import TeacherSidebar from "../TeacherSidebar";
-import { FaCheckCircle } from "react-icons/fa";
+import { FaCheckCircle, FaUserEdit, FaClock } from "react-icons/fa";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
@@ -43,16 +43,30 @@ const SubmissionsPage = () => {
               <td>{submission?.name}</td>
               <td>{submission?.status}</td>
               <td>{submission?.student_id}</td>
-              <td className="d-flex gap-2">
-                <FaCheckCircle
-                  className="cursor-pointer h-6 w-6 text-[#4caf50]"
-                  title="Evaluate Assignment"
-                  onClick={() =>
-                    navigate(
-                      `/teacherDashboard/evaluteAssignment/${assignmentId}/${submission?.student_id}`
-                    )
-                  }
-                />
+              <td>
+              {submission.status === "New" && (
+                  <FaClock
+                    className="cursor-pointer h-6 w-6 text-secondary"
+                    title="Waitingfor Evaluate Assignment"
+                  />
+                )}
+                {submission.status === "Submitted" && (
+                  <FaUserEdit
+                    className="cursor-pointer h-6 w-6 text-primary"
+                    title="Evaluate Assignment"
+                    onClick={() =>
+                      navigate(
+                        `/teacherDashboard/evaluteAssignment/${assignmentId}/${submission?.student_id}`
+                      )
+                    }
+                  />
+                )}
+                {submission.status === "Evaluated" && (
+                  <FaCheckCircle
+                    className="cursor-pointer h-6 w-6 text-success"
+                    title="Evaluated Assignment"
+                  />
+                )}
               </td>
             </tr>
           ))}

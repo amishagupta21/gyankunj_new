@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { evaluteAssignment } from "../../../ApiClient";
+import { useParams, useNavigate } from "react-router-dom";
+import { evaluteAssignment, submitEvaluationReport } from "../../../ApiClient";
 import "./EvaluteAssignmentReport.css";
 import { Badge, Button } from "react-bootstrap";
 import TeacherSidebar from "../TeacherSidebar";
@@ -11,9 +11,8 @@ import { faCheck, faTimes } from "@fortawesome/free-solid-svg-icons";
 const EvaluteAssignmentReport = () => {
   const { assignmentId, studentId } = useParams();
   const [evaluationData, setEvaluationData] = useState(null);
-  const [obtainedMarks, setObtainedMarks] = useState(null);
-  const [percentage, setPercentage] = useState(null);
   const [marksForWriteAnswer, setMarksForWriteAnswer] = useState({});
+  const navigate = useNavigate();
 
   useEffect(() => {
     evaluteAssignment(assignmentId, studentId)
@@ -25,27 +24,84 @@ const EvaluteAssignmentReport = () => {
         console.error("Error evaluating assignment:", error);
       });
   }, [assignmentId, studentId]);
+
+  const submitReport = () => {
+    let requestPayload = {
+      assignment_data: {},
+      overall_time: "0 seconds",
+      assignment_id: assignmentId,
+      student_id: studentId,
+    };
+
+    let totalTimeTaken = 0;
+
+    if (
+      evaluationData.student_response &&
+      Object.keys(evaluationData.student_response).length > 0
+    ) {
+      let tempData = {};
+      for (let [key, value] of Object.entries(
+        evaluationData.student_response
+      )) {
+        tempData[key] = {
+          type: value.type,
+          question: value.question,
+          selected_answer: value.selected_answer,
+          all_options: value.all_options,
+          marks: value.marks,
+          time_taken: value.time_taken,
+          correct_answer: evaluationData.teacher_response[key].correct_answer,
+          marks_received:
+            value.type === "subjective"
+              ? marksForWriteAnswer[key]?.toString()
+              : value.is_answer_correct
+              ? value.marks
+              : 0,
+        };
+
+        totalTimeTaken += value.time_taken;
+      }
+
+      requestPayload.overall_time = formatElapsedTime(totalTimeTaken);
+      requestPayload.assignment_data = { ...tempData };
+    }
+    
+    submitEvaluationReport(requestPayload)
+      .then((response) => {
+        if (response.data.status === "success") {
+          navigate(`/teacherDashboard/submissions/${assignmentId}`);
+        } else {
+          alert(response.data.message);
+        }
+      })
+      .catch((error) => {
+        console.error("Error submit evaluate report:", error);
+      });
+  };
+
+  const formatElapsedTime = (elapsedTime) => {
+    const hours = Math.floor(elapsedTime / (1000 * 60 * 60));
+    const minutes = Math.floor((elapsedTime % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((elapsedTime % (1000 * 60)) / 1000);
+
+    let formattedTime = "";
+    if (hours > 0) {
+      formattedTime += hours + "h ";
+    }
+    if (minutes > 0 || hours > 0) {
+      formattedTime += minutes + "m ";
+    }
+    formattedTime += seconds + "s";
+
+    return formattedTime;
+  };
+
   const handleMarksForWriteAnswerChange = (questionNumber, event) => {
     const marks = parseFloat(event.target.value) || 0;
     setMarksForWriteAnswer((prevMarks) => ({
       ...prevMarks,
       [questionNumber]: marks,
     }));
-  };
-
-  const handleEvaluateAssignment = () => {
-    const totalPossibleMarks = Object.values(
-      evaluationData.student_response
-    ).reduce((total, question) => total + question.marks, 0);
-
-    const calculatedPercentage = (obtainedMarks / totalPossibleMarks) * 100;
-
-    setPercentage(calculatedPercentage);
-  };
-
-  const handleObtainedMarksChange = (event) => {
-    const marks = parseFloat(event.target.value) || 0;
-    setObtainedMarks(marks);
   };
 
   if (evaluationData === null) {
@@ -158,7 +214,7 @@ const EvaluteAssignmentReport = () => {
                           Marks for Write Answer
                         </Form.Label>
                         <Form.Control
-                          type="text"
+                          type="number"
                           placeholder="Enter marks"
                           value={marksForWriteAnswer[questionNumber] || ""}
                           onChange={(event) =>
@@ -168,6 +224,11 @@ const EvaluteAssignmentReport = () => {
                             )
                           }
                           style={{ width: "30%" }}
+                          min={0}
+                          max={
+                            evaluationData.student_response[questionNumber]
+                              .marks
+                          }
                         />
                       </Form.Group>
                     </div>
@@ -175,7 +236,6 @@ const EvaluteAssignmentReport = () => {
                 </div>
                 <div className="right-section">
                   <p>
-                    {/* <span>Time Taken: {evaluationData.student_response[questionNumber].time_taken}</span> */}
                     <span style={{ fontWeight: "bold" }}>
                       Marks:{" "}
                       {evaluationData.student_response[questionNumber].marks}
@@ -184,18 +244,21 @@ const EvaluteAssignmentReport = () => {
                   <p style={{ fontWeight: "bold" }}>
                     Type: {evaluationData.student_response[questionNumber].type}
                   </p>
-                  <p>
-                    {evaluationData.student_response[questionNumber]
-                      .is_answer_correct ? (
-                      <span className="text-success fw-bold">
-                        Correct: <FontAwesomeIcon icon={faCheck} />
-                      </span>
-                    ) : (
-                      <span className="text-danger fw-bold">
-                        Incorrect: <FontAwesomeIcon icon={faTimes} />
-                      </span>
-                    )}
-                  </p>
+                  {evaluationData.student_response[questionNumber].type !==
+                    "subjective" && (
+                    <p>
+                      {evaluationData.student_response[questionNumber]
+                        .is_answer_correct ? (
+                        <span className="text-success fw-bold">
+                          Correct: <FontAwesomeIcon icon={faCheck} />
+                        </span>
+                      ) : (
+                        <span className="text-danger fw-bold">
+                          Incorrect: <FontAwesomeIcon icon={faTimes} />
+                        </span>
+                      )}
+                    </p>
+                  )}
                 </div>
               </div>
             )
@@ -203,31 +266,9 @@ const EvaluteAssignmentReport = () => {
         </div>
       </div>
       <div className="evaluation-report">
-        <div className="section" style={{ width: "100%", margin: "0 auto" }}>
-          <Form>
-            <Form.Group controlId="obtainedMarks">
-              <Form.Label style={{ fontWeight: "bold" }}>
-                Obtained Marks
-              </Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Enter obtained marks"
-                value={obtainedMarks}
-                onChange={handleObtainedMarksChange}
-                style={{ width: "50%" }}
-              />
-            </Form.Group>
-            {percentage !== null && (
-              <div className="result-section">
-                <h3>Obtained Marks: {obtainedMarks}</h3>
-                <h3>Total Marks: {percentage}%</h3>
-              </div>
-            )}
-            <Button className="mt-3" onClick={handleEvaluateAssignment}>
-              Evaluate Assignment
-            </Button>
-          </Form>
-        </div>
+        <Button className="mt-3" onClick={submitReport}>
+          Submit Evaluation
+        </Button>
       </div>
     </>
   );
