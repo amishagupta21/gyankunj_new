@@ -1,17 +1,18 @@
 import React from "react";
+import '../Styles/CommonMatTable.css'
 import {
   MaterialReactTable,
   useMaterialReactTable,
 } from "material-react-table";
 
-const CommonMatTable = ({ columns, data, title }) => {
+const CommonMatTable = ({ columns, data, renderTopToolbar }) => {
   const table = useMaterialReactTable({
     columns,
     data,
     columnFilterDisplayMode: "popover",
     paginationDisplayMode: "pages",
     enableFullScreenToggle: false,
-    renderTopToolbarCustomActions: () => <h4>{title}</h4>,
+    renderTopToolbarCustomActions:renderTopToolbar
   });
 
   return <MaterialReactTable table={table} />;

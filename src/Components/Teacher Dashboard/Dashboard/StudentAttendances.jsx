@@ -9,7 +9,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
-const LogBook = () => {
+const StudentAttendances = () => {
   const [gradeFilter, setGradeFilter] = useState("");
   const [sectionFilter, setSectionFilter] = useState("");
   const [dateFilter, setDateFilter] = useState(null);
@@ -34,7 +34,7 @@ const LogBook = () => {
   // Custom JSX element for the top toolbar
   const RenderTopToolbarCustomActions = () => {
     return (<Box sx={{ display: "flex", alignItems: "center", gap: 2, marginBottom:2 }}>
-    <FormControl fullWidth sx={{ minWidth: 150 }}>
+    <FormControl sx={{ minWidth: 'calc(100%/3)' }}>
       <InputLabel id="grade-filter-label">Grade</InputLabel>
       <Select
         labelId="grade-filter-label"
@@ -46,7 +46,7 @@ const LogBook = () => {
         <MenuItem value="B">B</MenuItem>
       </Select>
     </FormControl>
-    <FormControl fullWidth sx={{ minWidth: 150 }}>
+    <FormControl sx={{ minWidth: 'calc(100%/3)' }}>
       <InputLabel id="section-filter-label">Section</InputLabel>
       <Select
         labelId="section-filter-label"
@@ -58,11 +58,11 @@ const LogBook = () => {
         <MenuItem value="Section 2">Section 2</MenuItem>
       </Select>
     </FormControl>
-    <FormControl fullWidth sx={{ minWidth: 150 }}>
+    {/* <FormControl fullWidth sx={{ minWidth: 150 }}>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <DatePicker />
       </LocalizationProvider>
-    </FormControl>
+    </FormControl> */}
   </Box>)
   }
 
@@ -145,10 +145,10 @@ const LogBook = () => {
     <CommonMatTable
       columns={columns}
       data={filteredData}
-      renderTopToolbar={() => <h4>Log book</h4>}
+      renderTopToolbar={() => <h4>Student's attendance</h4>}
     />
     </div>
   );
 };
 
-export default LogBook;
+export default StudentAttendances;
