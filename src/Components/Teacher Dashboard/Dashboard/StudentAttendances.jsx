@@ -145,7 +145,7 @@ const StudentAttendances = () => {
     <CommonMatTable
       columns={columns}
       data={filteredData}
-      renderTopToolbar={() => <h4>Student's attendance</h4>}
+      renderTopToolbar={() => <h1 style={{fontSize: 18, marginTop: 10}}>Student's attendance</h1>}
     />
     </div>
   );

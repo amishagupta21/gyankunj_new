@@ -5,10 +5,13 @@ import {
   useMaterialReactTable,
 } from "material-react-table";
 
-const CommonMatTable = ({ columns, data, renderTopToolbar }) => {
+const CommonMatTable = ({ columns, data, renderTopToolbar, isLoading }) => {
   const table = useMaterialReactTable({
     columns,
     data,
+    state: {
+      isLoading: isLoading
+    },
     columnFilterDisplayMode: "popover",
     paginationDisplayMode: "pages",
     enableFullScreenToggle: false,
