@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import CommonMatTable from "../../../SharedComponents/CommonMatTable";
 import Box from "@mui/material/Box";
 import InputLabel from "@mui/material/InputLabel";
@@ -8,19 +8,45 @@ import Select from "@mui/material/Select";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { getGradeDetails, viewLogBook } from "../../../ApiClient";
+import dayjs from "dayjs";
 
 const StudentAttendances = () => {
+  const [logBookDetails, setLogBookDetails] = useState();
+  const [gradeData, setGradeData] = useState([]);
   const [gradeFilter, setGradeFilter] = useState("");
   const [sectionFilter, setSectionFilter] = useState("");
-  const [dateFilter, setDateFilter] = useState(null);
-  const [age, setAge] = useState("");
+  const [dateFilter, setDateFilter] = useState(dayjs());
 
-  const handleChange = (event) => {
-    setAge(event.target.value);
-  };
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    getGradeDetails()
+      .then((res) => {
+        if (res?.data?.grade_details?.grade_details) {
+          setGradeData(res.data.grade_details.grade_details);
+        }
+      })
+      .catch((err) => console.log(err));
+  }, []);
+
+  useEffect(() => {
+    setIsLoading(true);
+    const date = dateFilter.format("YYYY-MM-DD");
+    viewLogBook(date, gradeFilter, sectionFilter)
+      .then((res) => {
+        setLogBookDetails(res?.data?.log_book_data || []);
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+      });
+  }, [gradeFilter, sectionFilter, dateFilter]);
 
   const handleGradeChange = (event) => {
     setGradeFilter(event.target.value);
+    setSectionFilter(""); // Reset section filter when grade changes
   };
 
   const handleSectionChange = (event) => {
@@ -33,107 +59,71 @@ const StudentAttendances = () => {
 
   // Custom JSX element for the top toolbar
   const RenderTopToolbarCustomActions = () => {
-    return (<Box sx={{ display: "flex", alignItems: "center", gap: 2, marginBottom:2 }}>
-    <FormControl sx={{ minWidth: 'calc(100%/3)' }}>
-      <InputLabel id="grade-filter-label">Grade</InputLabel>
-      <Select
-        labelId="grade-filter-label"
-        value={gradeFilter}
-        onChange={handleGradeChange}
+    return (
+      <Box
+        sx={{ display: "flex", alignItems: "center", gap: 2, marginBottom: 2 }}
       >
-        <MenuItem value="">All</MenuItem>
-        <MenuItem value="A">A</MenuItem>
-        <MenuItem value="B">B</MenuItem>
-      </Select>
-    </FormControl>
-    <FormControl sx={{ minWidth: 'calc(100%/3)' }}>
-      <InputLabel id="section-filter-label">Section</InputLabel>
-      <Select
-        labelId="section-filter-label"
-        value={sectionFilter}
-        onChange={handleSectionChange}
-      >
-        <MenuItem value="">All</MenuItem>
-        <MenuItem value="Section 1">Section 1</MenuItem>
-        <MenuItem value="Section 2">Section 2</MenuItem>
-      </Select>
-    </FormControl>
-    {/* <FormControl fullWidth sx={{ minWidth: 150 }}>
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <DatePicker />
-      </LocalizationProvider>
-    </FormControl> */}
-  </Box>)
-  }
-
-  // Sample data
-  const data = [
-    {
-      name: {
-        firstName: "John",
-        lastName: "Doe",
-      },
-      address: "261 Erdman Ford",
-      city: "East Daphne",
-      state: "Kentucky",
-      grade: "A",
-      section: "Section 1",
-      date: new Date(2024, 3, 1), // April 1, 2024
-    },
-    {
-      name: {
-        firstName: "Jane",
-        lastName: "Doe",
-      },
-      address: "769 Dominic Grove",
-      city: "Columbus",
-      state: "Ohio",
-      grade: "B",
-      section: "Section 2",
-      date: new Date(2024, 3, 2), // April 2, 2024
-    },
-    // Add more data as needed
-  ];
-
-  // Filtered data based on filter values
-  const filteredData = useMemo(() => {
-    return data.filter((item) => {
-      return (
-        (gradeFilter === "" || item.grade === gradeFilter) &&
-        (sectionFilter === "" || item.section === sectionFilter) &&
-        (!dateFilter || item.date.getTime() === dateFilter.getTime())
-      );
-    });
-  }, [data, gradeFilter, sectionFilter, dateFilter]);
+        <FormControl fullWidth sx={{ width: "calc(100%/3)" }}>
+          <InputLabel id="grade-filter-label">Grade</InputLabel>
+          <Select
+            labelId="grade-filter-label"
+            value={gradeFilter || ""}
+            onChange={handleGradeChange}
+          >
+            <MenuItem value="">All</MenuItem>
+            {gradeData.map((item) => (
+              <MenuItem key={item.grade_id} value={item.grade_id}>
+                {item.grade_id}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <FormControl fullWidth sx={{ width: "calc(100%/3)" }}>
+          <InputLabel id="section-filter-label">Section</InputLabel>
+          <Select
+            labelId="section-filter-label"
+            value={sectionFilter}
+            onChange={handleSectionChange}
+            disabled={!gradeFilter}
+          >
+            <MenuItem value="">All</MenuItem>
+            {gradeData
+              .find((grade) => grade.grade_id === gradeFilter)
+              ?.section_list.map((section) => (
+                <MenuItem key={section.section_id} value={section.section_id}>
+                  {section.section_name}
+                </MenuItem>
+              ))}
+          </Select>
+        </FormControl>
+        {/* <FormControl fullWidth sx={{ minWidth: 150 }}>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DatePicker format="YYYY-MM-DD" value={dateFilter} onChange={handleDateChange} />
+          </LocalizationProvider>
+        </FormControl> */}
+      </Box>
+    );
+  };
 
   // Columns definition
   const columns = useMemo(
     () => [
       {
-        accessorKey: "name.firstName",
-        header: "First Name",
-        size: 150,
+        accessorKey: "period",
+        header: "Roll Number",
         filterable: false,
       },
       {
-        accessorKey: "name.lastName",
-        header: "Last Name",
-        size: 150,
+        accessorKey: "students_present",
+        header: "Name",
       },
       {
-        accessorKey: "address",
-        header: "Address",
-        size: 200,
+        accessorKey: "subject_name",
+        header: "Absent",
       },
       {
-        accessorKey: "city",
-        header: "City",
-        size: 150,
-      },
-      {
-        accessorKey: "state",
-        header: "State",
-        size: 150,
+        accessorKey: "content_taught",
+        header: "Dress Defaulter",
       },
     ],
     []
@@ -141,12 +131,15 @@ const StudentAttendances = () => {
 
   return (
     <div>
-    <RenderTopToolbarCustomActions />
-    <CommonMatTable
-      columns={columns}
-      data={filteredData}
-      renderTopToolbar={() => <h1 style={{fontSize: 18, marginTop: 10}}>Student's attendance</h1>}
-    />
+      <RenderTopToolbarCustomActions />
+      <CommonMatTable
+        columns={columns}
+        isLoading={isLoading}
+        data={logBookDetails?.log_record || []}
+        renderTopToolbar={() => (
+          <h1 style={{ fontSize: 18, marginTop: 10 }}>Student's attendance</h1>
+        )}
+      />
     </div>
   );
 };

@@ -10,6 +10,8 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { getGradeDetails, viewLogBook } from "../../../ApiClient";
 import dayjs from "dayjs";
+import { Button } from "@mui/material";
+import AddIcon from '@mui/icons-material/Add';
 
 const LogBook = () => {
   const [logBookDetails, setLogBookDetails] = useState();
@@ -60,12 +62,14 @@ const LogBook = () => {
   // Custom JSX element for the top toolbar
   const RenderTopToolbarCustomActions = () => {
     return (
-      <Box sx={{ display: "flex", alignItems: "center", gap: 2, marginBottom: 2 }}>
-        <FormControl fullWidth sx={{ minWidth: 150 }}>
+      <Box
+        sx={{ display: "flex", alignItems: "center", gap: 2, marginBottom: 2 }}
+      >
+        <FormControl fullWidth sx={{ width: "calc(100%/3)" }}>
           <InputLabel id="grade-filter-label">Grade</InputLabel>
           <Select
             labelId="grade-filter-label"
-            value={gradeFilter}
+            value={gradeFilter || ""}
             onChange={handleGradeChange}
           >
             <MenuItem value="">All</MenuItem>
@@ -76,7 +80,7 @@ const LogBook = () => {
             ))}
           </Select>
         </FormControl>
-        <FormControl fullWidth sx={{ minWidth: 150 }}>
+        <FormControl fullWidth sx={{ width: "calc(100%/3)" }}>
           <InputLabel id="section-filter-label">Section</InputLabel>
           <Select
             labelId="section-filter-label"
@@ -94,11 +98,16 @@ const LogBook = () => {
               ))}
           </Select>
         </FormControl>
-        <FormControl fullWidth sx={{ minWidth: 150 }}>
+        <FormControl fullWidth sx={{ width: "calc(100%/3)" }}>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker format="YYYY-MM-DD" value={dateFilter} onChange={handleDateChange} />
+            <DatePicker
+              format="YYYY-MM-DD"
+              value={dateFilter}
+              onChange={handleDateChange}
+            />
           </LocalizationProvider>
         </FormControl>
+        <Button variant="contained" className="py-3"><AddIcon /></Button>
       </Box>
     );
   };
@@ -109,28 +118,23 @@ const LogBook = () => {
       {
         accessorKey: "period",
         header: "Period",
-        size: 150,
         filterable: false,
       },
       {
         accessorKey: "students_present",
         header: "Student Present",
-        size: 150,
       },
       {
         accessorKey: "subject_name",
         header: "Subject",
-        size: 200,
       },
       {
         accessorKey: "content_taught",
         header: "Content Taught",
-        size: 150,
       },
       {
         accessorKey: "home_work",
         header: "Homework",
-        size: 150,
       },
     ],
     []
