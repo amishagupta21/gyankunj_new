@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Button, Form, Modal, Row, Col } from "react-bootstrap";
 import Select from "react-select";
-import { createLogBook, fetchAllSubjects, getGradeDetails } from "../../../ApiClient";
+import { createLogBook, getSubjectsList, getGradeDetails } from "../../../ApiClient";
 
 const AddLogBook = (props) => {
   const [grade, setGrade] = useState("");
@@ -81,7 +81,7 @@ const AddLogBook = (props) => {
   }
 
   const getAllSubjectsData = () => {
-    fetchAllSubjects()
+    getSubjectsList()
     .then((res) => {
       setAllSubjectDetails(res.data)
     })

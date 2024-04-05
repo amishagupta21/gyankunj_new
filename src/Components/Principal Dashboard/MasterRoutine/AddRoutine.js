@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Button, Form, Modal, Row, Col, Table } from "react-bootstrap";
 import Select from 'react-select'
-import { createMasterRoutine, getTeachersData, fetchAllSubjects, getGradeDetails } from '../../../ApiClient'
+import { createMasterRoutine, getTeachersData, getSubjectsList, getGradeDetails } from '../../../ApiClient'
 import './MasterRoutine.css'
 import {v4 as uuid} from 'uuid';
 import AsyncSelect from 'react-select/async';
@@ -46,7 +46,7 @@ const AddRoutine = (props) => {
   }
 
   const getAllSubjectsData = () => {
-    fetchAllSubjects()
+    getSubjectsList()
     .then((res) => {
       setAllSubjectDetails(res.data)
     })

@@ -70,7 +70,6 @@ const StudentAttendances = () => {
             value={gradeFilter || ""}
             onChange={handleGradeChange}
           >
-            <MenuItem value="">All</MenuItem>
             {gradeData.map((item) => (
               <MenuItem key={item.grade_id} value={item.grade_id}>
                 {item.grade_id}
@@ -86,7 +85,6 @@ const StudentAttendances = () => {
             onChange={handleSectionChange}
             disabled={!gradeFilter}
           >
-            <MenuItem value="">All</MenuItem>
             {gradeData
               .find((grade) => grade.grade_id === gradeFilter)
               ?.section_list.map((section) => (

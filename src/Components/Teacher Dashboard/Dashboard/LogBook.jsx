@@ -12,14 +12,15 @@ import { getGradeDetails, viewLogBook } from "../../../ApiClient";
 import dayjs from "dayjs";
 import { Button } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
+import AddNewLog from "./AddNewLog";
 
 const LogBook = () => {
   const [logBookDetails, setLogBookDetails] = useState();
   const [gradeData, setGradeData] = useState([]);
   const [gradeFilter, setGradeFilter] = useState("");
   const [sectionFilter, setSectionFilter] = useState("");
-  const [dateFilter, setDateFilter] = useState(dayjs());
-
+  const [dateFilter, setDateFilter] = useState(dayjs().subtract(1, 'day'));
+const [isAddLogModalVisible, setIsAddLogModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -72,7 +73,6 @@ const LogBook = () => {
             value={gradeFilter || ""}
             onChange={handleGradeChange}
           >
-            <MenuItem value="">All</MenuItem>
             {gradeData.map((item) => (
               <MenuItem key={item.grade_id} value={item.grade_id}>
                 {item.grade_id}
@@ -88,7 +88,6 @@ const LogBook = () => {
             onChange={handleSectionChange}
             disabled={!gradeFilter}
           >
-            <MenuItem value="">All</MenuItem>
             {gradeData
               .find((grade) => grade.grade_id === gradeFilter)
               ?.section_list.map((section) => (
@@ -107,7 +106,7 @@ const LogBook = () => {
             />
           </LocalizationProvider>
         </FormControl>
-        <Button variant="contained" className="py-3"><AddIcon /></Button>
+        <Button variant="contained" className="py-3" onClick={() => setIsAddLogModalVisible(true)}><AddIcon /></Button>
       </Box>
     );
   };
@@ -151,6 +150,7 @@ const LogBook = () => {
           <h1 style={{ fontSize: 18, marginTop: 10 }}>Log book</h1>
         )}
       />
+      <AddNewLog isOpen={isAddLogModalVisible} handleClose={()=>setIsAddLogModalVisible(false)} gradeList={gradeData} />
     </div>
   );
 };

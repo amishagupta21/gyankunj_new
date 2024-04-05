@@ -6,10 +6,11 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import { getTeacherRoutine } from "../../../ApiClient";
+import dayjs from "dayjs";
 
 const TeacherRoutine = () => {
   const [timeSchedulesList, setTimeSchedulesList] = useState();
-  const [dayFilter, setDayFilter] = useState("");
+  const [dayFilter, setDayFilter] = useState(dayjs().format('dddd'));
   const [daysData, setDaysData] = useState([
     { value: "Monday", title: "Monday" },
     { value: "Tuesday", title: "Tuesday" },
@@ -52,7 +53,6 @@ const TeacherRoutine = () => {
             value={dayFilter || ""}
             onChange={handleDayChange}
           >
-            <MenuItem value="">All</MenuItem>
             {daysData.map((item, index) => (
               <MenuItem key={index} value={item.value}>
                 {item.title}
