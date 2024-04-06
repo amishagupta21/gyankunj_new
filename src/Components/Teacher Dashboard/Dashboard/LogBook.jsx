@@ -19,7 +19,7 @@ const LogBook = () => {
   const [gradeData, setGradeData] = useState([]);
   const [gradeFilter, setGradeFilter] = useState("");
   const [sectionFilter, setSectionFilter] = useState("");
-  const [dateFilter, setDateFilter] = useState(dayjs().subtract(1, "day"));
+  const [dateFilter, setDateFilter] = useState(dayjs());
   const [isAddLogModalVisible, setIsAddLogModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -174,7 +174,7 @@ const AbsenteesList = ({ absentees }) => (
     {absentees?.map((item, index) => (
       <span key={index} className="fw-light">
         {item.student_name}
-        {index + 1 < absentees.length && ", "}
+        {item.student_name && index + 1 < absentees.length && ", "}
       </span>
     ))}
   </h1>
@@ -186,7 +186,7 @@ const DefaultersList = ({ defaulters }) => (
     {defaulters?.map((item, index) => (
       <span key={index} className="fw-light">
         {item.student_name}
-        {index + 1 < defaulters.length && ", "}
+        {item.student_name && index + 1 < defaulters.length && ", "}
       </span>
     ))}
   </h1>

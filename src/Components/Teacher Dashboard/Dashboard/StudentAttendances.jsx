@@ -103,12 +103,22 @@ const StudentAttendances = () => {
   const columns = useMemo(
     () => [
       {
-        accessorKey: "student_id",
-        header: "Student Id",
+        accessorKey: "roll_no",
+        header: "Roll No.",
       },
       {
         accessorKey: "student_name",
         header: "Student Name",
+      },
+      {
+        accessorKey: "student_name",
+        header: "Absentees",
+        
+      },
+      {
+        accessorKey: "student_name",
+        header: "Dress Defaulter",
+        
       },
     ],
     []
