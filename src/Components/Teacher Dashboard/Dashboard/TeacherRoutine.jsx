@@ -70,7 +70,6 @@ const TeacherRoutine = () => {
       {
         accessorKey: "period",
         header: "Period",
-        filterable: false,
       },
       {
         accessorKey: "grade",

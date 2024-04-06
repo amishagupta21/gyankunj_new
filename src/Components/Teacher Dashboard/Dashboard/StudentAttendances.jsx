@@ -105,7 +105,6 @@ const StudentAttendances = () => {
       {
         accessorKey: "student_id",
         header: "Student Id",
-        filterable: false,
       },
       {
         accessorKey: "student_name",

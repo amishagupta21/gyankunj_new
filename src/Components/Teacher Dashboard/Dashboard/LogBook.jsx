@@ -123,7 +123,6 @@ const LogBook = () => {
       {
         accessorKey: "period",
         header: "Period",
-        filterable: false,
       },
       {
         accessorKey: "students_present",
@@ -156,6 +155,8 @@ const LogBook = () => {
           <h1 style={{ fontSize: 18, marginTop: 10 }}>Log book</h1>
         )}
       />
+      <AbsenteesList absentees={logBookDetails?.name_of_absentees} />
+      <DefaultersList defaulters={logBookDetails?.name_of_dress_defaulters} />
       <AddNewLog
         isOpen={isAddLogModalVisible}
         handleClose={() => setIsAddLogModalVisible(false)}
@@ -166,3 +167,27 @@ const LogBook = () => {
 };
 
 export default LogBook;
+
+const AbsenteesList = ({ absentees }) => (
+  <h1 className="fs-6 mt-2">
+    Name of Absentees:{" "}
+    {absentees?.map((item, index) => (
+      <span key={index} className="fw-light">
+        {item.student_name}
+        {index + 1 < absentees.length && ", "}
+      </span>
+    ))}
+  </h1>
+);
+
+const DefaultersList = ({ defaulters }) => (
+  <h1 className="fs-6 mt-2">
+    Name of Defaulters:{" "}
+    {defaulters?.map((item, index) => (
+      <span key={index} className="fw-light">
+        {item.student_name}
+        {index + 1 < defaulters.length && ", "}
+      </span>
+    ))}
+  </h1>
+);
