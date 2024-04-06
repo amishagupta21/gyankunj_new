@@ -11,7 +11,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { getGradeDetails, viewLogBook } from "../../../ApiClient";
 import dayjs from "dayjs";
 import { Button } from "@mui/material";
-import AddIcon from '@mui/icons-material/Add';
+import AddIcon from "@mui/icons-material/Add";
 import AddNewLog from "./AddNewLog";
 
 const LogBook = () => {
@@ -19,8 +19,8 @@ const LogBook = () => {
   const [gradeData, setGradeData] = useState([]);
   const [gradeFilter, setGradeFilter] = useState("");
   const [sectionFilter, setSectionFilter] = useState("");
-  const [dateFilter, setDateFilter] = useState(dayjs().subtract(1, 'day'));
-const [isAddLogModalVisible, setIsAddLogModalVisible] = useState(false);
+  const [dateFilter, setDateFilter] = useState(dayjs().subtract(1, "day"));
+  const [isAddLogModalVisible, setIsAddLogModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -106,7 +106,13 @@ const [isAddLogModalVisible, setIsAddLogModalVisible] = useState(false);
             />
           </LocalizationProvider>
         </FormControl>
-        <Button variant="contained" className="py-3" onClick={() => setIsAddLogModalVisible(true)}><AddIcon /></Button>
+        <Button
+          variant="contained"
+          className="py-3"
+          onClick={() => setIsAddLogModalVisible(true)}
+        >
+          <AddIcon />
+        </Button>
       </Box>
     );
   };
@@ -150,7 +156,11 @@ const [isAddLogModalVisible, setIsAddLogModalVisible] = useState(false);
           <h1 style={{ fontSize: 18, marginTop: 10 }}>Log book</h1>
         )}
       />
-      <AddNewLog isOpen={isAddLogModalVisible} handleClose={()=>setIsAddLogModalVisible(false)} gradeList={gradeData} />
+      <AddNewLog
+        isOpen={isAddLogModalVisible}
+        handleClose={() => setIsAddLogModalVisible(false)}
+        gradeList={gradeData}
+      />
     </div>
   );
 };

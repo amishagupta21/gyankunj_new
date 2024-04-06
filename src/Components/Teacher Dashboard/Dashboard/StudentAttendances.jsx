@@ -8,15 +8,18 @@ import Select from "@mui/material/Select";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { getGradeDetails, viewLogBook } from "../../../ApiClient";
+import {
+  getAllStudentsData,
+  getGradeDetails,
+  viewLogBook,
+} from "../../../ApiClient";
 import dayjs from "dayjs";
 
 const StudentAttendances = () => {
-  const [logBookDetails, setLogBookDetails] = useState();
+  const [studentsList, setStudentsList] = useState([]);
   const [gradeData, setGradeData] = useState([]);
   const [gradeFilter, setGradeFilter] = useState("");
   const [sectionFilter, setSectionFilter] = useState("");
-  const [dateFilter, setDateFilter] = useState(dayjs());
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -32,17 +35,19 @@ const StudentAttendances = () => {
 
   useEffect(() => {
     setIsLoading(true);
-    const date = dateFilter.format("YYYY-MM-DD");
-    viewLogBook(date, gradeFilter, sectionFilter)
+    getAllStudentsData(gradeFilter, sectionFilter)
       .then((res) => {
-        setLogBookDetails(res?.data?.log_book_data || []);
+        setStudentsList([]);
+        if (res?.data?.student_details && res?.data?.student_details.length) {
+          setStudentsList(res?.data?.student_details);
+        }
         setIsLoading(false);
       })
       .catch((err) => {
         console.log(err);
         setIsLoading(false);
       });
-  }, [gradeFilter, sectionFilter, dateFilter]);
+  }, [gradeFilter, sectionFilter]);
 
   const handleGradeChange = (event) => {
     setGradeFilter(event.target.value);
@@ -51,10 +56,6 @@ const StudentAttendances = () => {
 
   const handleSectionChange = (event) => {
     setSectionFilter(event.target.value);
-  };
-
-  const handleDateChange = (newValue) => {
-    setDateFilter(newValue);
   };
 
   // Custom JSX element for the top toolbar
@@ -94,11 +95,6 @@ const StudentAttendances = () => {
               ))}
           </Select>
         </FormControl>
-        {/* <FormControl fullWidth sx={{ minWidth: 150 }}>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker format="YYYY-MM-DD" value={dateFilter} onChange={handleDateChange} />
-          </LocalizationProvider>
-        </FormControl> */}
       </Box>
     );
   };
@@ -107,21 +103,13 @@ const StudentAttendances = () => {
   const columns = useMemo(
     () => [
       {
-        accessorKey: "period",
-        header: "Roll Number",
+        accessorKey: "student_id",
+        header: "Student Id",
         filterable: false,
       },
       {
-        accessorKey: "students_present",
-        header: "Name",
-      },
-      {
-        accessorKey: "subject_name",
-        header: "Absent",
-      },
-      {
-        accessorKey: "content_taught",
-        header: "Dress Defaulter",
+        accessorKey: "student_name",
+        header: "Student Name",
       },
     ],
     []
@@ -133,7 +121,7 @@ const StudentAttendances = () => {
       <CommonMatTable
         columns={columns}
         isLoading={isLoading}
-        data={logBookDetails?.log_record || []}
+        data={studentsList || []}
         renderTopToolbar={() => (
           <h1 style={{ fontSize: 18, marginTop: 10 }}>Student's attendance</h1>
         )}
