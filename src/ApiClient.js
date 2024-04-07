@@ -215,6 +215,10 @@ const submitEvaluationReport = (data) => {
   return apiInstance.put(`/submit_student_evaluation_report`, data);
 };
 
+const getStudentAttendances = (grade, section) => {
+  return apiInstance.get(`/get_student_daily_attendance?grade_id=${grade}&section_id=${section}&date=2023-04-15`);
+};
+
 export {
   //loginUser,
   evaluteAssignment,
@@ -257,5 +261,6 @@ export {
   publishAssignmentData,
   loadAssignmentData,
   getAllChapterName,
-  submitEvaluationReport
+  submitEvaluationReport,
+  getStudentAttendances
 };
