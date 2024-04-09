@@ -96,10 +96,6 @@ const getLessonPlanMetadata = (grade, section) => {
   );
 };
 
-const fetchAllSubjects = () => {
-  return apiInstance.get(`/get_all_subjects`);
-};
-
 const getTeacherRoutine = (userId, day) => {
   return apiInstance.get(`/view_teacher_routine?user_id=${userId}&day=${day}`);
 };
@@ -210,12 +206,17 @@ const getAllChapterName = (grade, section) => {
     `/get_subject_chapters?grade_id=${grade}&section_id=${section}`
   );
 };
-const getSubjectData = () => {
+
+const getSubjectsList = () => {
   return apiInstance.get(`/get_all_subjects`);
 };
 
 const submitEvaluationReport = (data) => {
   return apiInstance.put(`/submit_student_evaluation_report`, data);
+};
+
+const getStudentAttendances = (grade, section, date) => {
+  return apiInstance.get(`/get_student_daily_attendance?grade_id=${grade}&section_id=${section}&date=${date}`);
 };
 
 export {
@@ -235,7 +236,7 @@ export {
   saveLessonPlan,
   viewAttendanceReport,
   getLessonPlan,
-  fetchAllSubjects,
+  getSubjectsList,
   getTeacherRoutine,
   viewStudentAttendance,
   getAllStudentsData,
@@ -260,6 +261,6 @@ export {
   publishAssignmentData,
   loadAssignmentData,
   getAllChapterName,
-  getSubjectData,
-  submitEvaluationReport
+  submitEvaluationReport,
+  getStudentAttendances
 };

@@ -11,7 +11,7 @@ import ReportSection from "../Components/Principal Dashboard/Reports/Reports";
 import Resources from "../Components/Principal Dashboard/Resources/ResourcesList";
 import Announcements from "../Components/Principal Dashboard/Announcement/Announcement";
 import Notifications from "../Components/Principal Dashboard/Notifications/Notifications";
-import TDashboard from "../Components/Teacher Dashboard/Dashboard/Dashboard";
+// import TDashboard from "../Components/Teacher Dashboard/Dashboard/Dashboard";
 import MySubjects from "../Components/Teacher Dashboard/My Subject/MySubjects";
 import TLessonPlan from "../Components/Teacher Dashboard/LessonPlan/LessonPlan";
 import LogBook from "../Components/Teacher Dashboard/LogBook/LogBook";
@@ -32,6 +32,7 @@ import Addquestions from '../Components/Teacher Dashboard/Assignment/Addquestion
 import SubmissionsPage from '../Components/Teacher Dashboard/Assignment/SubmissionsComponent';
 import Viewreport from '../Components/Teacher Dashboard/Assignment/Viewreport';
 import EvaluteAssignmentReport from '../Components/Teacher Dashboard/Assignment/EvaluteAssignmentReport';
+import TDashboard from "./Teacher Dashboard/Dashboard/TDashboard";
 
 // Define routes for different user roles
 const roleRoutes = {

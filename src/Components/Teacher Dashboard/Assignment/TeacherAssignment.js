@@ -9,7 +9,7 @@ import { AiFillDelete } from "react-icons/ai";
 import SaveAssignment from "./SaveAssignment";
 import {
   getGradeDetails,
-  fetchAllSubjects,
+  getSubjectsList,
   assignmentList,
   viewAssignemnt,
   publishAssignmentData,
