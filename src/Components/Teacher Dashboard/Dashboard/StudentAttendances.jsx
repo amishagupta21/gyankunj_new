@@ -37,7 +37,7 @@ const StudentAttendances = () => {
 
   useEffect(() => {
     setIsLoading(true);
-    getStudentAttendances(gradeFilter, sectionFilter)
+    getStudentAttendances(gradeFilter, sectionFilter, dayjs().format("YYYY-MM-DD"))
       .then((res) => {
         setStudentAttendances([]);
         if (
@@ -108,6 +108,8 @@ const StudentAttendances = () => {
 
   const handleAttendanceSubmit = () => {
     const payload = {
+      "grade_id": gradeFilter,
+      "section_id": sectionFilter,
       "absentees":selectedAbsentees,
       "dress_defaulters": selectedDressDefaulters,
       "date": dayjs().format("YYYY-MM-DD")
