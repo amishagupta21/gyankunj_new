@@ -160,6 +160,10 @@ const verifyLessonPlan = (dataToVerify) => {
   return apiInstance.put(`/verify_lesson_plan`, dataToVerify);
 };
 
+const verifyLogBook = (dataToVerify) => {
+  return apiInstance.put(`/verify_log_book`, dataToVerify);
+};
+
 const viewNotification = (userId, role) => {
   return apiInstance.get(`/fetch_notifications?user_id=${userId}&role=${role}`);
 };
@@ -262,5 +266,6 @@ export {
   loadAssignmentData,
   getAllChapterName,
   submitEvaluationReport,
-  getStudentAttendances
+  getStudentAttendances,
+  verifyLogBook
 };

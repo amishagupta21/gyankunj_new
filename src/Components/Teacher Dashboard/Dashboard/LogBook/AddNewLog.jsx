@@ -10,9 +10,9 @@ import {
   Grid,
 } from "@mui/material";
 import { Form, Modal } from "react-bootstrap";
-import { createLogBook, getSubjectsList } from "../../../ApiClient";
+import { createLogBook, getSubjectsList } from "../../../../ApiClient";
 import dayjs from "dayjs";
-import { showAlertMessage } from "../../AlertMessage";
+import { showAlertMessage } from "../../../AlertMessage";
 
 const AddNewLog = ({ isOpen, handleClose, gradeList = [] }) => {
   const {

@@ -22,6 +22,7 @@
 .app .main-body .main-container {
   width: calc(100% - 270px);
   overflow: auto;
+  padding: 30px 20px;
 }
 .app .main-body .main-container.cont-big {
   width: calc(100% - 80px);

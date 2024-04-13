@@ -14,7 +14,7 @@ import Notifications from "../Components/Principal Dashboard/Notifications/Notif
 // import TDashboard from "../Components/Teacher Dashboard/Dashboard/Dashboard";
 import MySubjects from "../Components/Teacher Dashboard/My Subject/MySubjects";
 import TLessonPlan from "../Components/Teacher Dashboard/LessonPlan/LessonPlan";
-import LogBook from "../Components/Teacher Dashboard/LogBook/LogBook";
+// import LogBook from "../Components/Teacher Dashboard/LogBook/LogBook";
 import TeacherReport from "../Components/Teacher Dashboard/Teacher Report/TeacherReport";
 import TeacherAttendance from "../Components/Teacher Dashboard/TeacherAttendance/TeacherAttendance";
 import TeacherAssignment from "../Components/Teacher Dashboard/Assignment/TeacherAssignment";
@@ -34,6 +34,7 @@ import Viewreport from '../Components/Teacher Dashboard/Assignment/Viewreport';
 import EvaluteAssignmentReport from '../Components/Teacher Dashboard/Assignment/EvaluteAssignmentReport';
 import TDashboard from "./Teacher Dashboard/Dashboard/TDashboard";
 import PLessonPlan from "./Principal Dashboard/PLessonPlan";
+import LogBookCLassTeacher from "./Teacher Dashboard/Dashboard/LogBook/LogBookCLassTeacher";
 
 // Define routes for different user roles
 const roleRoutes = {
@@ -106,7 +107,7 @@ export default function RoutesContainer({ userData }) {
             />
             <Route
               path="/teacherDashboard/logBook"
-              element={<ProtectedWrapper Component={LogBook} />}
+              element={<ProtectedWrapper Component={LogBookCLassTeacher} />}
             />
             <Route
               path="/teacherDashboard/lessonPlan"

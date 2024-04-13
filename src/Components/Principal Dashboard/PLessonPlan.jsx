@@ -117,7 +117,7 @@ const PLessonPlan = () => {
   );
 
   return (
-    <div className="py-5 px-4">
+    <>
       <RenderTopToolbarCustomActions />
       <CommonMatTable
         columns={columns}
@@ -129,7 +129,7 @@ const PLessonPlan = () => {
         renderDetailPanel={(row) => <CustomDetailPanel row={row} />}
       />
       {/* <TLessonPlan /> */}
-    </div>
+    </>
   );
 };
 

@@ -24,6 +24,7 @@ import Select from "react-select";
 // import mockData from '../../Mock Data/mockdata.json'
 import PrincipalLogBook from "./PrincipalLogbook";
 import { FaCheckSquare } from "react-icons/fa";
+import PLogBook from "./PLogBook";
 
 const PDashboard = () => {
   const [checked, setChecked] = useState(false);
@@ -416,8 +417,8 @@ const PDashboard = () => {
                   </Col>
                 </Row>
               </div>
-
-              <div className="princiDashboardLogbook">
+              <PLogBook />
+              {/* <div className="princiDashboardLogbook">
                 <Row
                   style={{
                     height: "74px",
@@ -439,7 +440,6 @@ const PDashboard = () => {
                     >
                       <option value="">--Grade--</option>
                       {gradeData?.grade_details?.grade_details?.map((grade) => {
-                        // console.log("grade - ", grade)
                         return (
                           <option value={grade?.grade_id}>
                             {grade?.grade_id}
@@ -607,23 +607,9 @@ const PDashboard = () => {
                     </Col>
                   </Row>
                 </div>
+              </div> */}
 
-                {/* <Row>
-          <Col>
-            <TableComponent column={column} data={mockData} />
-          </Col>
-        </Row> */}
-              </div>
             </div>
-            {/* <h1 style={{marginTop:"30%"}}> Principal Dashboard</h1> */}
-            {/* <Row>
-            <Col xs={16} md={8} style={{paddingLeft:"0px"}}>
-                <DashboardContent />
-            </Col>
-            <Col xs={4} md={4}>
-                <DashboardRightPanel />
-            </Col>
-        </Row> */}
           </div>
         </Col>
         <Col md={3} style={{ width: "25%", marginTop: "91px" }}>
