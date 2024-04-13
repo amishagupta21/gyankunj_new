@@ -8,6 +8,7 @@ import Select from "react-select";
 import PrincipalSidebar from "../PrincipalSidebar";
 import mockData from "../../../Mock Data/masterRoutineMockData.json";
 import { FaCheckSquare } from "react-icons/fa";
+import MasterRoutineV2 from "./MasterRoutineV2";
 
 const MasterRoutine = () => {
   const [showAddRoutine, setShowAddRoutine] = useState(false);
@@ -99,7 +100,8 @@ const MasterRoutine = () => {
   console.log("masterRoutineData - ", masterRoutineData);
 
   return (
-    <>
+    <div className="container mt-4">
+      {/* <MasterRoutineV2 /> */}
       <div className="routinemain">
         <div className="masterRoutineheader">
           <Row>
@@ -420,7 +422,7 @@ const MasterRoutine = () => {
           masterRoutineData={masterRoutineData}
         />
       )}
-    </>
+    </div>
   );
 };
 

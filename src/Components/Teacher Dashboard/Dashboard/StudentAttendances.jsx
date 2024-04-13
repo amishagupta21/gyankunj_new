@@ -9,7 +9,11 @@ import Switch from "@mui/material/Switch";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { getGradeDetails, getStudentAttendances, saveAttendance } from "../../../ApiClient";
+import {
+  getGradeDetails,
+  getStudentAttendances,
+  saveAttendance,
+} from "../../../ApiClient";
 import dayjs from "dayjs";
 import { Button } from "@mui/material";
 import { showAlertMessage } from "../../AlertMessage";
@@ -36,34 +40,40 @@ const StudentAttendances = () => {
   }, []);
 
   useEffect(() => {
-    setIsLoading(true);
-    getStudentAttendances(gradeFilter, sectionFilter, dayjs().format("YYYY-MM-DD"))
-      .then((res) => {
-        setStudentAttendances([]);
-        if (
-          res?.data?.student_attendance_data &&
-          res?.data?.student_attendance_data.length
-        ) {
-          setStudentAttendances(res.data.student_attendance_data);
-          const defaulters = [];
-          const absentees = [];
-          res.data.student_attendance_data.map((item) => {
-            if(item.is_absent){
-              absentees.push(item.student_id);
-            }
-            if(item.is_dress_defaulted){
-              defaulters.push(item.student_id);
-            }
-          })
-          setSelectedDressDefaulters(defaulters);
-          setSelectedAbsentees(absentees);
-        }
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        console.error("Error fetching student attendances: ", err);
-        setIsLoading(false);
-      });
+    if (gradeFilter && sectionFilter) {
+      setIsLoading(true);
+      getStudentAttendances(
+        gradeFilter,
+        sectionFilter,
+        dayjs().format("YYYY-MM-DD")
+      )
+        .then((res) => {
+          setStudentAttendances([]);
+          if (
+            res?.data?.student_attendance_data &&
+            res?.data?.student_attendance_data.length
+          ) {
+            setStudentAttendances(res.data.student_attendance_data);
+            const defaulters = [];
+            const absentees = [];
+            res.data.student_attendance_data.map((item) => {
+              if (item.is_absent) {
+                absentees.push(item.student_id);
+              }
+              if (item.is_dress_defaulted) {
+                defaulters.push(item.student_id);
+              }
+            });
+            setSelectedDressDefaulters(defaulters);
+            setSelectedAbsentees(absentees);
+          }
+          setIsLoading(false);
+        })
+        .catch((err) => {
+          console.error("Error fetching student attendances: ", err);
+          setIsLoading(false);
+        });
+    }
   }, [gradeFilter, sectionFilter]);
 
   const handleGradeChange = (event) => {
@@ -101,37 +111,37 @@ const StudentAttendances = () => {
     });
     setIsTableVisible(false);
     setTimeout(() => {
-      setIsTableVisible(true)
+      setIsTableVisible(true);
     });
   }, []);
-  
 
   const handleAttendanceSubmit = () => {
     const payload = {
-      "grade_id": gradeFilter,
-      "section_id": sectionFilter,
-      "absentees":selectedAbsentees,
-      "dress_defaulters": selectedDressDefaulters,
-      "date": dayjs().format("YYYY-MM-DD")
-  }
-    saveAttendance(payload).then((res) => {
-      if (res?.data?.status === "success") {
-        setShowAlert("success");
-      } else {
-        setShowAlert("error");
-      }
+      grade_id: gradeFilter,
+      section_id: sectionFilter,
+      absentees: selectedAbsentees,
+      dress_defaulters: selectedDressDefaulters,
+      date: dayjs().format("YYYY-MM-DD"),
+    };
+    saveAttendance(payload)
+      .then((res) => {
+        if (res?.data?.status === "success") {
+          setShowAlert("success");
+        } else {
+          setShowAlert("error");
+        }
 
-      setTimeout(() => {
-        setShowAlert("");
-      }, 3000);
-    })
-    .catch((err) => {
-      setShowAlert("error");
-      setTimeout(() => {
-        setShowAlert("");
-      }, 3000);
-    });
-  }
+        setTimeout(() => {
+          setShowAlert("");
+        }, 3000);
+      })
+      .catch((err) => {
+        setShowAlert("error");
+        setTimeout(() => {
+          setShowAlert("");
+        }, 3000);
+      });
+  };
 
   // Custom JSX element for the top toolbar
   const RenderTopToolbarCustomActions = () => {
@@ -170,7 +180,15 @@ const StudentAttendances = () => {
               ))}
           </Select>
         </FormControl>
-        <FormControl fullWidth sx={{ width: "calc(100%/3)" }}><Button variant="contained" sx={{width:100, height: 56}} onClick={handleAttendanceSubmit}>Submit</Button></FormControl>
+        <FormControl fullWidth sx={{ width: "calc(100%/3)" }}>
+          <Button
+            variant="contained"
+            sx={{ width: 100, height: 56 }}
+            onClick={handleAttendanceSubmit}
+          >
+            Submit
+          </Button>
+        </FormControl>
       </Box>
     );
   };
@@ -202,7 +220,7 @@ const StudentAttendances = () => {
         header: "Dress Defaulter",
         accessorFn: (row) => (
           <Switch
-           disabled={selectedAbsentees.includes(row.student_id)}
+            disabled={selectedAbsentees.includes(row.student_id)}
             defaultChecked={selectedDressDefaulters.includes(row.student_id)}
             onChange={(event) =>
               handleDressDefaulterChange(event.target.checked, row)
@@ -212,34 +230,49 @@ const StudentAttendances = () => {
         ),
       },
     ],
-    [handleDressDefaulterChange, handleAbsenteesChange, selectedAbsentees, selectedDressDefaulters]
+    [
+      handleDressDefaulterChange,
+      handleAbsenteesChange,
+      selectedAbsentees,
+      selectedDressDefaulters,
+    ]
   );
 
   return (
     <div>
       <RenderTopToolbarCustomActions />
-      {isTableVisible && <CommonMatTable
-        columns={columns}
-        isLoading={isLoading}
-        data={studentAttendances || []}
-        renderTopToolbar={() => (
-          <h1 style={{ fontSize: 18, marginTop: 10 }}>Student's attendance</h1>
-        )}
-      />}
-      {!isTableVisible && <CommonMatTable
-        columns={columns}
-        isLoading={isLoading}
-        data={studentAttendances || []}
-        renderTopToolbar={() => (
-          <h1 style={{ fontSize: 18, marginTop: 10 }}>Student's attendance</h1>
-        )}
-      />}
+      {isTableVisible && (
+        <CommonMatTable
+          columns={columns}
+          isLoading={isLoading}
+          data={studentAttendances || []}
+          renderTopToolbar={() => (
+            <h1 style={{ fontSize: 18, marginTop: 10 }}>
+              Student's attendance
+            </h1>
+          )}
+        />
+      )}
+      {!isTableVisible && (
+        <CommonMatTable
+          columns={columns}
+          isLoading={isLoading}
+          data={studentAttendances || []}
+          renderTopToolbar={() => (
+            <h1 style={{ fontSize: 18, marginTop: 10 }}>
+              Student's attendance
+            </h1>
+          )}
+        />
+      )}
       {showAlert &&
         showAlertMessage({
           open: true,
           alertFor: showAlert,
           message: `${
-            showAlert === "success" ? "Attendance successfully marked" : "Attendance marking failed"
+            showAlert === "success"
+              ? "Attendance successfully marked"
+              : "Attendance marking failed"
           }.`,
         })}
     </div>
