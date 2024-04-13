@@ -5,7 +5,7 @@ import DashboardSectionContent from "../Components/DashboardSectionContent";
 import PageNotFound from "./PageNotFound";
 import PDashboard from "../Components/Principal Dashboard/Dashboard";
 import MasterRoutine from "../Components/Principal Dashboard/MasterRoutine/MasterRoutine";
-import LessonPlan from "../Components/Principal Dashboard/Lesson Plan/LessonPlan";
+// import LessonPlan from "../Components/Principal Dashboard/Lesson Plan/LessonPlan";
 import AttendanceOverview from "../Components/Principal Dashboard/Attendance/AttendanceOverview";
 import ReportSection from "../Components/Principal Dashboard/Reports/Reports";
 import Resources from "../Components/Principal Dashboard/Resources/ResourcesList";
@@ -33,6 +33,7 @@ import SubmissionsPage from '../Components/Teacher Dashboard/Assignment/Submissi
 import Viewreport from '../Components/Teacher Dashboard/Assignment/Viewreport';
 import EvaluteAssignmentReport from '../Components/Teacher Dashboard/Assignment/EvaluteAssignmentReport';
 import TDashboard from "./Teacher Dashboard/Dashboard/TDashboard";
+import PLessonPlan from "./Principal Dashboard/PLessonPlan";
 
 // Define routes for different user roles
 const roleRoutes = {
@@ -68,7 +69,7 @@ export default function RoutesContainer({ userData }) {
             />
             <Route
               path="/principalDashboard/lessonPlan"
-              element={<ProtectedWrapper Component={LessonPlan} />}
+              element={<ProtectedWrapper Component={PLessonPlan} />}
             />
             <Route
               path="/principalDashboard/attendanceOverview"
