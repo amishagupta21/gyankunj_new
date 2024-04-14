@@ -52,7 +52,9 @@ const PLogBook = () => {
       viewLogBook(date, gradeFilter, sectionFilter)
         .then((res) => {
           setLogBookDetails(res?.data?.log_book_data || []);
-          setIsLoading(false);
+          setTimeout(() => {
+            setIsLoading(false);
+          }, 1000);
         })
         .catch((err) => {
           console.log(err);

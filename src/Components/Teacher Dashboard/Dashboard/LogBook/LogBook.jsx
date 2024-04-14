@@ -22,6 +22,7 @@ const LogBook = () => {
   const [dateFilter, setDateFilter] = useState(dayjs());
   const [isAddLogModalVisible, setIsAddLogModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [refreshTable, setRefreshTable] = useState(false);
 
   useEffect(() => {
     getGradeDetails()
@@ -40,14 +41,16 @@ const LogBook = () => {
       viewLogBook(date, gradeFilter, sectionFilter)
       .then((res) => {
         setLogBookDetails(res?.data?.log_book_data || []);
-        setIsLoading(false);
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 1000);
       })
       .catch((err) => {
         console.log(err);
         setIsLoading(false);
       });
     }
-  }, [gradeFilter, sectionFilter, dateFilter]);
+  }, [gradeFilter, sectionFilter, dateFilter, refreshTable]);
 
   const handleGradeChange = (event) => {
     setGradeFilter(event.target.value);
@@ -61,6 +64,11 @@ const LogBook = () => {
   const handleDateChange = (newValue) => {
     setDateFilter(newValue);
   };
+
+  const handleClose = () => {
+    setIsAddLogModalVisible(false);
+    setRefreshTable(!refreshTable);
+  }
 
   // Custom JSX element for the top toolbar
   const RenderTopToolbarCustomActions = () => {
@@ -162,7 +170,7 @@ const LogBook = () => {
       <DefaultersList defaulters={logBookDetails?.name_of_dress_defaulters} />
       <AddNewLog
         isOpen={isAddLogModalVisible}
-        handleClose={() => setIsAddLogModalVisible(false)}
+        handleClose={handleClose}
         gradeList={gradeData}
       />
     </div>
