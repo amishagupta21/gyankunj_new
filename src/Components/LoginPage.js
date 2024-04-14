@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from 'axios';
-import { Row, Col, Modal, Form, Button } from "react-bootstrap";
+import { Row, Col, Modal, Form } from "react-bootstrap";
 import "../Styles/LoginPage.css";
 import loginImage from "../Images/loginImage.png";
 import closeBtn from "../Images/closeBtn.png";
@@ -11,6 +11,7 @@ import LoginError from './LoginError'
 import { trackPromise } from "react-promise-tracker";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { Button } from "@mui/material";
 
 const LoginPage = (props) => {
 
@@ -176,7 +177,7 @@ const LoginPage = (props) => {
                     <Form.Group>
                       <a href="#">Forgot password?</a>
                     </Form.Group>
-                    <Button variant="primary" className="loginBtn" onClick={loginMember} disabled={!(userName && passwordd)}>
+                    <Button variant="contained" className="mt-4" onClick={loginMember} disabled={!(userName && passwordd)}>
                       Submit
                     </Button>
                   </Form>

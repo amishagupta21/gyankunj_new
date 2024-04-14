@@ -58,7 +58,7 @@ function App() {
         <div
           className={`main-container ${
             (isTabScreen || !userData?.token || isPageNotFound) && "w-100"
-          } ${isCollapsed && "cont-big"}`}
+          } ${isCollapsed && "cont-big"} ${!userData?.token && 'p-0'}`}
         >
           <RoutesContainer userData={userData} />
         </div>

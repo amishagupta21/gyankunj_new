@@ -4,18 +4,12 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import dayjs from "dayjs";
 import {
   Button,
   Card,
   CardActions,
   CardContent,
   Grid,
-  div,
-  Typography,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -23,22 +17,20 @@ import {
   TextField,
   DialogActions,
 } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
 import {
-  getGradeDetails,
   getLessonPlan,
   getTeachersData,
   lessonPlanAllDetails,
   verifyLessonPlan,
 } from "../../ApiClient";
 import CommonMatTable from "../../SharedComponents/CommonMatTable";
-import TLessonPlan from "./Lesson Plan/LessonPlan";
 
 const PLessonPlan = () => {
   const [lessonPlanData, setLessonPlanData] = useState([]);
   const [teachersList, setTeachersList] = useState([]);
   const [teacherFilter, setTeacherFilter] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [refreshTable, setRefreshTable] = useState(false);
 
   useEffect(() => {
     getTeachersData()
@@ -64,13 +56,13 @@ const PLessonPlan = () => {
         }
         setTimeout(() => {
           setIsLoading(false);
-        }, 500);
+        }, 1000);
       })
       .catch((err) => {
         setIsLoading(false);
         console.log(err);
       });
-  }, [teacherFilter]);
+  }, [teacherFilter, refreshTable]);
 
   const handleTeacherChange = (event) => {
     setTeacherFilter(event.target.value);
@@ -108,7 +100,21 @@ const PLessonPlan = () => {
       { accessorKey: "topic_name", header: "Lesson" },
       {
         accessorFn: (row) => (
-          <div className={`fw-bold ${row.verified === true ? "text-success" : row.verified === false ? "text-danger": ""}`}>{row.verified === true ? "Verified" : row.verified === false ? "Sent back": "Review"}</div>
+          <div
+            className={`fw-bold ${
+              row.verified === true
+                ? "text-success"
+                : row.verified === false
+                ? "text-danger"
+                : ""
+            }`}
+          >
+            {row.verified === true
+              ? "Verified"
+              : row.verified === false
+              ? "Sent back"
+              : "Review"}
+          </div>
         ),
         header: "Status",
       },
@@ -126,7 +132,13 @@ const PLessonPlan = () => {
         renderTopToolbar={() => (
           <h1 style={{ fontSize: 18, marginTop: 10 }}>Lesson Plan</h1>
         )}
-        renderDetailPanel={(row) => <CustomDetailPanel row={row} />}
+        renderDetailPanel={(row) => (
+          <CustomDetailPanel
+            row={row}
+            setRefreshTable={setRefreshTable}
+            refreshTable={refreshTable}
+          />
+        )}
       />
       {/* <TLessonPlan /> */}
     </>
@@ -135,7 +147,7 @@ const PLessonPlan = () => {
 
 export default PLessonPlan;
 
-const CustomDetailPanel = ({ row }) => {
+const CustomDetailPanel = ({ row, setRefreshTable, refreshTable }) => {
   const [rowData, setRowData] = useState({});
   const [open, setOpen] = useState(false);
 
@@ -164,17 +176,7 @@ const CustomDetailPanel = ({ row }) => {
     verifyLessonPlan(dataToVerify)
       .then((res) => {
         console.log("Verified - ", res.data);
-
-        lessonPlanAllDetails(row.row.original.lesson_id)
-          .then((res) => {
-            if (
-              res?.data?.lesson_plan_data &&
-              res?.data?.lesson_plan_data.length > 0
-            ) {
-              setRowData(res.data.lesson_plan_data[0]);
-            }
-          })
-          .catch((err) => console.log("Lesson err - ", err));
+        setRefreshTable(!refreshTable);
       })
       .catch((err) => console.log("Not Verified"));
   };
