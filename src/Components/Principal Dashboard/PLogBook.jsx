@@ -90,7 +90,7 @@ const PLogBook = () => {
           >
             {gradeData.map((item) => (
               <MenuItem key={item.grade_id} value={item.grade_id}>
-                {item.grade_id}
+                {item.grade}
               </MenuItem>
             ))}
           </Select>
