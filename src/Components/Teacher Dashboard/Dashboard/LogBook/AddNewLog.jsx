@@ -10,11 +10,16 @@ import {
   Grid,
 } from "@mui/material";
 import { Form, Modal } from "react-bootstrap";
-import { createLogBook, getSubjectsList } from "../../../../ApiClient";
+import { createLogBook, editLogBook, getSubjectsList } from "../../../../ApiClient";
 import dayjs from "dayjs";
 import { showAlertMessage } from "../../../AlertMessage";
 
-const AddNewLog = ({ isOpen, handleClose, gradeList = [] }) => {
+const AddNewLog = ({
+  isOpen,
+  handleClose,
+  gradeData = [],
+  selectedLog = {},
+}) => {
   const {
     register,
     handleSubmit,
@@ -25,7 +30,9 @@ const AddNewLog = ({ isOpen, handleClose, gradeList = [] }) => {
   } = useForm();
   const [selectedGradeId, setSelectedGradeId] = useState(0);
   const [subjectsList, setSubjectsList] = useState([]);
+  const [selectedLogBookData, setSelectedLogBookData] = useState(selectedLog);
   const [showAlert, setShowAlert] = useState("");
+  const [isEditMode, setIsEditMode] = useState(false);
   const userId = JSON.parse(localStorage.getItem("UserData"))?.user_id;
   const periodsList = [
     { value: "1", label: 1 },
@@ -38,8 +45,27 @@ const AddNewLog = ({ isOpen, handleClose, gradeList = [] }) => {
     { value: "8", label: 8 },
   ];
   useEffect(() => {
+    if (selectedLog && Object.keys(selectedLog).length > 0) {
+      setIsEditMode(true);
+      const {
+        grade_id,
+        section_id,
+        period,
+        subject_id,
+        content_taught,
+        home_work
+      } = selectedLog;
+    
+      setValue("grade", grade_id);
+      setValue("section", section_id);
+      setValue("period", period);
+      setValue("subject", subject_id);
+      setValue("contentTaught", content_taught);
+      setValue("homework", home_work);
+     setSelectedGradeId(selectedLog.grade_id);
+    }
     getAllSubjectsData();
-  }, []);
+  }, [setValue, selectedLog]);
 
   const getAllSubjectsData = () => {
     getSubjectsList()
@@ -55,6 +81,15 @@ const AddNewLog = ({ isOpen, handleClose, gradeList = [] }) => {
   };
 
   const onSubmit = (data) => {
+    if(isEditMode){
+      editLog(data);
+    }
+    else{
+      addNewLog(data);
+    }
+  }
+
+  const addNewLog = (data) => {
     const payload = {
       grade_id: data.grade,
       section_id: parseInt(data.section),
@@ -73,10 +108,12 @@ const AddNewLog = ({ isOpen, handleClose, gradeList = [] }) => {
         } else {
           setShowAlert("error");
         }
-
         setTimeout(() => {
-          setShowAlert("");
-        }, 3000);
+          handleClose(true);
+          setTimeout(() => {
+            setShowAlert("");
+          }, 2000);
+        }, 1000);
       })
       .catch((err) => {
         setShowAlert("error");
@@ -84,12 +121,39 @@ const AddNewLog = ({ isOpen, handleClose, gradeList = [] }) => {
           setShowAlert("");
         }, 3000);
       });
-    handleClose();
-    reset();
   };
 
-  const handleGradeChange = (e) => {
-    setSelectedGradeId(e.target.value);
+  const editLog = (data) => {
+    const payload = {
+      log_book_id: selectedLog.log_book_id,
+      content_taught: data.contentTaught,
+      home_work: data.homework
+    };
+    console.log(data);
+    editLogBook(payload)
+      .then((res) => {
+        if (res?.data?.status === "success") {
+          setShowAlert("success");
+        } else {
+          setShowAlert("error");
+        }
+        setTimeout(() => {
+          handleClose(true);
+          setTimeout(() => {
+            setShowAlert("");
+          }, 2000);
+        }, 1000);
+      })
+      .catch((err) => {
+        setShowAlert("error");
+        setTimeout(() => {
+          setShowAlert("");
+        }, 3000);
+      });
+  };
+
+  const handleGradeChange = (grade) => {
+    setSelectedGradeId(grade);
     // Reset section value when grade changes
     setValue("section", "");
   };
@@ -98,7 +162,7 @@ const AddNewLog = ({ isOpen, handleClose, gradeList = [] }) => {
     <>
       <Modal show={isOpen} onHide={handleClose} size="lg">
         <Modal.Header closeButton>
-          <Modal.Title>Add new log</Modal.Title>
+          <Modal.Title>{isEditMode ? "Edit log" : "Add new log"}</Modal.Title>
         </Modal.Header>
 
         <Modal.Body>
@@ -108,12 +172,14 @@ const AddNewLog = ({ isOpen, handleClose, gradeList = [] }) => {
                 <FormControl fullWidth>
                   <InputLabel>Grade</InputLabel>
                   <Select
+                    disabled={isEditMode}
+                    defaultValue={selectedLogBookData?.grade_id}
                     {...register("grade", { required: true })}
-                    onChange={handleGradeChange}
+                    onChange={(e) => handleGradeChange(e.target.value)}
                   >
-                    {gradeList?.map((item) => (
+                    {gradeData?.map((item) => (
                       <MenuItem key={item.grade_id} value={item.grade_id}>
-                        {item.grade_id}
+                        {item.grade}
                       </MenuItem>
                     ))}
                   </Select>
@@ -126,11 +192,12 @@ const AddNewLog = ({ isOpen, handleClose, gradeList = [] }) => {
                 <FormControl fullWidth>
                   <InputLabel>Section</InputLabel>
                   <Select
-                    disabled={!selectedGradeId}
+                    disabled={!selectedGradeId || isEditMode}
+                    defaultValue={selectedLogBookData?.section_id}
                     {...register("section", { required: true })}
                   >
-                    {selectedGradeId && gradeList
-                      ? gradeList
+                    {selectedGradeId && gradeData
+                      ? gradeData
                           .find((grade) => grade.grade_id === selectedGradeId)
                           ?.section_list.map((section) => (
                             <MenuItem
@@ -153,7 +220,11 @@ const AddNewLog = ({ isOpen, handleClose, gradeList = [] }) => {
               <Grid item xs={12} md={6}>
                 <FormControl fullWidth>
                   <InputLabel>Subject</InputLabel>
-                  <Select {...register("subject", { required: true })}>
+                  <Select
+                    disabled={isEditMode}
+                    defaultValue={selectedLogBookData?.subject_id}
+                    {...register("subject", { required: true })}
+                  >
                     {subjectsList?.map((item) => (
                       <MenuItem key={item.subject_id} value={item.subject_id}>
                         {item.subject_name}
@@ -168,7 +239,11 @@ const AddNewLog = ({ isOpen, handleClose, gradeList = [] }) => {
               <Grid item xs={12} md={6}>
                 <FormControl fullWidth>
                   <InputLabel>Period</InputLabel>
-                  <Select {...register("period", { required: true })}>
+                  <Select
+                    disabled={isEditMode}
+                    defaultValue={selectedLogBookData?.period}
+                    {...register("period", { required: true })}
+                  >
                     {periodsList?.map((item) => (
                       <MenuItem key={item.value} value={item.value}>
                         {item.label}
@@ -189,6 +264,7 @@ const AddNewLog = ({ isOpen, handleClose, gradeList = [] }) => {
                   label="Content Taught"
                   multiline
                   rows={3}
+                  defaultValue={selectedLogBookData?.content_taught}
                   {...register("contentTaught", { required: true })}
                 />
                 {errors.contentTaught && (
@@ -201,6 +277,7 @@ const AddNewLog = ({ isOpen, handleClose, gradeList = [] }) => {
                   label="Homework"
                   multiline
                   rows={3}
+                  defaultValue={selectedLogBookData?.home_work}
                   {...register("homework", { required: true })}
                 />
                 {errors.homework && (
@@ -213,8 +290,11 @@ const AddNewLog = ({ isOpen, handleClose, gradeList = [] }) => {
               <Button
                 className="me-3"
                 variant="outlined"
+                disabled={isEditMode}
                 type="reset"
-                onClick={() => reset()}
+                onClick={() => {
+                  reset();
+                }}
               >
                 Reset
               </Button>
@@ -229,7 +309,7 @@ const AddNewLog = ({ isOpen, handleClose, gradeList = [] }) => {
         showAlertMessage({
           open: true,
           alertFor: showAlert,
-          message: `The log book creation ${
+          message: `The log book ${isEditMode ? 'updation': 'creation'} ${
             showAlert === "success" ? "succeeded" : "failed"
           }.`,
         })}

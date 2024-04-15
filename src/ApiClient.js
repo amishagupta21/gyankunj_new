@@ -132,6 +132,10 @@ const createLogBook = (data) => {
   return apiInstance.post(`/save_log_book`, data);
 };
 
+const editLogBook = (data) => {
+  return apiInstance.put(`/edit_log_book`, data);
+};
+
 const studentAssignmentList = (student) => {
   return apiInstance.get(`/get_student_assignments_list?student_id=${student}`);
 };
@@ -223,6 +227,11 @@ const getStudentAttendances = (grade, section, date) => {
   return apiInstance.get(`/get_student_daily_attendance?grade_id=${grade}&section_id=${section}&date=${date}`);
 };
 
+const getTeacherLogBook = () => {
+  return apiInstance.get(`/view_teacher_logbook`);
+};
+
+
 export {
   //loginUser,
   evaluteAssignment,
@@ -267,5 +276,7 @@ export {
   getAllChapterName,
   submitEvaluationReport,
   getStudentAttendances,
-  verifyLogBook
+  verifyLogBook,
+  getTeacherLogBook,
+  editLogBook
 };
