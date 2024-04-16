@@ -19,7 +19,6 @@ import {
 } from "@mui/material";
 import { getGradeDetails, verifyLogBook, viewLogBook } from "../../ApiClient";
 import CommonMatTable from "../../SharedComponents/CommonMatTable";
-import AddNewLog from "../Teacher Dashboard/Dashboard/LogBook/AddNewLog";
 
 const PLogBook = () => {
   const [logBookDetails, setLogBookDetails] = useState();
@@ -27,7 +26,6 @@ const PLogBook = () => {
   const [gradeFilter, setGradeFilter] = useState("");
   const [sectionFilter, setSectionFilter] = useState("");
   const [dateFilter, setDateFilter] = useState(dayjs());
-  const [isAddLogModalVisible, setIsAddLogModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [selectedLogBook, setSelectedLogBook] = useState({});
@@ -234,11 +232,6 @@ const PLogBook = () => {
       <ClassTeacher teacher={logBookDetails?.class_teacher_name} />
       <AbsenteesList absentees={logBookDetails?.name_of_absentees} />
       <DefaultersList defaulters={logBookDetails?.name_of_dress_defaulters} />
-      <AddNewLog
-        isOpen={isAddLogModalVisible}
-        handleClose={() => setIsAddLogModalVisible(false)}
-        gradeList={gradeData}
-      />
       <Dialog
         open={open}
         onClose={handleClose}

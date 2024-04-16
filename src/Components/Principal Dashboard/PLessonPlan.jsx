@@ -225,7 +225,7 @@ const CustomDetailPanel = ({ row, setRefreshTable, refreshTable }) => {
           </Grid>
         </Grid>
       </CardContent>
-      {rowData.verified !== false && rowData.verified !== true && (
+      {rowData.id && rowData.verified !== false && rowData.verified !== true && (
         <CardActions>
           <Button
             size="small"
