@@ -27,12 +27,13 @@ import {
 import CommonMatTable from "../../../SharedComponents/CommonMatTable";
 import AddIcon from "@mui/icons-material/Add";
 import CreateLessonPlan from "./CreateLessonPlan";
+import Edit from "@mui/icons-material/Edit";
 
 const TLessonPlan = () => {
   const userInfo = JSON.parse(localStorage.getItem("UserData"));
   const [lessonPlanData, setLessonPlanData] = useState([]);
   const [teachersList, setTeachersList] = useState([]);
-  const [teacherFilter, setTeacherFilter] = useState(userInfo.user_id);
+  const [selectedLessonId, setSelectedLessonId] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const [refreshTable, setRefreshTable] = useState(false);
   const [isAddLessonModalVisible, setIsAddLessonModalVisible] = useState(false);
@@ -50,7 +51,7 @@ const TLessonPlan = () => {
 
   useEffect(() => {
     setIsLoading(true);
-    getLessonPlan(teacherFilter)
+    getLessonPlan(userInfo.user_id)
       .then((res) => {
         setLessonPlanData([]);
         if (
@@ -67,32 +68,20 @@ const TLessonPlan = () => {
         setIsLoading(false);
         console.log(err);
       });
-  }, [teacherFilter, refreshTable]);
-
-  const handleTeacherChange = (event) => {
-    setTeacherFilter(event.target.value);
-  };
+  }, [refreshTable]);
 
   // Custom JSX element for the top toolbar
   const RenderTopToolbarCustomActions = () => {
     return (
       <Box
-        sx={{ display: "flex", alignItems: "center", gap: 2, marginBottom: 2, justifyContent: 'space-between' }}
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          gap: 2,
+          marginBottom: 2,
+          justifyContent: "space-between",
+        }}
       >
-        <FormControl fullWidth sx={{ width: "calc(100%/3)" }}>
-          <InputLabel id="teacher-filter-label">Teacher</InputLabel>
-          <Select
-            labelId="teacher-filter-label"
-            value={teacherFilter || ""}
-            onChange={handleTeacherChange}
-          >
-            {teachersList.map((item) => (
-              <MenuItem key={item.teacher_id} value={item.teacher_id}>
-                {item.teacher_name}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
         <Button
           variant="contained"
           className="py-3"
@@ -111,32 +100,46 @@ const TLessonPlan = () => {
       { accessorKey: "subject_name", header: "Subject" },
       { accessorKey: "topic_name", header: "Lesson" },
       {
+        header: "Status",
         accessorFn: (row) => (
-          <div
-            className={`fw-bold ${
-              row.verified === true
-                ? "text-success"
-                : row.verified === false
-                ? "text-danger"
-                : ""
-            }`}
-          >
-            {row.verified === true
-              ? "Verified"
-              : row.verified === false
-              ? "Sent back"
-              : "Review"}
+          <div className="align-items-baseline d-flex justify-content-between">
+            {row.verified === true ? (
+              <div className="fw-bold text-success">Verified</div>
+            ) : row.verified === false ? (
+              <div className="fw-bold text-danger">Sent back</div>
+            ) : (
+              <div className="fw-bold">Review</div>
+            )}
+            {row.verified !== true && (
+              <Button
+                size="small"
+                color="primary"
+                variant="outlined"
+                className="me-2"
+                onClick={() => {
+                  handleEditLesson(row);
+                }}
+              >
+                <Edit sx={{ fontSize: 16 }} />
+                Edit
+              </Button>
+            )}
           </div>
         ),
-        header: "Status",
       },
     ],
     []
   );
 
+  const handleEditLesson = (row) => {
+    setSelectedLessonId(row.lesson_id);
+    setIsAddLessonModalVisible(true);
+  };
+
   const handleClose = (isSubmit) => {
     setIsAddLessonModalVisible(false);
-    if(isSubmit){
+    setSelectedLessonId(0);
+    if (isSubmit) {
       setTimeout(() => {
         setRefreshTable(!refreshTable);
       }, 500);
@@ -165,7 +168,7 @@ const TLessonPlan = () => {
         <CreateLessonPlan
           isOpen={isAddLessonModalVisible}
           handleClose={handleClose}
-          //selectedLog={selectedLog}
+          selectedLessonId={selectedLessonId}
         />
       )}
     </>
@@ -252,26 +255,28 @@ const CustomDetailPanel = ({ row, setRefreshTable, refreshTable }) => {
           </Grid>
         </Grid>
       </CardContent>
-      {rowData.id && rowData.verified !== false && rowData.verified !== true && (
-        <CardActions>
-          <Button
-            size="small"
-            color="success"
-            variant="contained"
-            onClick={() => approveLessonPlan(true)}
-          >
-            Approve
-          </Button>
-          <Button
-            size="small"
-            color="error"
-            variant="contained"
-            onClick={handleClickOpen}
-          >
-            Reject
-          </Button>
-        </CardActions>
-      )}
+      {rowData.id &&
+        rowData.verified !== false &&
+        rowData.verified !== true && (
+          <CardActions>
+            <Button
+              size="small"
+              color="success"
+              variant="contained"
+              onClick={() => approveLessonPlan(true)}
+            >
+              Approve
+            </Button>
+            <Button
+              size="small"
+              color="error"
+              variant="contained"
+              onClick={handleClickOpen}
+            >
+              Reject
+            </Button>
+          </CardActions>
+        )}
       <Dialog
         open={open}
         onClose={handleClose}

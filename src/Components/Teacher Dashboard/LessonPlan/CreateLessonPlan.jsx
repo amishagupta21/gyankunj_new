@@ -21,13 +21,11 @@ import {
   TextField,
   Grid,
 } from "@mui/material";
-import { Form } from "react-bootstrap";
 import {
-  createLogBook,
-  editLogBook,
   getGradeDetails,
   getLessonPlanMetadata,
   getSubjectsList,
+  lessonPlanAllDetails,
   saveLessonPlan,
 } from "../../../ApiClient";
 import { showAlertMessage } from "../../AlertMessage";
@@ -48,25 +46,53 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
-const CreateLessonPlan = ({ isOpen, handleClose, selectedLog = {} }) => {
+const CreateLessonPlan = ({ isOpen, handleClose, selectedLessonId }) => {
   const {
     register,
     handleSubmit,
     getValues,
     setValue,
-    formState: { errors, isValid },
+    formState: { errors },
     reset,
     trigger,
   } = useForm();
+  const userInfo = JSON.parse(localStorage.getItem("UserData"));
   const [selectedGradeId, setSelectedGradeId] = useState(0);
+  const [lessonDetails, setLessonDetails] = useState({});
   const [gradeData, setGradeData] = useState([]);
   const [subjectsList, setSubjectsList] = useState([]);
   const [chaptersList, setChaptersList] = useState([]);
   const [showAlert, setShowAlert] = useState("");
-  const [isEditMode, setIsEditMode] = useState(false);
-  const userInfo = JSON.parse(localStorage.getItem("UserData"));
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
+
+  useEffect(() => {
+    if (selectedLessonId > 0) {
+      lessonPlanAllDetails(selectedLessonId)
+        .then((res) => {
+          if (
+            res?.data?.lesson_plan_data &&
+            res?.data?.lesson_plan_data.length > 0
+          ) {
+            setLessonDetails(res.data.lesson_plan_data[0]);
+            reset({
+              grade_id: "",
+              section_id: "",
+              subject_id: "",
+              start_date: "",
+              end_date: "",
+              chapter_id: "",
+              topic_name: "",
+              learning_objectives: "",
+              teaching_methods: "",
+              learning_outcome: "",
+              teaching_aid_references: "",
+            });
+          }
+        })
+        .catch((err) => console.log("Lesson err - ", err));
+    }
+  }, [selectedLessonId]);
 
   useEffect(() => {
     getGradesList();
@@ -132,7 +158,6 @@ const CreateLessonPlan = ({ isOpen, handleClose, selectedLog = {} }) => {
 
   const handleStartDateChange = (date) => {
     setStartDate(date);
-    debugger;
     setValue("start_date", dayjs(date).format("YYYY-MM-DD"));
     trigger("start_date");
   };
@@ -174,7 +199,7 @@ const CreateLessonPlan = ({ isOpen, handleClose, selectedLog = {} }) => {
   };
 
   return (
-    <>
+    <React.Fragment>
       <BootstrapDialog
         onClose={handleClose}
         aria-labelledby="customized-dialog-title"
@@ -182,7 +207,7 @@ const CreateLessonPlan = ({ isOpen, handleClose, selectedLog = {} }) => {
         scroll="paper"
       >
         <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
-          Create New Lesson
+          {selectedLessonId > 0 ? "Edit Lesson" : "Create New Lesson"}
         </DialogTitle>
         <IconButton
           aria-label="close"
@@ -292,6 +317,7 @@ const CreateLessonPlan = ({ isOpen, handleClose, selectedLog = {} }) => {
                       format="YYYY-MM-DD"
                       value={startDate}
                       maxDate={endDate}
+                      minDate={dayjs()}
                       onChange={handleStartDateChange}
                     />
                   </LocalizationProvider>
@@ -307,7 +333,7 @@ const CreateLessonPlan = ({ isOpen, handleClose, selectedLog = {} }) => {
                     dateAdapter={AdapterDayjs}
                   >
                     <DatePicker
-                      minDate={startDate}
+                      minDate={startDate ?? dayjs()}
                       format="YYYY-MM-DD"
                       value={endDate}
                       onChange={handleEndDateChange}
@@ -412,7 +438,6 @@ const CreateLessonPlan = ({ isOpen, handleClose, selectedLog = {} }) => {
             <Button
               className="me-3"
               variant="outlined"
-              disabled={isEditMode}
               type="reset"
               onClick={() => {
                 setStartDate(null);
@@ -433,11 +458,11 @@ const CreateLessonPlan = ({ isOpen, handleClose, selectedLog = {} }) => {
         showAlertMessage({
           open: true,
           alertFor: showAlert,
-          message: `The log book ${isEditMode ? "updation" : "creation"} ${
+          message: `The log book creation ${
             showAlert === "success" ? "succeeded" : "failed"
           }.`,
         })}
-    </>
+    </React.Fragment>
   );
 };
 
