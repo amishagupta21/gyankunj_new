@@ -25,6 +25,7 @@ import {
 import CommonMatTable from "../../../../SharedComponents/CommonMatTable";
 
 const LogBookCLassTeacher = () => {
+  const userInfo = JSON.parse(localStorage.getItem("UserData"));
   const [logBookDetails, setLogBookDetails] = useState();
   const [gradeData, setGradeData] = useState([]);
   const [gradeFilter, setGradeFilter] = useState("");
@@ -33,7 +34,6 @@ const LogBookCLassTeacher = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [selectedLogBook, setSelectedLogBook] = useState({});
-  const userId = JSON.parse(localStorage.getItem("UserData"))?.user_id;
   const [refreshTable, setRefreshTable] = useState(false);
 
   useEffect(() => {
@@ -44,6 +44,10 @@ const LogBookCLassTeacher = () => {
         }
       })
       .catch((err) => console.log(err));
+    if (userInfo?.class_teacher_details) {
+      setGradeFilter(userInfo?.class_teacher_details?.grade_id);
+      setSectionFilter(userInfo?.class_teacher_details?.section_id);
+    }
   }, []);
 
   useEffect(() => {
@@ -140,7 +144,7 @@ const LogBookCLassTeacher = () => {
       const dataToVerify = {
         log_book_id: rowData.log_book_id,
         user_type: "primary",
-        user_id: userId,
+        user_id: userInfo?.user_id,
         verification_status: isVerified,
         message: !isVerified ? comment : undefined,
       };
@@ -154,7 +158,7 @@ const LogBookCLassTeacher = () => {
         })
         .catch((err) => console.log("Not Verified"));
     },
-    [userId, refreshTable]
+    [userInfo, refreshTable]
   );
 
   const columns = useMemo(
@@ -190,36 +194,41 @@ const LogBookCLassTeacher = () => {
             ) : row.primary_verification_status === false ? (
               <div className="fw-bold text-danger">Sent back</div>
             ) : (
-              <div>
-                <Button
-                  size="small"
-                  color="success"
-                  variant="contained"
-                  className="me-2"
-                  onClick={() => {
-                    approveLogBook(true, "", row);
-                  }}
-                >
-                  Approve
-                </Button>
-                <Button
-                  size="small"
-                  color="error"
-                  variant="contained"
-                  onClick={() => {
-                    setSelectedLogBook(row);
-                    handleClickOpen();
-                  }}
-                >
-                  Reject
-                </Button>
-              </div>
+              <>
+                {row.grade_id === userInfo?.class_teacher_details?.grade_id &&
+                  row.teacher_id !== userInfo.user_id && (
+                    <div>
+                      <Button
+                        size="small"
+                        color="success"
+                        variant="contained"
+                        className="me-2"
+                        onClick={() => {
+                          approveLogBook(true, "", row);
+                        }}
+                      >
+                        Approve
+                      </Button>
+                      <Button
+                        size="small"
+                        color="error"
+                        variant="contained"
+                        onClick={() => {
+                          setSelectedLogBook(row);
+                          handleClickOpen();
+                        }}
+                      >
+                        Reject
+                      </Button>
+                    </div>
+                  )}
+              </>
             )}
           </>
         ),
       },
     ],
-    [approveLogBook, setSelectedLogBook, handleClickOpen]
+    [approveLogBook, setSelectedLogBook, handleClickOpen, userInfo]
   );
 
   return (
