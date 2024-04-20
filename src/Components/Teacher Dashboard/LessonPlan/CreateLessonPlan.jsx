@@ -8,9 +8,9 @@ import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import Typography from "@mui/material/Typography";
 import { useForm } from "react-hook-form";
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 import {
   Button,
@@ -26,7 +26,9 @@ import {
   createLogBook,
   editLogBook,
   getGradeDetails,
+  getLessonPlanMetadata,
   getSubjectsList,
+  saveLessonPlan,
 } from "../../../ApiClient";
 import { showAlertMessage } from "../../AlertMessage";
 
@@ -52,31 +54,23 @@ const CreateLessonPlan = ({ isOpen, handleClose, selectedLog = {} }) => {
     handleSubmit,
     getValues,
     setValue,
-    formState: { errors },
+    formState: { errors, isValid },
     reset,
+    trigger,
   } = useForm();
   const [selectedGradeId, setSelectedGradeId] = useState(0);
   const [gradeData, setGradeData] = useState([]);
   const [subjectsList, setSubjectsList] = useState([]);
-  const [selectedLogBookData, setSelectedLogBookData] = useState(selectedLog);
+  const [chaptersList, setChaptersList] = useState([]);
   const [showAlert, setShowAlert] = useState("");
   const [isEditMode, setIsEditMode] = useState(false);
-  const userId = JSON.parse(localStorage.getItem("UserData"))?.user_id;
-  const periodsList = [
-    { value: "1", label: 1 },
-    { value: "2", label: 2 },
-    { value: "3", label: 3 },
-    { value: "4", label: 4 },
-    { value: "5", label: 5 },
-    { value: "6", label: 6 },
-    { value: "7", label: 7 },
-    { value: "8", label: 8 },
-  ];
+  const userInfo = JSON.parse(localStorage.getItem("UserData"));
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
 
   useEffect(() => {
     getGradesList();
     getAllSubjectsData();
-    //setValue("start_date", dayjs())
   }, []);
 
   const getGradesList = () => {
@@ -102,27 +96,62 @@ const CreateLessonPlan = ({ isOpen, handleClose, selectedLog = {} }) => {
       });
   };
 
-  const onSubmit = (data) => {
-    if (isEditMode) {
-      editLog(data);
-    } else {
-      addNewLog(data);
+  const lessonPlanMetadata = (grade, section) => {
+    if (grade && section) {
+      setChaptersList([]);
+      getLessonPlanMetadata(grade, section)
+        .then((res) => {
+          if (res.data && res.data.metadata && res.data.metadata.length > 0) {
+            setChaptersList(res.data.metadata);
+          }
+        })
+        .catch((err) => console.log("metadata err - "));
     }
   };
 
-  const addNewLog = (data) => {
-    const payload = {
-      grade_id: data.grade,
-      section_id: parseInt(data.section),
-      period: data.period,
-      subject_id: data.subject,
-      teacher_id: userId,
-      content_taught: data.contentTaught,
-      home_work: data.homework,
-      date: dayjs().format("YYYY-MM-DD"),
-    };
-    console.log(data);
-    createLogBook(payload)
+  const handleGradeChange = (e) => {
+    setSelectedGradeId(e.target.value);
+    setValue("grade_id", e.target.value);
+    setValue("section_id", "");
+    setValue("chapter_id", "");
+    lessonPlanMetadata(e.target.value, getValues().section_id);
+    trigger("grade_id");
+  };
+
+  const handleSectionChange = (e) => {
+    setValue("section_id", e.target.value);
+    setValue("chapter_id", "");
+    lessonPlanMetadata(getValues().grade_id, e.target.value);
+    trigger("section_id");
+  };
+
+  const handleSubjectChange = (e) => {
+    setValue("subject_id", e.target.value);
+    trigger("subject_id");
+  };
+
+  const handleStartDateChange = (date) => {
+    setStartDate(date);
+    debugger;
+    setValue("start_date", dayjs(date).format("YYYY-MM-DD"));
+    trigger("start_date");
+  };
+
+  const handleEndDateChange = (date) => {
+    setEndDate(date);
+    setValue("end_date", dayjs(date).format("YYYY-MM-DD"));
+    trigger("end_date");
+  };
+
+  const handleChapterChange = (e) => {
+    setValue("chapter_id", e.target.value);
+    trigger("chapter_id");
+  };
+
+  const onSubmit = (data) => {
+    let paylaod = { ...data };
+    paylaod["teacher_id"] = userInfo.user_id;
+    saveLessonPlan(paylaod)
       .then((res) => {
         if (res?.data?.status === "success") {
           setShowAlert("success");
@@ -142,44 +171,6 @@ const CreateLessonPlan = ({ isOpen, handleClose, selectedLog = {} }) => {
           setShowAlert("");
         }, 3000);
       });
-  };
-
-  const editLog = (data) => {
-    const payload = {
-      log_book_id: selectedLog.log_book_id,
-      content_taught: data.contentTaught,
-      home_work: data.homework,
-    };
-    console.log(data);
-    editLogBook(payload)
-      .then((res) => {
-        if (res?.data?.status === "success") {
-          setShowAlert("success");
-        } else {
-          setShowAlert("error");
-        }
-        setTimeout(() => {
-          handleClose(true);
-          setTimeout(() => {
-            setShowAlert("");
-          }, 2000);
-        }, 1000);
-      })
-      .catch((err) => {
-        setShowAlert("error");
-        setTimeout(() => {
-          setShowAlert("");
-        }, 3000);
-      });
-  };
-
-  const handleGradeChange = (grade) => {
-    setSelectedGradeId(0);
-    setTimeout(() => {
-      setSelectedGradeId(grade);
-    }, 1000);
-    // Reset section value when grade changes
-    setValue("section_id", 0);
   };
 
   return (
@@ -216,7 +207,8 @@ const CreateLessonPlan = ({ isOpen, handleClose, selectedLog = {} }) => {
                   <InputLabel>Grade</InputLabel>
                   <Select
                     {...register("grade_id", { required: true })}
-                    onChange={(e) => handleGradeChange(e.target.value)}
+                    onChange={handleGradeChange}
+                    value={getValues()?.grade_id ?? ""}
                   >
                     {gradeData?.map((item) => (
                       <MenuItem key={item.grade_id} value={item.grade_id}>
@@ -234,7 +226,8 @@ const CreateLessonPlan = ({ isOpen, handleClose, selectedLog = {} }) => {
                   <InputLabel>Section</InputLabel>
                   <Select
                     {...register("section_id", { required: true })}
-                    onChange={(e) => console.log('section_id',e.target.value)}
+                    onChange={handleSectionChange}
+                    value={getValues()?.section_id ?? ""}
                   >
                     {selectedGradeId && gradeData
                       ? gradeData
@@ -260,7 +253,11 @@ const CreateLessonPlan = ({ isOpen, handleClose, selectedLog = {} }) => {
               <Grid item xs={12} md={6}>
                 <FormControl fullWidth>
                   <InputLabel>Subject</InputLabel>
-                  <Select {...register("subject_id", { required: true })}>
+                  <Select
+                    {...register("subject_id", { required: true })}
+                    onChange={handleSubjectChange}
+                    value={getValues()?.subject_id ?? ""}
+                  >
                     {subjectsList?.map((item) => (
                       <MenuItem key={item.subject_id} value={item.subject_id}>
                         {item.subject_name}
@@ -277,23 +274,25 @@ const CreateLessonPlan = ({ isOpen, handleClose, selectedLog = {} }) => {
                   <TextField
                     fullWidth
                     label="Teacher Name"
-                    {...register("teacher_id", { required: true })}
+                    disabled={true}
+                    defaultValue={userInfo.name}
                   />
                 </FormControl>
-                {errors.teacher_id && (
-                  <p className="text-danger">Teacher is required</p>
-                )}
               </Grid>
             </Grid>
 
             <Grid container spacing={2} className="mb-4">
               <Grid item xs={12} md={6}>
                 <FormControl fullWidth>
-                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <LocalizationProvider
+                    {...register("start_date", { required: true })}
+                    dateAdapter={AdapterDayjs}
+                  >
                     <DatePicker
-                      {...register("start_date", { required: true })}
                       format="YYYY-MM-DD"
-                      // onChange={handleDateChange}
+                      value={startDate}
+                      maxDate={endDate}
+                      onChange={handleStartDateChange}
                     />
                   </LocalizationProvider>
                 </FormControl>
@@ -303,12 +302,15 @@ const CreateLessonPlan = ({ isOpen, handleClose, selectedLog = {} }) => {
               </Grid>
               <Grid item xs={12} md={6}>
                 <FormControl fullWidth>
-                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <LocalizationProvider
+                    {...register("end_date", { required: true })}
+                    dateAdapter={AdapterDayjs}
+                  >
                     <DatePicker
-                      {...register("end_date", { required: true })}
+                      minDate={startDate}
                       format="YYYY-MM-DD"
-                      //value={dateFilter}
-                      // onChange={handleDateChange}
+                      value={endDate}
+                      onChange={handleEndDateChange}
                     />
                   </LocalizationProvider>
                 </FormControl>
@@ -322,10 +324,14 @@ const CreateLessonPlan = ({ isOpen, handleClose, selectedLog = {} }) => {
               <Grid item xs={12} md={6}>
                 <FormControl fullWidth>
                   <InputLabel>Chapter Number</InputLabel>
-                  <Select {...register("chapter_id", { required: true })}>
-                    {periodsList?.map((item) => (
-                      <MenuItem key={item.value} value={item.value}>
-                        {item.label}
+                  <Select
+                    {...register("chapter_id", { required: true })}
+                    onChange={handleChapterChange}
+                    value={getValues()?.chapter_id ?? ""}
+                  >
+                    {chaptersList?.map((item) => (
+                      <MenuItem key={item.chapter_id} value={item.chapter_id}>
+                        {item.chapter_id}
                       </MenuItem>
                     ))}
                   </Select>
@@ -409,6 +415,8 @@ const CreateLessonPlan = ({ isOpen, handleClose, selectedLog = {} }) => {
               disabled={isEditMode}
               type="reset"
               onClick={() => {
+                setStartDate(null);
+                setEndDate(null);
                 reset();
               }}
             >

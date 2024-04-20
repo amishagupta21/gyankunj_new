@@ -13,7 +13,7 @@ import Announcements from "../Components/Principal Dashboard/Announcement/Announ
 import Notifications from "../Components/Principal Dashboard/Notifications/Notifications";
 // import TDashboard from "../Components/Teacher Dashboard/Dashboard/Dashboard";
 import MySubjects from "../Components/Teacher Dashboard/My Subject/MySubjects";
-import TLessonPlan from "../Components/Teacher Dashboard/LessonPlan/LessonPlan";
+//import TLessonPlan from "../Components/Teacher Dashboard/LessonPlan/LessonPlan";
 // import LogBook from "../Components/Teacher Dashboard/LogBook/LogBook";
 import TeacherReport from "../Components/Teacher Dashboard/Teacher Report/TeacherReport";
 import TeacherAttendance from "../Components/Teacher Dashboard/TeacherAttendance/TeacherAttendance";
@@ -35,7 +35,7 @@ import EvaluteAssignmentReport from "../Components/Teacher Dashboard/Assignment/
 import TDashboard from "./Teacher Dashboard/Dashboard/TDashboard";
 import PLessonPlan from "./Principal Dashboard/PLessonPlan";
 import LogBookCLassTeacher from "./Teacher Dashboard/Dashboard/LogBook/LogBookCLassTeacher";
-// import TLessonPlan from "./Teacher Dashboard/LessonPlan/TLessonPlan";
+import TLessonPlan from "./Teacher Dashboard/LessonPlan/TLessonPlan";
 
 // Define routes for different user roles
 const roleRoutes = {
@@ -107,12 +107,16 @@ export default function RoutesContainer({ userData }) {
               path="/teacherDashboard/subjects"
               element={<ProtectedWrapper Component={MySubjects} />}
             />
-            {classTeacherDetails && (
+            {/* {classTeacherDetails && (
               <Route
                 path="/teacherDashboard/logBook"
                 element={<ProtectedWrapper Component={LogBookCLassTeacher} />}
               />
-            )}
+            )} */}
+             <Route
+                path="/teacherDashboard/logBook"
+                element={<ProtectedWrapper Component={LogBookCLassTeacher} />}
+              />
             <Route
               path="/teacherDashboard/lessonPlan"
               element={<ProtectedWrapper Component={TLessonPlan} />}
