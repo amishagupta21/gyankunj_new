@@ -29,9 +29,10 @@ import AddIcon from "@mui/icons-material/Add";
 import CreateLessonPlan from "./CreateLessonPlan";
 
 const TLessonPlan = () => {
+  const userInfo = JSON.parse(localStorage.getItem("UserData"));
   const [lessonPlanData, setLessonPlanData] = useState([]);
   const [teachersList, setTeachersList] = useState([]);
-  const [teacherFilter, setTeacherFilter] = useState("");
+  const [teacherFilter, setTeacherFilter] = useState(userInfo.user_id);
   const [isLoading, setIsLoading] = useState(false);
   const [refreshTable, setRefreshTable] = useState(false);
   const [isAddLessonModalVisible, setIsAddLessonModalVisible] = useState(false);
