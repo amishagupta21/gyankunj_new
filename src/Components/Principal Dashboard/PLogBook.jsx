@@ -186,30 +186,32 @@ const PLogBook = () => {
             ) : row.secondary_verification_status === false ? (
               <div className="fw-bold text-danger">Sent back</div>
             ) : (
-              <div>
-                <Button
-                  size="small"
-                  color="success"
-                  variant="contained"
-                  className="me-2"
-                  onClick={() => {
-                    approveLogBook(true, "", row);
-                  }}
-                >
-                  Approve
-                </Button>
-                <Button
-                  size="small"
-                  color="error"
-                  variant="contained"
-                  onClick={() => {
-                    setSelectedLogBook(row);
-                    handleClickOpen();
-                  }}
-                >
-                  Reject
-                </Button>
-              </div>
+              row.primary_verification_status ? (
+                <div>
+                  <Button
+                    size="small"
+                    color="success"
+                    variant="contained" 
+                    className="me-2"
+                    onClick={() => {
+                      approveLogBook(true, "", row);
+                    }}
+                  >
+                    Approve
+                  </Button>
+                  <Button
+                    size="small"
+                    color="error"
+                    variant="contained"
+                    onClick={() => {
+                      setSelectedLogBook(row);
+                      handleClickOpen();
+                    }}
+                  >
+                    Reject
+                  </Button>
+                </div>
+              ) : <div className="fw-bold text-danger">Pending from class teacher</div>
             )}
           </>
         ),

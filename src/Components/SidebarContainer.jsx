@@ -40,13 +40,14 @@ const SidebarContainer = ({
   const colors = tokens(theme.palette.mode);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const userRole = userData?.role;
+  const classTeacherDetails = userData?.class_teacher_details;
   const userRoutes = routesConfig[userRole] || [];
 
   useEffect(() => {
     if (setCollapsed) {
       setCollapsed(isCollapsed);
     }
-  }, [isCollapsed]);
+  }, [isCollapsed,setCollapsed]);
 
   return (
     <Box
@@ -82,15 +83,20 @@ const SidebarContainer = ({
           )}
 
           <Box>
-            {userRoutes.map((item) => (
-              <Item
-                key={item.code}
-                title={item.title}
-                to={item.route}
-                icon={item.icon}
-                onMenuItemClick={onMenuItemClick}
-              />
-            ))}
+            {userRoutes.map(
+              (item) =>
+                // Check if the item route is "teacherDashboard/logBook" and classTeacherDetails exist
+                (item.code !== "logBook" ||
+                (item.code === "logBook" && classTeacherDetails)) && (
+                  <Item
+                    key={item.code}
+                    title={item.title}
+                    to={item.route}
+                    icon={item.icon}
+                    onMenuItemClick={onMenuItemClick}
+                  />
+                )
+            )}
           </Box>
         </Menu>
       </ProSidebar>

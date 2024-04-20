@@ -27,14 +27,15 @@ import StudentReportSection from "../Components/Student Dashboard/Report/Reports
 import ResourcesForStudents from "../Components/Student Dashboard/Resources/StudentResources";
 import NoticeForStudents from "../Components/Student Dashboard/NoticeForStudents/NoticeForStudents";
 import NotificationsForStudent from "../Components/Student Dashboard/Notification/StudentNotification";
-import CreateAssignment from '../Components/Teacher Dashboard/Assignment/CreateAssignment';
-import Addquestions from '../Components/Teacher Dashboard/Assignment/Addquestions';
-import SubmissionsPage from '../Components/Teacher Dashboard/Assignment/SubmissionsComponent';
-import Viewreport from '../Components/Teacher Dashboard/Assignment/Viewreport';
-import EvaluteAssignmentReport from '../Components/Teacher Dashboard/Assignment/EvaluteAssignmentReport';
+import CreateAssignment from "../Components/Teacher Dashboard/Assignment/CreateAssignment";
+import Addquestions from "../Components/Teacher Dashboard/Assignment/Addquestions";
+import SubmissionsPage from "../Components/Teacher Dashboard/Assignment/SubmissionsComponent";
+import Viewreport from "../Components/Teacher Dashboard/Assignment/Viewreport";
+import EvaluteAssignmentReport from "../Components/Teacher Dashboard/Assignment/EvaluteAssignmentReport";
 import TDashboard from "./Teacher Dashboard/Dashboard/TDashboard";
 import PLessonPlan from "./Principal Dashboard/PLessonPlan";
 import LogBookCLassTeacher from "./Teacher Dashboard/Dashboard/LogBook/LogBookCLassTeacher";
+// import TLessonPlan from "./Teacher Dashboard/LessonPlan/TLessonPlan";
 
 // Define routes for different user roles
 const roleRoutes = {
@@ -45,6 +46,7 @@ const roleRoutes = {
 };
 
 export default function RoutesContainer({ userData }) {
+  const classTeacherDetails = userData?.class_teacher_details;
   // Function to check if the user has the required role for accessing a route
   const hasPermission = (allowedRoles) => {
     return allowedRoles.includes(userData?.role);
@@ -105,10 +107,12 @@ export default function RoutesContainer({ userData }) {
               path="/teacherDashboard/subjects"
               element={<ProtectedWrapper Component={MySubjects} />}
             />
-            <Route
-              path="/teacherDashboard/logBook"
-              element={<ProtectedWrapper Component={LogBookCLassTeacher} />}
-            />
+            {classTeacherDetails && (
+              <Route
+                path="/teacherDashboard/logBook"
+                element={<ProtectedWrapper Component={LogBookCLassTeacher} />}
+              />
+            )}
             <Route
               path="/teacherDashboard/lessonPlan"
               element={<ProtectedWrapper Component={TLessonPlan} />}

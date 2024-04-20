@@ -18,19 +18,23 @@ import {
   DialogActions,
 } from "@mui/material";
 import {
+  getGradeDetails,
   getLessonPlan,
   getTeachersData,
   lessonPlanAllDetails,
   verifyLessonPlan,
-} from "../../ApiClient";
-import CommonMatTable from "../../SharedComponents/CommonMatTable";
+} from "../../../ApiClient";
+import CommonMatTable from "../../../SharedComponents/CommonMatTable";
+import AddIcon from "@mui/icons-material/Add";
+import CreateLessonPlan from "./CreateLessonPlan";
 
-const PLessonPlan = () => {
+const TLessonPlan = () => {
   const [lessonPlanData, setLessonPlanData] = useState([]);
   const [teachersList, setTeachersList] = useState([]);
   const [teacherFilter, setTeacherFilter] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [refreshTable, setRefreshTable] = useState(false);
+  const [isAddLessonModalVisible, setIsAddLessonModalVisible] = useState(false);
 
   useEffect(() => {
     getTeachersData()
@@ -72,7 +76,7 @@ const PLessonPlan = () => {
   const RenderTopToolbarCustomActions = () => {
     return (
       <Box
-        sx={{ display: "flex", alignItems: "center", gap: 2, marginBottom: 2 }}
+        sx={{ display: "flex", alignItems: "center", gap: 2, marginBottom: 2, justifyContent: 'space-between' }}
       >
         <FormControl fullWidth sx={{ width: "calc(100%/3)" }}>
           <InputLabel id="teacher-filter-label">Teacher</InputLabel>
@@ -88,6 +92,13 @@ const PLessonPlan = () => {
             ))}
           </Select>
         </FormControl>
+        <Button
+          variant="contained"
+          className="py-3"
+          onClick={() => setIsAddLessonModalVisible(true)}
+        >
+          <AddIcon />
+        </Button>
       </Box>
     );
   };
@@ -122,6 +133,15 @@ const PLessonPlan = () => {
     []
   );
 
+  const handleClose = (isSubmit) => {
+    setIsAddLessonModalVisible(false);
+    if(isSubmit){
+      setTimeout(() => {
+        setRefreshTable(!refreshTable);
+      }, 500);
+    }
+  };
+
   return (
     <>
       <RenderTopToolbarCustomActions />
@@ -140,12 +160,18 @@ const PLessonPlan = () => {
           />
         )}
       />
-      {/* <TLessonPlan /> */}
+      {isAddLessonModalVisible && (
+        <CreateLessonPlan
+          isOpen={isAddLessonModalVisible}
+          handleClose={handleClose}
+          //selectedLog={selectedLog}
+        />
+      )}
     </>
   );
 };
 
-export default PLessonPlan;
+export default TLessonPlan;
 
 const CustomDetailPanel = ({ row, setRefreshTable, refreshTable }) => {
   const [rowData, setRowData] = useState({});
@@ -225,7 +251,7 @@ const CustomDetailPanel = ({ row, setRefreshTable, refreshTable }) => {
           </Grid>
         </Grid>
       </CardContent>
-      {rowData.verified !== false && rowData.verified !== true && (
+      {rowData.id && rowData.verified !== false && rowData.verified !== true && (
         <CardActions>
           <Button
             size="small"
