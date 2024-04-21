@@ -46,7 +46,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
-const CreateLessonPlan = ({ isOpen, handleClose, selectedLessonId }) => {
+const CreateLessonPlan = ({ isOpen, handleClose, selectedLessonId = 0 }) => {
   const {
     register,
     handleSubmit,
@@ -55,6 +55,7 @@ const CreateLessonPlan = ({ isOpen, handleClose, selectedLessonId }) => {
     formState: { errors },
     reset,
     trigger,
+    setFocus,
   } = useForm();
   const userInfo = JSON.parse(localStorage.getItem("UserData"));
   const [selectedGradeId, setSelectedGradeId] = useState(0);
@@ -75,24 +76,29 @@ const CreateLessonPlan = ({ isOpen, handleClose, selectedLessonId }) => {
             res?.data?.lesson_plan_data.length > 0
           ) {
             setLessonDetails(res.data.lesson_plan_data[0]);
-            reset({
-              grade_id: "",
-              section_id: "",
-              subject_id: "",
-              start_date: "",
-              end_date: "",
-              chapter_id: "",
-              topic_name: "",
-              learning_objectives: "",
-              teaching_methods: "",
-              learning_outcome: "",
-              teaching_aid_references: "",
-            });
+            setValue("grade_id", 1);
+            setValue("section_id", "1");
+            setValue("subject_id", 4);
+            setValue("start_date", "2024-04-23");
+            setValue("end_date", "2024-04-24");
+            setValue("chapter_id", 1);
+            setValue("topic_name", "Topic test 2");
+            setValue("learning_objectives", "Learning Objective 2");
+            setValue("teaching_methods", "Teaching Methods 2");
+            setValue("learning_outcome", "Learning Outcome 2");
+            setValue("teaching_aid_references", "Teaching Aids 2");
+            // setValue("teacher_id", "teacher");
+            setSelectedGradeId(1);
+            lessonPlanMetadata(1, "1");
+            setStartDate(dayjs("2024-04-23"));
+            setEndDate(dayjs("2024-04-24"));
+
+            setFocus();
           }
         })
         .catch((err) => console.log("Lesson err - ", err));
     }
-  }, [selectedLessonId]);
+  }, []);
 
   useEffect(() => {
     getGradesList();
@@ -176,6 +182,9 @@ const CreateLessonPlan = ({ isOpen, handleClose, selectedLessonId }) => {
   const onSubmit = (data) => {
     let paylaod = { ...data };
     paylaod["teacher_id"] = userInfo.user_id;
+    if (selectedLessonId > 0) {
+      paylaod["lesson_id"] = selectedLessonId;
+    }
     saveLessonPlan(paylaod)
       .then((res) => {
         if (res?.data?.status === "success") {
@@ -458,9 +467,9 @@ const CreateLessonPlan = ({ isOpen, handleClose, selectedLessonId }) => {
         showAlertMessage({
           open: true,
           alertFor: showAlert,
-          message: `The log book creation ${
-            showAlert === "success" ? "succeeded" : "failed"
-          }.`,
+          message: `The lesson ${
+            selectedLessonId > 0 ? "updation" : "creation"
+          } ${showAlert === "success" ? "succeeded" : "failed"}.`,
         })}
     </React.Fragment>
   );

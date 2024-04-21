@@ -77,7 +77,13 @@ const getGradeDetails = () => {
 };
 
 const saveLessonPlan = (data) => {
-  return apiInstance.post(`/save_lesson_plan`, data);
+  if(data.lesson_id > 0){
+    return apiInstance.put(`/edit_lesson_plan`, data);
+  }
+  else{
+    return apiInstance.post(`/save_lesson_plan`, data);
+  }
+
 };
 
 const viewAttendanceReport = (grade, section, year, userType) => {
