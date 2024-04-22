@@ -7,7 +7,7 @@ import DialogActions from "@mui/material/DialogActions";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import Typography from "@mui/material/Typography";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -21,13 +21,11 @@ import {
   TextField,
   Grid,
 } from "@mui/material";
-import { Form } from "react-bootstrap";
 import {
-  createLogBook,
-  editLogBook,
   getGradeDetails,
   getLessonPlanMetadata,
   getSubjectsList,
+  lessonPlanAllDetails,
   saveLessonPlan,
 } from "../../../ApiClient";
 import { showAlertMessage } from "../../AlertMessage";
@@ -45,28 +43,69 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     maxWidth: "90%", // Adjust the value as needed
     width: "75%", // Adjust the value as needed
     height: "100%",
+    overflow: "hidden",
   },
 }));
 
-const CreateLessonPlan = ({ isOpen, handleClose, selectedLog = {} }) => {
+const CreateLessonPlan = ({ isOpen, handleClose, selectedLessonId = 0 }) => {
   const {
     register,
     handleSubmit,
     getValues,
     setValue,
-    formState: { errors, isValid },
+    formState: { errors, isValid, isDirty },
     reset,
     trigger,
+    setFocus,
+    control,
   } = useForm();
+  const userInfo = JSON.parse(localStorage.getItem("UserData"));
   const [selectedGradeId, setSelectedGradeId] = useState(0);
+  const [lessonDetails, setLessonDetails] = useState({});
   const [gradeData, setGradeData] = useState([]);
   const [subjectsList, setSubjectsList] = useState([]);
   const [chaptersList, setChaptersList] = useState([]);
   const [showAlert, setShowAlert] = useState("");
-  const [isEditMode, setIsEditMode] = useState(false);
-  const userInfo = JSON.parse(localStorage.getItem("UserData"));
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
+
+  useEffect(() => {
+    if (selectedLessonId > 0) {
+      lessonPlanAllDetails(selectedLessonId)
+        .then((res) => {
+          if (
+            res?.data?.lesson_plan_data &&
+            res?.data?.lesson_plan_data.length > 0
+          ) {
+            setLessonDetails(res.data.lesson_plan_data[0]);
+          }
+        })
+        .catch((err) => console.log("Lesson err - ", err));
+    }
+  }, [selectedLessonId]);
+
+  useEffect(() => {
+    if (lessonDetails && Object.keys(lessonDetails).length > 0) {
+      setValue("grade_id", lessonDetails.grade_id);
+      setValue("section_id", lessonDetails.section_id);
+      setValue("subject_id", lessonDetails.subject_id);
+      setValue("start_date", dayjs(lessonDetails.start_date));
+      setValue("end_date", dayjs(lessonDetails.end_date));
+      setValue("chapter_id", lessonDetails.chapter_id);
+      setValue("topic_name", lessonDetails.topic_name);
+      setValue("learning_objectives", lessonDetails.learning_objectives);
+      setValue("teaching_methods", lessonDetails.teaching_methods);
+      setValue("learning_outcome", lessonDetails.learning_outcome);
+      setValue(
+        "teaching_aid_references",
+        lessonDetails.teaching_aid_references
+      );
+      setSelectedGradeId(lessonDetails.grade_id);
+      lessonPlanMetadata(lessonDetails.grade_id, lessonDetails.section_id);
+      setStartDate(dayjs(lessonDetails.start_date));
+      setEndDate(dayjs(lessonDetails.end_date));
+    }
+  }, [lessonDetails, setValue, setFocus]);
 
   useEffect(() => {
     getGradesList();
@@ -115,14 +154,12 @@ const CreateLessonPlan = ({ isOpen, handleClose, selectedLog = {} }) => {
     setValue("section_id", "");
     setValue("chapter_id", "");
     lessonPlanMetadata(e.target.value, getValues().section_id);
-    trigger("grade_id");
   };
 
   const handleSectionChange = (e) => {
     setValue("section_id", e.target.value);
     setValue("chapter_id", "");
     lessonPlanMetadata(getValues().grade_id, e.target.value);
-    trigger("section_id");
   };
 
   const handleSubjectChange = (e) => {
@@ -132,7 +169,6 @@ const CreateLessonPlan = ({ isOpen, handleClose, selectedLog = {} }) => {
 
   const handleStartDateChange = (date) => {
     setStartDate(date);
-    debugger;
     setValue("start_date", dayjs(date).format("YYYY-MM-DD"));
     trigger("start_date");
   };
@@ -151,6 +187,9 @@ const CreateLessonPlan = ({ isOpen, handleClose, selectedLog = {} }) => {
   const onSubmit = (data) => {
     let paylaod = { ...data };
     paylaod["teacher_id"] = userInfo.user_id;
+    if (selectedLessonId > 0) {
+      paylaod["lesson_id"] = selectedLessonId;
+    }
     saveLessonPlan(paylaod)
       .then((res) => {
         if (res?.data?.status === "success") {
@@ -174,19 +213,19 @@ const CreateLessonPlan = ({ isOpen, handleClose, selectedLog = {} }) => {
   };
 
   return (
-    <>
+    <React.Fragment>
       <BootstrapDialog
-        onClose={handleClose}
+        onClose={() => handleClose(false)}
         aria-labelledby="customized-dialog-title"
         open={isOpen}
         scroll="paper"
       >
         <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
-          Create New Lesson
+          {selectedLessonId > 0 ? "Edit Lesson" : "Create New Lesson"}
         </DialogTitle>
         <IconButton
           aria-label="close"
-          onClick={handleClose}
+          onClick={() => handleClose(false)}
           sx={{
             position: "absolute",
             right: 8,
@@ -204,70 +243,108 @@ const CreateLessonPlan = ({ isOpen, handleClose, selectedLog = {} }) => {
             <Grid container spacing={2} className="mb-4">
               <Grid item xs={12} md={6}>
                 <FormControl fullWidth>
-                  <InputLabel>Grade</InputLabel>
-                  <Select
-                    {...register("grade_id", { required: true })}
-                    onChange={handleGradeChange}
-                    value={getValues()?.grade_id ?? ""}
-                  >
-                    {gradeData?.map((item) => (
-                      <MenuItem key={item.grade_id} value={item.grade_id}>
-                        {item.grade}
-                      </MenuItem>
-                    ))}
-                  </Select>
+                  <Controller
+                    name="grade_id"
+                    control={control}
+                    rules={{ required: true }}
+                    render={({
+                      field: { onChange, value },
+                      fieldState: { error },
+                    }) => (
+                      <>
+                        <InputLabel error={!!error}>Grade</InputLabel>
+                        <Select
+                          onChange={(e) => {
+                            onChange(e.target.value);
+                            handleGradeChange(e);
+                          }}
+                          value={value || ""}
+                          error={!!error}
+                        >
+                          {gradeData?.map((item) => (
+                            <MenuItem key={item.grade_id} value={item.grade_id}>
+                              {item.grade}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </>
+                    )}
+                  />
                 </FormControl>
-                {errors.grade_id && (
-                  <p className="text-danger">Grade is required</p>
-                )}
               </Grid>
               <Grid item xs={12} md={6}>
                 <FormControl fullWidth>
-                  <InputLabel>Section</InputLabel>
-                  <Select
-                    {...register("section_id", { required: true })}
-                    onChange={handleSectionChange}
-                    value={getValues()?.section_id ?? ""}
-                  >
-                    {selectedGradeId && gradeData
-                      ? gradeData
-                          .find((grade) => grade.grade_id === selectedGradeId)
-                          ?.section_list.map((section) => (
-                            <MenuItem
-                              key={section.section_id}
-                              value={section.section_id}
-                            >
-                              {section.section_name}
-                            </MenuItem>
-                          ))
-                      : null}
-                  </Select>
+                  <Controller
+                    name="section_id"
+                    control={control}
+                    rules={{ required: true }}
+                    render={({
+                      field: { onChange, value },
+                      fieldState: { error },
+                    }) => (
+                      <>
+                        <InputLabel error={!!error}>Section</InputLabel>
+                        <Select
+                          onChange={(e) => {
+                            onChange(e.target.value);
+                            handleSectionChange(e);
+                          }}
+                          value={value || ""}
+                          error={!!error}
+                        >
+                          {selectedGradeId && gradeData
+                            ? gradeData
+                                .find(
+                                  (grade) => grade.grade_id === selectedGradeId
+                                )
+                                ?.section_list.map((section) => (
+                                  <MenuItem
+                                    key={section.section_id}
+                                    value={section.section_id}
+                                  >
+                                    {section.section_name}
+                                  </MenuItem>
+                                ))
+                            : null}
+                        </Select>
+                      </>
+                    )}
+                  />
                 </FormControl>
-                {errors.section_id && (
-                  <p className="text-danger">Section is required</p>
-                )}
               </Grid>
             </Grid>
 
             <Grid container spacing={2} className="mb-4">
               <Grid item xs={12} md={6}>
                 <FormControl fullWidth>
-                  <InputLabel>Subject</InputLabel>
-                  <Select
-                    {...register("subject_id", { required: true })}
-                    onChange={handleSubjectChange}
-                    value={getValues()?.subject_id ?? ""}
-                  >
-                    {subjectsList?.map((item) => (
-                      <MenuItem key={item.subject_id} value={item.subject_id}>
-                        {item.subject_name}
-                      </MenuItem>
-                    ))}
-                  </Select>
+                  <Controller
+                    name="subject_id"
+                    control={control}
+                    rules={{ required: true }}
+                    render={({
+                      field: { onChange, value },
+                      fieldState: { error },
+                    }) => (
+                      <>
+                        <InputLabel error={!!error}>Subject</InputLabel>
+                        <Select
+                          onChange={onChange}
+                          value={value || ""}
+                          error={!!error}
+                        >
+                          {subjectsList?.map((item) => (
+                            <MenuItem
+                              key={item.subject_id}
+                              value={item.subject_id}
+                            >
+                              {item.subject_name}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </>
+                    )}
+                  />
                 </FormControl>
-                {errors.subject_id && (
-                  <p className="text-danger">Subject is required</p>
-                )}
               </Grid>
               <Grid item xs={12} md={6}>
                 <FormControl fullWidth>
@@ -284,127 +361,222 @@ const CreateLessonPlan = ({ isOpen, handleClose, selectedLog = {} }) => {
             <Grid container spacing={2} className="mb-4">
               <Grid item xs={12} md={6}>
                 <FormControl fullWidth>
-                  <LocalizationProvider
-                    {...register("start_date", { required: true })}
-                    dateAdapter={AdapterDayjs}
-                  >
-                    <DatePicker
-                      format="YYYY-MM-DD"
-                      value={startDate}
-                      maxDate={endDate}
-                      onChange={handleStartDateChange}
-                    />
-                  </LocalizationProvider>
-                </FormControl>
-                {errors.start_date && (
-                  <p className="text-danger">Start Date is required</p>
-                )}
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <FormControl fullWidth>
-                  <LocalizationProvider
-                    {...register("end_date", { required: true })}
-                    dateAdapter={AdapterDayjs}
-                  >
-                    <DatePicker
-                      minDate={startDate}
-                      format="YYYY-MM-DD"
-                      value={endDate}
-                      onChange={handleEndDateChange}
-                    />
-                  </LocalizationProvider>
-                </FormControl>
-                {errors.end_date && (
-                  <p className="text-danger">End Date is required</p>
-                )}
-              </Grid>
-            </Grid>
-
-            <Grid container spacing={2} className="mb-4">
-              <Grid item xs={12} md={6}>
-                <FormControl fullWidth>
-                  <InputLabel>Chapter Number</InputLabel>
-                  <Select
-                    {...register("chapter_id", { required: true })}
-                    onChange={handleChapterChange}
-                    value={getValues()?.chapter_id ?? ""}
-                  >
-                    {chaptersList?.map((item) => (
-                      <MenuItem key={item.chapter_id} value={item.chapter_id}>
-                        {item.chapter_id}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-                {errors.chapter_id && (
-                  <p className="text-danger">Chapter is required</p>
-                )}
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <FormControl fullWidth>
-                  <TextField
-                    fullWidth
-                    label="Topic Name"
-                    {...register("topic_name", { required: true })}
+                  <Controller
+                    name="start_date"
+                    control={control}
+                    rules={{ required: true }}
+                    render={({
+                      field: { onChange, value },
+                      fieldState: { error },
+                    }) => (
+                      <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <DatePicker
+                          maxDate={getValues()?.endDate}
+                          minDate={selectedLessonId > 0 ? null : dayjs()}
+                          format="YYYY-MM-DD"
+                          label="Start Date"
+                          value={value || null}
+                          onChange={onChange}
+                          slotProps={{
+                            textField: {
+                              variant: 'outlined',
+                              error: !!error,
+                              helperText: error?.message,
+                            },
+                          }}
+                        />
+                      </LocalizationProvider>
+                    )}
                   />
                 </FormControl>
-                {errors.topic_name && (
-                  <p className="text-danger">Topic is required</p>
-                )}
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <FormControl fullWidth>
+                  <Controller
+                    name="end_date"
+                    control={control}
+                    rules={{ required: true }}
+                    render={({
+                      field: { onChange, value },
+                      fieldState: { error },
+                    }) => (
+                      <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <DatePicker
+                          minDate={getValues()?.startDate || dayjs()} 
+                          format="YYYY-MM-DD"
+                          label="End Date"
+                          value={value || null}
+                          onChange={onChange}
+                          slotProps={{
+                            textField: {
+                              variant: 'outlined',
+                              error: !!error,
+                              helperText: error?.message,
+                            },
+                          }}
+                        />
+                      </LocalizationProvider>
+                    )}
+                  />
+                </FormControl>
               </Grid>
             </Grid>
 
             <Grid container spacing={2} className="mb-4">
               <Grid item xs={12} md={6}>
-                <TextField
-                  fullWidth
-                  label="Learning Objective"
-                  multiline
-                  rows={3}
-                  {...register("learning_objectives", { required: true })}
-                />
-                {errors.learning_objectives && (
-                  <p className="text-danger">Learning Objective is required</p>
-                )}
+                <FormControl fullWidth>
+                  <Controller
+                    name="chapter_id"
+                    control={control}
+                    rules={{ required: true }}
+                    render={({
+                      field: { onChange, value },
+                      fieldState: { error },
+                    }) => (
+                      <>
+                        <InputLabel error={!!error}>Chapter Number</InputLabel>
+                        <Select
+                          onChange={onChange}
+                          value={value || ""}
+                          error={!!error}
+                        >
+                          {chaptersList?.map((item) => (
+                            <MenuItem
+                              key={item.chapter_id}
+                              value={item.chapter_id}
+                            >
+                              {item.chapter_id}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </>
+                    )}
+                  />
+                </FormControl>
               </Grid>
               <Grid item xs={12} md={6}>
-                <TextField
-                  fullWidth
-                  label="Teaching Methods"
-                  multiline
-                  rows={3}
-                  {...register("teaching_methods", { required: true })}
-                />
-                {errors.teaching_methods && (
-                  <p className="text-danger">Teaching Methods is required</p>
-                )}
+                <FormControl fullWidth>
+                  <Controller
+                    name="topic_name"
+                    control={control}
+                    rules={{ required: true }}
+                    render={({
+                      field: { onChange, value },
+                      fieldState: { error },
+                    }) => (
+                      <TextField
+                        error={!!error}
+                        onChange={onChange}
+                        value={value || ""}
+                        fullWidth
+                        label="Topic Name"
+                        variant="outlined"
+                      />
+                    )}
+                  />
+                </FormControl>
               </Grid>
             </Grid>
 
             <Grid container spacing={2} className="mb-4">
               <Grid item xs={12} md={6}>
-                <TextField
-                  fullWidth
-                  label="Learning Outcome"
-                  multiline
-                  rows={3}
-                  {...register("learning_outcome", { required: true })}
-                />
-                {errors.learning_outcome && (
-                  <p className="text-danger">Learning Outcome is required</p>
-                )}
+                <FormControl fullWidth>
+                  <Controller
+                    name="learning_objectives"
+                    control={control}
+                    rules={{ required: true }}
+                    render={({
+                      field: { onChange, value },
+                      fieldState: { error },
+                    }) => (
+                      <TextField
+                        error={!!error}
+                        onChange={onChange}
+                        value={value || ""}
+                        fullWidth
+                        label="Learning Objective"
+                        variant="outlined"
+                        multiline
+                        rows={3}
+                      />
+                    )}
+                  />
+                </FormControl>
               </Grid>
               <Grid item xs={12} md={6}>
-                <TextField
-                  fullWidth
-                  label="Teaching Aids"
-                  multiline
-                  rows={3}
-                  {...register("teaching_aid_references", { required: true })}
-                />
-                {errors.teaching_aid_references && (
-                  <p className="text-danger">Teaching Aids is required</p>
-                )}
+                <FormControl fullWidth>
+                  <Controller
+                    name="teaching_methods"
+                    control={control}
+                    rules={{ required: true }}
+                    render={({
+                      field: { onChange, value },
+                      fieldState: { error },
+                    }) => (
+                      <TextField
+                        error={!!error}
+                        onChange={onChange}
+                        value={value || ""}
+                        fullWidth
+                        label="Teaching Methods"
+                        variant="outlined"
+                        multiline
+                        rows={3}
+                      />
+                    )}
+                  />
+                </FormControl>
+              </Grid>
+            </Grid>
+
+            <Grid container spacing={2} className="mb-4">
+              <Grid item xs={12} md={6}>
+                <FormControl fullWidth>
+                  <Controller
+                    name="learning_outcome"
+                    control={control}
+                    rules={{ required: true }}
+                    render={({
+                      field: { onChange, value },
+                      fieldState: { error },
+                    }) => (
+                      <TextField
+                        error={!!error}
+                        onChange={onChange}
+                        value={value || ""}
+                        fullWidth
+                        label="Learning Outcome"
+                        variant="outlined"
+                        multiline
+                        rows={3}
+                      />
+                    )}
+                  />
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <FormControl fullWidth>
+                  <Controller
+                    name="teaching_aid_references"
+                    control={control}
+                    rules={{ required: true }}
+                    render={({
+                      field: { onChange, value },
+                      fieldState: { error },
+                    }) => (
+                      <TextField
+                        error={!!error}
+                        onChange={onChange}
+                        value={value || ""}
+                        fullWidth
+                        label="Teaching Aids"
+                        variant="outlined"
+                        multiline
+                        rows={3}
+                      />
+                    )}
+                  />
+                </FormControl>
               </Grid>
             </Grid>
           </DialogContent>
@@ -412,7 +584,6 @@ const CreateLessonPlan = ({ isOpen, handleClose, selectedLog = {} }) => {
             <Button
               className="me-3"
               variant="outlined"
-              disabled={isEditMode}
               type="reset"
               onClick={() => {
                 setStartDate(null);
@@ -433,11 +604,11 @@ const CreateLessonPlan = ({ isOpen, handleClose, selectedLog = {} }) => {
         showAlertMessage({
           open: true,
           alertFor: showAlert,
-          message: `The log book ${isEditMode ? "updation" : "creation"} ${
-            showAlert === "success" ? "succeeded" : "failed"
-          }.`,
+          message: `The lesson ${
+            selectedLessonId > 0 ? "updation" : "creation"
+          } ${showAlert === "success" ? "succeeded" : "failed"}.`,
         })}
-    </>
+    </React.Fragment>
   );
 };
 

@@ -234,7 +234,7 @@ const homesection = () => {
 
         <p>© 2023 Gyankoonj. </p>
       </div>
-      <style jsx>
+      <style jsx="true">
         {`
                       
             .dashboardContentMain section{
