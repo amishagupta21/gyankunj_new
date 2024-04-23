@@ -6,7 +6,6 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
-import Typography from "@mui/material/Typography";
 import { Controller, useForm } from "react-hook-form";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -48,17 +47,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 }));
 
 const CreateLessonPlan = ({ isOpen, handleClose, selectedLessonId = 0 }) => {
-  const {
-    register,
-    handleSubmit,
-    getValues,
-    setValue,
-    formState: { errors, isValid, isDirty },
-    reset,
-    trigger,
-    setFocus,
-    control,
-  } = useForm();
+  const { handleSubmit, getValues, setValue, reset, control } = useForm();
   const userInfo = JSON.parse(localStorage.getItem("UserData"));
   const [selectedGradeId, setSelectedGradeId] = useState(0);
   const [lessonDetails, setLessonDetails] = useState({});
@@ -67,7 +56,6 @@ const CreateLessonPlan = ({ isOpen, handleClose, selectedLessonId = 0 }) => {
   const [chaptersList, setChaptersList] = useState([]);
   const [showAlert, setShowAlert] = useState("");
   const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
 
   useEffect(() => {
     if (selectedLessonId > 0) {
@@ -103,9 +91,8 @@ const CreateLessonPlan = ({ isOpen, handleClose, selectedLessonId = 0 }) => {
       setSelectedGradeId(lessonDetails.grade_id);
       lessonPlanMetadata(lessonDetails.grade_id, lessonDetails.section_id);
       setStartDate(dayjs(lessonDetails.start_date));
-      setEndDate(dayjs(lessonDetails.end_date));
     }
-  }, [lessonDetails, setValue, setFocus]);
+  }, [lessonDetails, setValue]);
 
   useEffect(() => {
     getGradesList();
@@ -162,28 +149,6 @@ const CreateLessonPlan = ({ isOpen, handleClose, selectedLessonId = 0 }) => {
     lessonPlanMetadata(getValues().grade_id, e.target.value);
   };
 
-  const handleSubjectChange = (e) => {
-    setValue("subject_id", e.target.value);
-    trigger("subject_id");
-  };
-
-  const handleStartDateChange = (date) => {
-    setStartDate(date);
-    setValue("start_date", dayjs(date).format("YYYY-MM-DD"));
-    trigger("start_date");
-  };
-
-  const handleEndDateChange = (date) => {
-    setEndDate(date);
-    setValue("end_date", dayjs(date).format("YYYY-MM-DD"));
-    trigger("end_date");
-  };
-
-  const handleChapterChange = (e) => {
-    setValue("chapter_id", e.target.value);
-    trigger("chapter_id");
-  };
-
   const onSubmit = (data) => {
     let paylaod = { ...data };
     paylaod["teacher_id"] = userInfo.user_id;
@@ -210,6 +175,12 @@ const CreateLessonPlan = ({ isOpen, handleClose, selectedLessonId = 0 }) => {
           setShowAlert("");
         }, 3000);
       });
+  };
+
+  const handleStartDateChange = (date) => {
+    setStartDate(date);
+    setValue("end_date", "");
+    console.log("Start Date value changed to:", date);
   };
 
   return (
@@ -371,15 +342,21 @@ const CreateLessonPlan = ({ isOpen, handleClose, selectedLessonId = 0 }) => {
                     }) => (
                       <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <DatePicker
-                          maxDate={getValues()?.endDate}
-                          minDate={selectedLessonId > 0 ? null : dayjs()}
+                          minDate={
+                            selectedLessonId > 0
+                              ? dayjs(lessonDetails.start_date)
+                              : dayjs()
+                          }
                           format="YYYY-MM-DD"
                           label="Start Date"
                           value={value || null}
-                          onChange={onChange}
+                          onChange={(newValue) => {
+                            onChange(newValue);
+                            handleStartDateChange(newValue);
+                          }}
                           slotProps={{
                             textField: {
-                              variant: 'outlined',
+                              variant: "outlined",
                               error: !!error,
                               helperText: error?.message,
                             },
@@ -402,14 +379,14 @@ const CreateLessonPlan = ({ isOpen, handleClose, selectedLessonId = 0 }) => {
                     }) => (
                       <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <DatePicker
-                          minDate={getValues()?.startDate || dayjs()} 
+                          minDate={startDate || dayjs()}
                           format="YYYY-MM-DD"
                           label="End Date"
                           value={value || null}
                           onChange={onChange}
                           slotProps={{
                             textField: {
-                              variant: 'outlined',
+                              variant: "outlined",
                               error: !!error,
                               helperText: error?.message,
                             },
@@ -587,7 +564,6 @@ const CreateLessonPlan = ({ isOpen, handleClose, selectedLessonId = 0 }) => {
               type="reset"
               onClick={() => {
                 setStartDate(null);
-                setEndDate(null);
                 reset();
               }}
             >

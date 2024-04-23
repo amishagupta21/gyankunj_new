@@ -1,53 +1,20 @@
 import React, { useState, useMemo, useEffect } from "react";
 import Box from "@mui/material/Box";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import {
-  Button,
-  Card,
-  CardActions,
-  CardContent,
-  Grid,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  TextField,
-  DialogActions,
-} from "@mui/material";
-import {
-  getGradeDetails,
-  getLessonPlan,
-  getTeachersData,
-  lessonPlanAllDetails,
-  verifyLessonPlan,
-} from "../../../ApiClient";
+import { Button, Card, CardContent, Grid } from "@mui/material";
+import { getLessonPlan, lessonPlanAllDetails } from "../../../ApiClient";
 import CommonMatTable from "../../../SharedComponents/CommonMatTable";
 import AddIcon from "@mui/icons-material/Add";
 import CreateLessonPlan from "./CreateLessonPlan";
 import Edit from "@mui/icons-material/Edit";
 
 const TLessonPlan = () => {
-  const userInfo = JSON.parse(localStorage.getItem("UserData"));
+  //const userInfo = JSON.parse(localStorage.getItem("UserData"));
   const [lessonPlanData, setLessonPlanData] = useState([]);
-  const [teachersList, setTeachersList] = useState([]);
+  const [userInfo, setuserInfo] = useState(JSON.parse(localStorage.getItem("UserData")));
   const [selectedLessonId, setSelectedLessonId] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const [refreshTable, setRefreshTable] = useState(false);
   const [isAddLessonModalVisible, setIsAddLessonModalVisible] = useState(false);
-
-  useEffect(() => {
-    getTeachersData()
-      .then((res) => {
-        setTeachersList([]);
-        if (res?.data?.teachers && res?.data?.teachers.length > 0) {
-          setTeachersList(res?.data?.teachers);
-        }
-      })
-      .catch((err) => console.log(err));
-  }, []);
 
   useEffect(() => {
     setIsLoading(true);
@@ -68,7 +35,7 @@ const TLessonPlan = () => {
         setIsLoading(false);
         console.log(err);
       });
-  }, [refreshTable]);
+  }, [userInfo]);
 
   // Custom JSX element for the top toolbar
   const RenderTopToolbarCustomActions = () => {
@@ -156,13 +123,7 @@ const TLessonPlan = () => {
         renderTopToolbar={() => (
           <h1 style={{ fontSize: 18, marginTop: 10 }}>Lesson Plan</h1>
         )}
-        renderDetailPanel={(row) => (
-          <CustomDetailPanel
-            row={row}
-            setRefreshTable={setRefreshTable}
-            refreshTable={refreshTable}
-          />
-        )}
+        renderDetailPanel={(row) => <CustomDetailPanel row={row} />}
       />
       {isAddLessonModalVisible && (
         <CreateLessonPlan
@@ -177,9 +138,8 @@ const TLessonPlan = () => {
 
 export default TLessonPlan;
 
-const CustomDetailPanel = ({ row, setRefreshTable, refreshTable }) => {
+const CustomDetailPanel = ({ row }) => {
   const [rowData, setRowData] = useState({});
-  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     if (row.row.getIsExpanded()) {
@@ -195,29 +155,6 @@ const CustomDetailPanel = ({ row, setRefreshTable, refreshTable }) => {
         .catch((err) => console.log("Lesson err - ", err));
     }
   }, [row]);
-
-  const approveLessonPlan = (isVerified, comment) => {
-    const dataToVerify = {
-      lesson_id: row.row.original.lesson_id,
-      verified: isVerified,
-      reviewers_message: !isVerified ? comment : undefined,
-    };
-
-    verifyLessonPlan(dataToVerify)
-      .then((res) => {
-        console.log("Verified - ", res.data);
-        setRefreshTable(!refreshTable);
-      })
-      .catch((err) => console.log("Not Verified"));
-  };
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
 
   return (
     <Card>
@@ -255,68 +192,6 @@ const CustomDetailPanel = ({ row, setRefreshTable, refreshTable }) => {
           </Grid>
         </Grid>
       </CardContent>
-      {rowData.id &&
-        rowData.verified !== false &&
-        rowData.verified !== true && (
-          <CardActions>
-            <Button
-              size="small"
-              color="success"
-              variant="contained"
-              onClick={() => approveLessonPlan(true)}
-            >
-              Approve
-            </Button>
-            <Button
-              size="small"
-              color="error"
-              variant="contained"
-              onClick={handleClickOpen}
-            >
-              Reject
-            </Button>
-          </CardActions>
-        )}
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        PaperProps={{
-          component: "form",
-          onSubmit: (event) => {
-            event.preventDefault();
-            const formData = new FormData(event.currentTarget);
-            const formJson = Object.fromEntries(formData.entries());
-            const comment = formJson.comment;
-            approveLessonPlan(false, comment);
-            handleClose();
-          },
-        }}
-      >
-        <DialogTitle>Reject</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            To reject this lesson plan, please enter your comment here. We will
-            send updates occasionally.
-          </DialogContentText>
-          <TextField
-            autoFocus
-            required
-            margin="dense"
-            id="comment"
-            name="comment"
-            label="Comment"
-            type="text"
-            fullWidth
-            variant="outlined"
-            rows={3}
-            multiline
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button type="submit">Reject</Button>
-        </DialogActions>
-      </Dialog>
     </Card>
   );
 };
