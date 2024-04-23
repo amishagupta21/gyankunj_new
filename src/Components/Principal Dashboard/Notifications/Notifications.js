@@ -17,8 +17,6 @@ const NotificationsForTeacher = () => {
   const [selectedRole, setSelectedRole] = useState("");
   const [initaialSelectRole, setInitialSelectedRole] = useState("principal");
 
-  const userName = userDetails?.user_id;
-
   useEffect(() => {
     allNotification();
   }, [selectedRole]);
@@ -30,14 +28,7 @@ const NotificationsForTeacher = () => {
   ];
 
   const allNotification = () => {
-    const userId = userName;
-    const role =
-      selectedRole == "teacher"
-        ? "teacher"
-        : selectedRole == "student"
-        ? "student"
-        : "principal";
-    viewNotification(userId, role)
+    viewNotification(userDetails?.user_id, userDetails?.role)
       .then((res) => setNotificationData(res.data))
       .catch((err) => console.log("Notices err - ", err));
   };
