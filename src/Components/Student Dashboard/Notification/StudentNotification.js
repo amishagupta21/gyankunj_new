@@ -14,16 +14,12 @@ const NotificationsForStudent = () => {
   const [hideResponse, setHideResponse] = useState([]);
   const [sectionExpanded, setSectionExpanded] = useState(false);
 
-  const userName = userDetails?.user_id;
-
   useEffect(() => {
     allNotification();
   }, []);
 
   const allNotification = () => {
-    const userId = userName;
-    const role = "student";
-    viewNotification(userId, role)
+    viewNotification(userDetails?.user_id, userDetails?.role)
       .then((res) => setNotificationData(res.data))
       .catch((err) => console.log("Notices err - ", err));
   };
