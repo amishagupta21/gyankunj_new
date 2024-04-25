@@ -1,5 +1,6 @@
 var path = require('path');
 var webpack = require("webpack");
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
 module.exports = {
   entry: './src/app.js',
@@ -32,6 +33,13 @@ module.exports = {
       },
 ]
   },
+  plugins: [
+    new BundleAnalyzerPlugin({
+      analyzerMode: 'server', // Opens a server for interactive analysis
+      analyzerHost: 'localhost', // Customize the server host (optional)
+      analyzerPort: 3000, // Customize the server port (optional)
+    }),
+  ],
   output: {
     path: path.resolve(__dirname, './src/vendor'),
     filename: 'bundle.min.js'
