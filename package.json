@@ -87,6 +87,7 @@
     "@babel/core": "^7.22.10",
     "@babel/preset-env": "^7.22.10",
     "@craco/craco": "^7.1.0",
+    "webpack-bundle-analyzer": "^4.10.2",
     "webpack-dev-server": "^4.11.1"
   }
 }
