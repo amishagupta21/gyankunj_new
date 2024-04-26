@@ -83,7 +83,6 @@ const saveLessonPlan = (data) => {
   else{
     return apiInstance.post(`/save_lesson_plan`, data);
   }
-
 };
 
 const viewAttendanceReport = (grade, section, year, userType) => {
@@ -132,6 +131,15 @@ const saveNotice = (noticeData) => {
 
 const publishNotice = (noticeDataToPublish) => {
   return apiInstance.post(`/publish_notice`, noticeDataToPublish);
+};
+
+const saveLogBook = (data) => {
+  if(data.log_book_id > 0){
+    return apiInstance.put(`/edit_log_book`, data);
+  }
+  else{
+    return apiInstance.post(`/save_log_book`, data);
+  }
 };
 
 const createLogBook = (data) => {
@@ -284,5 +292,6 @@ export {
   getStudentAttendances,
   verifyLogBook,
   getTeacherLogBook,
-  editLogBook
+  editLogBook,
+  saveLogBook
 };

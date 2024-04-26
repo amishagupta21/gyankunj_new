@@ -4,26 +4,15 @@ import Box from "@mui/material/Box";
 import { getGradeDetails, getTeacherLogBook } from "../../../../ApiClient";
 import { Button } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import AddNewLog from "./AddNewLog";
 import Edit from "@mui/icons-material/Edit";
+import CreateLogBook from "./CreateLogBook";
 
 const LogBook = () => {
   const [logBookDetails, setLogBookDetails] = useState();
-  const [gradeData, setGradeData] = useState([]);
   const [selectedLog, setSelectedLog] = useState({});
   const [isAddLogModalVisible, setIsAddLogModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [refreshTable, setRefreshTable] = useState(false);
-
-  useEffect(() => {
-    getGradeDetails()
-      .then((res) => {
-        if (res?.data?.grade_details?.grade_details) {
-          setGradeData(res.data.grade_details.grade_details);
-        }
-      })
-      .catch((err) => console.log(err));
-  }, []);
 
   useEffect(() => {
     setIsLoading(true);
@@ -52,7 +41,7 @@ const LogBook = () => {
 
   const handleClose = (isSubmit) => {
     setIsAddLogModalVisible(false);
-    if(isSubmit){
+    if (isSubmit) {
       setTimeout(() => {
         setRefreshTable(!refreshTable);
       }, 500);
@@ -96,27 +85,42 @@ const LogBook = () => {
         header: "Status",
         accessorFn: (row) => (
           <div className="align-items-baseline d-flex justify-content-between">
-            {row.primary_verification_status === true ? (
-              <div className="fw-bold text-success">Verified</div>
-            ) : row.primary_verification_status === false ? (
-              <div className="fw-bold text-danger">Sent back</div>
-            ) : (
-              <div className="fw-bold">Review</div>
-            )}
-            {row.primary_verification_status !== true && (
-              <Button
-                size="small"
-                color="primary"
-                variant="outlined"
-                className="me-2"
-                onClick={() => {
-                  handleEditLog(row);
-                }}
-              >
-                <Edit sx={{ fontSize: 16 }} />
-                Edit
-              </Button>
-            )}
+            {row.secondary_verification_status === null &&
+              row.primary_verification_status === null && (
+                <div className="fw-bold">Under Review</div>
+              )}
+            {row.secondary_verification_status === null &&
+              row.primary_verification_status === true && (
+                <div className="fw-bold">Under Review</div>
+              )}
+            {row.secondary_verification_status === null &&
+              row.primary_verification_status === false && (
+                <div className="fw-bold text-danger">Sent back</div>
+              )}
+            {row.secondary_verification_status === false &&
+              row.primary_verification_status === true && (
+                <div className="fw-bold text-danger">Sent back</div>
+              )}
+            {row.secondary_verification_status === true &&
+              row.primary_verification_status === true && (
+                <div className="fw-bold text-success">Verified</div>
+              )}
+
+            {row.secondary_verification_status !== true &&
+              row.primary_verification_status !== true && (
+                <Button
+                  size="small"
+                  color="primary"
+                  variant="outlined"
+                  className="me-2"
+                  onClick={() => {
+                    handleEditLog(row);
+                  }}
+                >
+                  <Edit sx={{ fontSize: 16 }} />
+                  Edit
+                </Button>
+              )}
           </div>
         ),
       },
@@ -136,10 +140,9 @@ const LogBook = () => {
         )}
       />
       {isAddLogModalVisible && (
-        <AddNewLog
+        <CreateLogBook
           isOpen={isAddLogModalVisible}
           handleClose={handleClose}
-          gradeData={gradeData}
           selectedLog={selectedLog}
         />
       )}
