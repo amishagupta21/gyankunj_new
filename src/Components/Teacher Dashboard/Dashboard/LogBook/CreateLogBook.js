@@ -7,9 +7,6 @@ import DialogActions from "@mui/material/DialogActions";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import { Controller, useForm } from "react-hook-form";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 import {
   Button,
@@ -22,12 +19,10 @@ import {
 } from "@mui/material";
 import {
   getGradeDetails,
-  getLessonPlanMetadata,
   getSubjectsList,
-  lessonPlanAllDetails,
-  saveLessonPlan,
-} from "../../../ApiClient";
-import { showAlertMessage } from "../../AlertMessage";
+  saveLogBook,
+} from "../../../../ApiClient";
+import { showAlertMessage } from "../../../AlertMessage";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -46,53 +41,46 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
-const CreateLessonPlan = ({ isOpen, handleClose, selectedLessonId = 0 }) => {
+const CreateLogBook = ({ isOpen, handleClose, selectedLog = {} }) => {
   const { handleSubmit, getValues, setValue, reset, control } = useForm();
   const userInfo = JSON.parse(localStorage.getItem("UserData"));
   const [selectedGradeId, setSelectedGradeId] = useState(0);
-  const [lessonDetails, setLessonDetails] = useState({});
+  const [selectedLogBookData] = useState(selectedLog);
+  const [isEditMode, setIsEditMode] = useState(false);
   const [gradeData, setGradeData] = useState([]);
   const [subjectsList, setSubjectsList] = useState([]);
-  const [chaptersList, setChaptersList] = useState([]);
   const [showAlert, setShowAlert] = useState("");
-  const [startDate, setStartDate] = useState(null);
+  const periodsList = [
+    { value: "1", label: 1 },
+    { value: "2", label: 2 },
+    { value: "3", label: 3 },
+    { value: "4", label: 4 },
+    { value: "5", label: 5 },
+    { value: "6", label: 6 },
+    { value: "7", label: 7 },
+    { value: "8", label: 8 },
+  ];
 
   useEffect(() => {
-    if (selectedLessonId > 0) {
-      lessonPlanAllDetails(selectedLessonId)
-        .then((res) => {
-          if (
-            res?.data?.lesson_plan_data &&
-            res?.data?.lesson_plan_data.length > 0
-          ) {
-            setLessonDetails(res.data.lesson_plan_data[0]);
-          }
-        })
-        .catch((err) => console.log("Lesson err - ", err));
+    if (selectedLogBookData && Object.keys(selectedLogBookData).length > 0) {
+      setIsEditMode(true);
+      const {
+        grade_id,
+        section_id,
+        period,
+        subject_id,
+        content_taught,
+        home_work,
+      } = selectedLogBookData;
+      setValue("grade_id", grade_id);
+      setValue("section_id", section_id);
+      setValue("period", period);
+      setValue("subject_id", subject_id);
+      setValue("content_taught", content_taught);
+      setValue("home_work", home_work);
+      setSelectedGradeId(grade_id);
     }
-  }, [selectedLessonId]);
-
-  useEffect(() => {
-    if (lessonDetails && Object.keys(lessonDetails).length > 0) {
-      setValue("grade_id", lessonDetails.grade_id);
-      setValue("section_id", lessonDetails.section_id);
-      setValue("subject_id", lessonDetails.subject_id);
-      setValue("start_date", dayjs(lessonDetails.start_date));
-      setValue("end_date", dayjs(lessonDetails.end_date));
-      setValue("chapter_id", lessonDetails.chapter_id);
-      setValue("topic_name", lessonDetails.topic_name);
-      setValue("learning_objectives", lessonDetails.learning_objectives);
-      setValue("teaching_methods", lessonDetails.teaching_methods);
-      setValue("learning_outcome", lessonDetails.learning_outcome);
-      setValue(
-        "teaching_aid_references",
-        lessonDetails.teaching_aid_references
-      );
-      setSelectedGradeId(lessonDetails.grade_id);
-      lessonPlanMetadata(lessonDetails.grade_id, lessonDetails.section_id);
-      setStartDate(dayjs(lessonDetails.start_date));
-    }
-  }, [lessonDetails, setValue]);
+  }, [selectedLogBookData, setValue]);
 
   useEffect(() => {
     getGradesList();
@@ -122,40 +110,26 @@ const CreateLessonPlan = ({ isOpen, handleClose, selectedLessonId = 0 }) => {
       });
   };
 
-  const lessonPlanMetadata = (grade, section) => {
-    if (grade && section) {
-      setChaptersList([]);
-      getLessonPlanMetadata(grade, section)
-        .then((res) => {
-          if (res.data && res.data.metadata && res.data.metadata.length > 0) {
-            setChaptersList(res.data.metadata);
-          }
-        })
-        .catch((err) => console.log("metadata err - "));
-    }
-  };
-
   const handleGradeChange = (e) => {
     setSelectedGradeId(e.target.value);
     setValue("grade_id", e.target.value);
     setValue("section_id", "");
-    setValue("chapter_id", "");
-    lessonPlanMetadata(e.target.value, getValues().section_id);
-  };
-
-  const handleSectionChange = (e) => {
-    setValue("section_id", e.target.value);
-    setValue("chapter_id", "");
-    lessonPlanMetadata(getValues().grade_id, e.target.value);
   };
 
   const onSubmit = (data) => {
-    let paylaod = { ...data };
-    paylaod["teacher_id"] = userInfo.user_id;
-    if (selectedLessonId > 0) {
-      paylaod["lesson_id"] = selectedLessonId;
+    let payload = { ...data };
+    payload["date"] = dayjs().format("YYYY-MM-DD");
+    payload["teacher_id"] = userInfo.user_id;
+
+    if (isEditMode) {
+      payload = {
+        log_book_id: selectedLog.log_book_id,
+        content_taught: data.content_taught,
+        home_work: data.home_work,
+      };
     }
-    saveLessonPlan(paylaod)
+
+    saveLogBook(payload)
       .then((res) => {
         if (res?.data?.status === "success") {
           setShowAlert("success");
@@ -177,22 +151,16 @@ const CreateLessonPlan = ({ isOpen, handleClose, selectedLessonId = 0 }) => {
       });
   };
 
-  const handleStartDateChange = (date) => {
-    setStartDate(date);
-    setValue("end_date", "");
-    console.log("Start Date value changed to:", date);
-  };
-
   return (
     <React.Fragment>
       <BootstrapDialog
-        //onClose={() => handleClose(false)}
+        // onClose={() => handleClose(false)}
         aria-labelledby="customized-dialog-title"
         open={isOpen}
         scroll="paper"
       >
         <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
-          {selectedLessonId > 0 ? "Edit Lesson" : "Create New Lesson"}
+          {isEditMode ? "Edit Log" : "Create New Log"}
         </DialogTitle>
         <IconButton
           aria-label="close"
@@ -225,6 +193,7 @@ const CreateLessonPlan = ({ isOpen, handleClose, selectedLessonId = 0 }) => {
                       <>
                         <InputLabel error={!!error}>Grade</InputLabel>
                         <Select
+                          disabled={isEditMode}
                           onChange={(e) => {
                             onChange(e.target.value);
                             handleGradeChange(e);
@@ -256,10 +225,8 @@ const CreateLessonPlan = ({ isOpen, handleClose, selectedLessonId = 0 }) => {
                       <>
                         <InputLabel error={!!error}>Section</InputLabel>
                         <Select
-                          onChange={(e) => {
-                            onChange(e.target.value);
-                            handleSectionChange(e);
-                          }}
+                          disabled={isEditMode}
+                          onChange={onChange}
                           value={value || ""}
                           error={!!error}
                         >
@@ -299,6 +266,7 @@ const CreateLessonPlan = ({ isOpen, handleClose, selectedLessonId = 0 }) => {
                       <>
                         <InputLabel error={!!error}>Subject</InputLabel>
                         <Select
+                          disabled={isEditMode}
                           onChange={onChange}
                           value={value || ""}
                           error={!!error}
@@ -319,91 +287,8 @@ const CreateLessonPlan = ({ isOpen, handleClose, selectedLessonId = 0 }) => {
               </Grid>
               <Grid item xs={12} md={6}>
                 <FormControl fullWidth>
-                  <TextField
-                    fullWidth
-                    label="Teacher Name"
-                    disabled={true}
-                    defaultValue={userInfo.name}
-                  />
-                </FormControl>
-              </Grid>
-            </Grid>
-
-            <Grid container spacing={2} className="mb-4">
-              <Grid item xs={12} md={6}>
-                <FormControl fullWidth>
                   <Controller
-                    name="start_date"
-                    control={control}
-                    rules={{ required: true }}
-                    render={({
-                      field: { onChange, value },
-                      fieldState: { error },
-                    }) => (
-                      <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <DatePicker
-                          minDate={
-                            selectedLessonId > 0
-                              ? dayjs(lessonDetails.start_date)
-                              : dayjs()
-                          }
-                          format="YYYY-MM-DD"
-                          label="Start Date"
-                          value={value || null}
-                          onChange={(newValue) => {
-                            onChange(newValue);
-                            handleStartDateChange(newValue);
-                          }}
-                          slotProps={{
-                            textField: {
-                              variant: "outlined",
-                              error: !!error,
-                              helperText: error?.message,
-                            },
-                          }}
-                        />
-                      </LocalizationProvider>
-                    )}
-                  />
-                </FormControl>
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <FormControl fullWidth>
-                  <Controller
-                    name="end_date"
-                    control={control}
-                    rules={{ required: true }}
-                    render={({
-                      field: { onChange, value },
-                      fieldState: { error },
-                    }) => (
-                      <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <DatePicker
-                          minDate={startDate || dayjs()}
-                          format="YYYY-MM-DD"
-                          label="End Date"
-                          value={value || null}
-                          onChange={onChange}
-                          slotProps={{
-                            textField: {
-                              variant: "outlined",
-                              error: !!error,
-                              helperText: error?.message,
-                            },
-                          }}
-                        />
-                      </LocalizationProvider>
-                    )}
-                  />
-                </FormControl>
-              </Grid>
-            </Grid>
-
-            <Grid container spacing={2} className="mb-4">
-              <Grid item xs={12} md={6}>
-                <FormControl fullWidth>
-                  <Controller
-                    name="chapter_id"
+                    name="period"
                     control={control}
                     rules={{ required: true }}
                     render={({
@@ -411,18 +296,16 @@ const CreateLessonPlan = ({ isOpen, handleClose, selectedLessonId = 0 }) => {
                       fieldState: { error },
                     }) => (
                       <>
-                        <InputLabel error={!!error}>Chapter Number</InputLabel>
+                        <InputLabel error={!!error}>Period</InputLabel>
                         <Select
+                          disabled={isEditMode}
                           onChange={onChange}
                           value={value || ""}
                           error={!!error}
                         >
-                          {chaptersList?.map((item) => (
-                            <MenuItem
-                              key={item.chapter_id}
-                              value={item.chapter_id}
-                            >
-                              {item.chapter_id}
+                          {periodsList?.map((item) => (
+                            <MenuItem key={item.value} value={item.value}>
+                              {item.label}
                             </MenuItem>
                           ))}
                         </Select>
@@ -431,35 +314,13 @@ const CreateLessonPlan = ({ isOpen, handleClose, selectedLessonId = 0 }) => {
                   />
                 </FormControl>
               </Grid>
-              <Grid item xs={12} md={6}>
-                <FormControl fullWidth>
-                  <Controller
-                    name="topic_name"
-                    control={control}
-                    rules={{ required: true }}
-                    render={({
-                      field: { onChange, value },
-                      fieldState: { error },
-                    }) => (
-                      <TextField
-                        error={!!error}
-                        onChange={onChange}
-                        value={value || ""}
-                        fullWidth
-                        label="Topic Name"
-                        variant="outlined"
-                      />
-                    )}
-                  />
-                </FormControl>
-              </Grid>
             </Grid>
 
             <Grid container spacing={2} className="mb-4">
               <Grid item xs={12} md={6}>
                 <FormControl fullWidth>
                   <Controller
-                    name="learning_objectives"
+                    name="content_taught"
                     control={control}
                     rules={{ required: true }}
                     render={({
@@ -471,7 +332,7 @@ const CreateLessonPlan = ({ isOpen, handleClose, selectedLessonId = 0 }) => {
                         onChange={onChange}
                         value={value || ""}
                         fullWidth
-                        label="Learning Objective"
+                        label="Content Taught"
                         variant="outlined"
                         multiline
                         rows={3}
@@ -483,7 +344,7 @@ const CreateLessonPlan = ({ isOpen, handleClose, selectedLessonId = 0 }) => {
               <Grid item xs={12} md={6}>
                 <FormControl fullWidth>
                   <Controller
-                    name="teaching_methods"
+                    name="home_work"
                     control={control}
                     rules={{ required: true }}
                     render={({
@@ -495,58 +356,7 @@ const CreateLessonPlan = ({ isOpen, handleClose, selectedLessonId = 0 }) => {
                         onChange={onChange}
                         value={value || ""}
                         fullWidth
-                        label="Teaching Methods"
-                        variant="outlined"
-                        multiline
-                        rows={3}
-                      />
-                    )}
-                  />
-                </FormControl>
-              </Grid>
-            </Grid>
-
-            <Grid container spacing={2} className="mb-4">
-              <Grid item xs={12} md={6}>
-                <FormControl fullWidth>
-                  <Controller
-                    name="learning_outcome"
-                    control={control}
-                    rules={{ required: true }}
-                    render={({
-                      field: { onChange, value },
-                      fieldState: { error },
-                    }) => (
-                      <TextField
-                        error={!!error}
-                        onChange={onChange}
-                        value={value || ""}
-                        fullWidth
-                        label="Learning Outcome"
-                        variant="outlined"
-                        multiline
-                        rows={3}
-                      />
-                    )}
-                  />
-                </FormControl>
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <FormControl fullWidth>
-                  <Controller
-                    name="teaching_aid_references"
-                    control={control}
-                    rules={{ required: true }}
-                    render={({
-                      field: { onChange, value },
-                      fieldState: { error },
-                    }) => (
-                      <TextField
-                        error={!!error}
-                        onChange={onChange}
-                        value={value || ""}
-                        fullWidth
-                        label="Teaching Aids"
+                        label="Home Work"
                         variant="outlined"
                         multiline
                         rows={3}
@@ -561,9 +371,9 @@ const CreateLessonPlan = ({ isOpen, handleClose, selectedLessonId = 0 }) => {
             <Button
               className="me-3"
               variant="outlined"
+              disabled={isEditMode}
               type="reset"
               onClick={() => {
-                setStartDate(null);
                 reset();
               }}
             >
@@ -580,12 +390,12 @@ const CreateLessonPlan = ({ isOpen, handleClose, selectedLessonId = 0 }) => {
         showAlertMessage({
           open: true,
           alertFor: showAlert,
-          message: `The lesson ${
-            selectedLessonId > 0 ? "updation" : "creation"
-          } ${showAlert === "success" ? "succeeded" : "failed"}.`,
+          message: `The log book ${isEditMode ? "updation" : "creation"} ${
+            showAlert === "success" ? "succeeded" : "failed"
+          }.`,
         })}
     </React.Fragment>
   );
 };
 
-export default CreateLessonPlan;
+export default CreateLogBook;
