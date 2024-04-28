@@ -37,6 +37,8 @@ import PLessonPlan from "./Principal Dashboard/PLessonPlan";
 import LogBookCLassTeacher from "./Teacher Dashboard/Dashboard/LogBook/LogBookCLassTeacher";
 import TLessonPlan from "./Teacher Dashboard/LessonPlan/TLessonPlan";
 import PResources from "./Principal Dashboard/PResources";
+import TResources from "./Teacher Dashboard/TResources";
+import SResources from "./Student Dashboard/SResources";
 
 // Define routes for different user roles
 const roleRoutes = {
@@ -136,7 +138,7 @@ export default function RoutesContainer({ userData }) {
             />
             <Route
               path="/teacherDashboard/resources"
-              element={<ProtectedWrapper Component={PResources} />}
+              element={<ProtectedWrapper Component={TResources} />}
             />
             <Route
               path="/teacherDashboard/announcements"
@@ -185,7 +187,7 @@ export default function RoutesContainer({ userData }) {
             />
             <Route
               path="/studentDashboard/resources"
-              element={<ProtectedWrapper Component={ResourcesForStudents} />}
+              element={<ProtectedWrapper Component={SResources} />}
             />
             <Route
               path="/studentDashboard/notice"

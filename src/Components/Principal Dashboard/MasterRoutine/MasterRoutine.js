@@ -9,6 +9,7 @@ import PrincipalSidebar from "../PrincipalSidebar";
 import mockData from "../../../Mock Data/masterRoutineMockData.json";
 import { FaCheckSquare } from "react-icons/fa";
 import MasterRoutineV2 from "./MasterRoutineV2";
+import CustomMasterRoutine from "./CustomMasterRoutine";
 
 const MasterRoutine = () => {
   const [showAddRoutine, setShowAddRoutine] = useState(false);
@@ -101,6 +102,7 @@ const MasterRoutine = () => {
 
   return (
     <div className="container mt-4">
+      <CustomMasterRoutine />
       {/* <MasterRoutineV2 /> */}
       <div className="routinemain">
         <div className="masterRoutineheader">
@@ -119,7 +121,7 @@ const MasterRoutine = () => {
                 {gradeData?.grade_details?.grade_details?.map((grade) => {
                   // console.log("grade - ", grade)
                   return (
-                    <option value={grade?.grade_id}>{grade?.grade_id}</option>
+                    <option key={grade?.grade_id} value={grade?.grade_id}>{grade?.grade_id}</option>
                   );
                 })}
               </select>
@@ -134,7 +136,7 @@ const MasterRoutine = () => {
                 <option value="">--Week Day--</option>
                 {DayOption?.map((weekDay) => {
                   return (
-                    <option value={weekDay?.value}>{weekDay?.label}</option>
+                    <option key={weekDay?.value} value={weekDay?.value}>{weekDay?.label}</option>
                   );
                 })}
               </select>
@@ -162,7 +164,7 @@ const MasterRoutine = () => {
             <Col md={5}></Col>
           </Row>
 
-          <Table Stripprd bordered hover>
+          <Table bordered hover>
             <thead>
               <tr>
                 <th>Grade</th>
@@ -229,7 +231,7 @@ const MasterRoutine = () => {
                   <tr>
                     {masterRoutineData.time_table?.section_A?.subject.map(
                       (subject) => {
-                        return <td>{subject}</td>;
+                        return <td key={subject}>{subject}</td>;
                       }
                     )}
                   </tr>
@@ -239,7 +241,7 @@ const MasterRoutine = () => {
                   <tr>
                     {masterRoutineData.time_table?.section_A?.teacher.map(
                       (teacher) => {
-                        return <td>{teacher}</td>;
+                        return <td key={teacher}>{teacher}</td>;
                       }
                     )}
                   </tr>
@@ -267,7 +269,7 @@ const MasterRoutine = () => {
                   <tr>
                     {masterRoutineData.time_table?.section_B?.subject.map(
                       (subject) => {
-                        return <td>{subject}</td>;
+                        return <td key={subject}>{subject}</td>;
                       }
                     )}
                   </tr>
@@ -305,7 +307,7 @@ const MasterRoutine = () => {
                   <tr>
                     {masterRoutineData.time_table?.section_C?.subject.map(
                       (subject) => {
-                        return <td>{subject}</td>;
+                        return <td key={subject}>{subject}</td>;
                       }
                     )}
                   </tr>
@@ -343,7 +345,7 @@ const MasterRoutine = () => {
                   <tr style={{ backgroundColor: "#c6d0da" }}>
                     {masterRoutineData.time_table?.section_D?.subject.map(
                       (subject) => {
-                        return <td>{subject}</td>;
+                        return <td key={subject}>{subject}</td>;
                       }
                     )}
                   </tr>
@@ -387,7 +389,7 @@ const MasterRoutine = () => {
                   <tr>
                     {masterRoutineData.time_table?.section_E?.subject.map(
                       (subject) => {
-                        return <td>{subject}</td>;
+                        return <td key={subject}>{subject}</td>;
                       }
                     )}
                   </tr>
@@ -397,7 +399,7 @@ const MasterRoutine = () => {
                   <tr>
                     {masterRoutineData.time_table?.section_E?.teacher.map(
                       (teacher) => {
-                        return <td>{teacher}</td>;
+                        return <td key={teacher}>{teacher}</td>;
                       }
                     )}
                   </tr>
