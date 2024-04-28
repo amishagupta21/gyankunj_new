@@ -14,9 +14,26 @@ import {
   TextField,
   DialogActions,
   Button,
+  Tooltip,
+  styled,
+  tooltipClasses,
 } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditCalendarIcon from "@mui/icons-material/EditCalendar";
 import dayjs from "dayjs";
 import CreateMasterRoutine from "./CreateMasterRoutine";
+
+const HtmlTooltip = styled(({ className, ...props }) => (
+  <Tooltip {...props} classes={{ popper: className }} />
+))(({ theme }) => ({
+  [`& .${tooltipClasses.tooltip}`]: {
+    backgroundColor: "#f5f5f9",
+    color: "rgba(0, 0, 0, 0.87)",
+    maxWidth: 220,
+    fontSize: theme.typography.pxToRem(12),
+    border: "1px solid #dadde9",
+  },
+}));
 
 const CustomMasterRoutine = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -24,7 +41,9 @@ const CustomMasterRoutine = () => {
   const [subjectsList, setSubjectsList] = useState([]);
   const [masterRoutineData, setMasterRoutineData] = useState();
   const [selectedRoutineData, setSelectedRoutineData] = useState({});
-  const [isAddRoutineModalVisible, setIsAddRoutineModalVisible] = useState(false);
+  const [selectedSectionData, setSelectedSectionData] = useState([]);
+  const [isAddRoutineModalVisible, setIsAddRoutineModalVisible] =
+    useState(false);
   const [periodData] = useState([
     { value: "1", label: 1 },
     { value: "2", label: 2 },
@@ -60,18 +79,22 @@ const CustomMasterRoutine = () => {
         end_time: "08:00",
         period: "1",
         grade_id: 1,
-        teacher_name: "Devanshu",
-        teacher_id: "teacher",
+        section_id: "1",
+        section_name: "A",
+        teacher_name: "JEFFER",
+        teacher_id: "JEFFER",
         subject_name: "English",
         subject_id: 12,
       },
       2: {
-        start_time: "07:00",
-        end_time: "08:00",
+        start_time: "17:00",
+        end_time: "21:00",
         period: "1",
         grade_id: 1,
-        teacher_name: "Puja sharma",
-        teacher_id: "teacher",
+        section_id: "1",
+        section_name: "A",
+        teacher_name: "Rajlakshmi",
+        teacher_id: "TEACHER_3",
         subject_name: "Math",
         subject_id: 12,
       },
@@ -80,8 +103,10 @@ const CustomMasterRoutine = () => {
         end_time: "09:00",
         period: "3",
         grade_id: 4,
-        teacher_name: "Raj Pathar",
-        teacher_id: "teacher1",
+        section_id: "1",
+        section_name: "A",
+        teacher_name: "Devanshu Shekharr",
+        teacher_id: "TEACHER_12",
         subject_name: "Math",
         subject_id: 11,
       },
@@ -115,8 +140,9 @@ const CustomMasterRoutine = () => {
       });
   };
 
-  const handleClickOpen = (data = {}) => {
+  const handleClickOpen = (data = {}, sectionList = []) => {
     setSelectedRoutineData(data);
+    setSelectedSectionData(sectionList);
     setIsAddRoutineModalVisible(true);
   };
 
@@ -186,27 +212,53 @@ const CustomMasterRoutine = () => {
                   if (routine && routine.grade_id === gradeItem.grade_id) {
                     return (
                       <td className="p-0" key={period.value}>
-                        <div className="p-1 rounded text-center text-white cell selected-cell" onClick={() => handleClickOpen(routine)}>
-                          <p className="mb-0">
-                            <small>{routine.subject_name}</small>
-                          </p>
-                          <p className="mb-0">
-                            <small>
-                              {routine.start_time}
-                              {" - "}
-                              {routine.end_time}
-                            </small>
-                          </p>
-                          <p className="mb-0">
-                            <small>{routine.teacher_name}</small>
-                          </p>
-                        </div>
+                        <HtmlTooltip
+                          arrow
+                          title={
+                            <>
+                              <DeleteIcon
+                                className="me-2"
+                                style={{ cursor: "pointer" }}
+                              />
+                              <EditCalendarIcon
+                                style={{ cursor: "pointer" }}
+                                onClick={() =>
+                                  handleClickOpen(
+                                    routine,
+                                    gradeItem.section_list
+                                  )
+                                }
+                              />
+                            </>
+                          }
+                        >
+                          <div className="p-1 rounded text-center text-white cell selected-cell">
+                            <p className="mb-0">
+                              <small>
+                                {routine.start_time}
+                                {" - "}
+                                {routine.end_time}
+                              </small>
+                            </p>
+                            <p className="mb-0">
+                              <small>{routine.subject_name}</small>
+                            </p>
+                            <p className="mb-0">
+                              <small>{routine.teacher_name}</small>
+                            </p>
+                          </div>
+                        </HtmlTooltip>
                       </td>
                     );
                   } else {
                     return (
                       <td className="p-0" key={period.value}>
-                        <div className="text-center cell empty-cell" onClick={handleClickOpen}></div>
+                        <div
+                          className="text-center cell empty-cell"
+                          onClick={() =>
+                            handleClickOpen({}, gradeItem.section_list)
+                          }
+                        ></div>
                       </td>
                     );
                   }
@@ -221,6 +273,7 @@ const CustomMasterRoutine = () => {
           isOpen={isAddRoutineModalVisible}
           handleClose={handleClose}
           selectedData={selectedRoutineData}
+          selectedSectionData={selectedSectionData}
         />
       )}
     </>
