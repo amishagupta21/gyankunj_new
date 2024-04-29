@@ -39,6 +39,7 @@ import TLessonPlan from "./Teacher Dashboard/LessonPlan/TLessonPlan";
 import PResources from "./Principal Dashboard/PResources";
 import TResources from "./Teacher Dashboard/TResources";
 import SResources from "./Student Dashboard/SResources";
+import CustomMasterRoutine from "./Principal Dashboard/MasterRoutine/CustomMasterRoutine";
 
 // Define routes for different user roles
 const roleRoutes = {
@@ -71,7 +72,7 @@ export default function RoutesContainer({ userData }) {
             />
             <Route
               path="/principalDashboard/masterRoutine"
-              element={<ProtectedWrapper Component={MasterRoutine} />}
+              element={<ProtectedWrapper Component={CustomMasterRoutine} />}
             />
             <Route
               path="/principalDashboard/lessonPlan"

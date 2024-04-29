@@ -6,44 +6,18 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  CircularProgress,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  TextField,
-  DialogActions,
-  Button,
-  Tooltip,
-  styled,
-  tooltipClasses,
+  CircularProgress
 } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditCalendarIcon from "@mui/icons-material/EditCalendar";
 import dayjs from "dayjs";
 import CreateMasterRoutine from "./CreateMasterRoutine";
-
-const HtmlTooltip = styled(({ className, ...props }) => (
-  <Tooltip {...props} classes={{ popper: className }} />
-))(({ theme }) => ({
-  [`& .${tooltipClasses.tooltip}`]: {
-    backgroundColor: "#f5f5f9",
-    color: "rgba(0, 0, 0, 0.87)",
-    maxWidth: 220,
-    fontSize: theme.typography.pxToRem(12),
-    border: "1px solid #dadde9",
-  },
-}));
 
 const CustomMasterRoutine = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [gradeData, setGradeData] = useState([]);
-  const [subjectsList, setSubjectsList] = useState([]);
   const [masterRoutineData, setMasterRoutineData] = useState();
-  const [selectedRoutineData, setSelectedRoutineData] = useState({});
+  const [selectedRoutineData, setSelectedRoutineData] = useState();
   const [selectedSectionData, setSelectedSectionData] = useState([]);
-  const [isAddRoutineModalVisible, setIsAddRoutineModalVisible] =
-    useState(false);
+  const [isAddRoutineModalVisible, setIsAddRoutineModalVisible] = useState(false);
   const [periodData] = useState([
     { value: "1", label: 1 },
     { value: "2", label: 2 },
@@ -55,6 +29,7 @@ const CustomMasterRoutine = () => {
     { value: "8", label: 8 },
     { value: "9", label: 9 },
   ]);
+
   const [daysData] = useState([
     "Monday",
     "Tuesday",
@@ -68,7 +43,6 @@ const CustomMasterRoutine = () => {
 
   useEffect(() => {
     getGradesList();
-    getAllSubjectsData();
   }, []);
 
   useEffect(() => {
@@ -89,7 +63,7 @@ const CustomMasterRoutine = () => {
       2: {
         start_time: "17:00",
         end_time: "21:00",
-        period: "1",
+        period: "2",
         grade_id: 1,
         section_id: "1",
         section_name: "A",
@@ -110,6 +84,18 @@ const CustomMasterRoutine = () => {
         subject_name: "Math",
         subject_id: 11,
       },
+      6: {
+        start_time: "01:30",
+        end_time: "2:30",
+        period: "6",
+        grade_id: 4,
+        section_id: "1",
+        section_name: "A",
+        teacher_name: "Puja Kumari",
+        teacher_id: "TEACHER_2",
+        subject_name: "URDU",
+        subject_id: 4,
+      },
     };
     setMasterRoutineData(tempData);
     setTimeout(() => {
@@ -127,20 +113,7 @@ const CustomMasterRoutine = () => {
       .catch((err) => console.log(err));
   };
 
-  const getAllSubjectsData = () => {
-    getSubjectsList()
-      .then((res) => {
-        setSubjectsList([]);
-        if (res.data && res.data.subjects && res.data.subjects.length > 0) {
-          setSubjectsList(res.data.subjects);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
-  const handleClickOpen = (data = {}, sectionList = []) => {
+  const handleClickOpen = (data, sectionList = []) => {
     setSelectedRoutineData(data);
     setSelectedSectionData(sectionList);
     setIsAddRoutineModalVisible(true);
@@ -212,42 +185,26 @@ const CustomMasterRoutine = () => {
                   if (routine && routine.grade_id === gradeItem.grade_id) {
                     return (
                       <td className="p-0" key={period.value}>
-                        <HtmlTooltip
-                          arrow
-                          title={
-                            <>
-                              <DeleteIcon
-                                className="me-2"
-                                style={{ cursor: "pointer" }}
-                              />
-                              <EditCalendarIcon
-                                style={{ cursor: "pointer" }}
-                                onClick={() =>
-                                  handleClickOpen(
-                                    routine,
-                                    gradeItem.section_list
-                                  )
-                                }
-                              />
-                            </>
+                        <div
+                          className="p-1 rounded text-center text-white cell selected-cell"
+                          onClick={() =>
+                            handleClickOpen(routine, gradeItem.section_list)
                           }
                         >
-                          <div className="p-1 rounded text-center text-white cell selected-cell">
-                            <p className="mb-0">
-                              <small>
-                                {routine.start_time}
-                                {" - "}
-                                {routine.end_time}
-                              </small>
-                            </p>
-                            <p className="mb-0">
-                              <small>{routine.subject_name}</small>
-                            </p>
-                            <p className="mb-0">
-                              <small>{routine.teacher_name}</small>
-                            </p>
-                          </div>
-                        </HtmlTooltip>
+                          <p className="mb-0">
+                            <small>
+                              {routine.start_time}
+                              {" - "}
+                              {routine.end_time}
+                            </small>
+                          </p>
+                          <p className="mb-0">
+                            <small>{routine.subject_name}</small>
+                          </p>
+                          <p className="mb-0">
+                            <small>{routine.teacher_name}</small>
+                          </p>
+                        </div>
                       </td>
                     );
                   } else {

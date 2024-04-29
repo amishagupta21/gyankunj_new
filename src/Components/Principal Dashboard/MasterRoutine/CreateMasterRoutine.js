@@ -42,36 +42,43 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 const CreateMasterRoutine = ({
   isOpen,
   handleClose,
-  selectedData = {},
+  selectedData,
   selectedSectionData = [],
 }) => {
-  const { handleSubmit, getValues, setValue, reset, control } = useForm();
-  const userInfo = JSON.parse(localStorage.getItem("UserData"));
+  const { handleSubmit, setValue, reset, control } = useForm();
   const [isEditMode, setIsEditMode] = useState(false);
   const [teacherData, setTeacherData] = useState([]);
-  const [selectedRoutineData] = useState(selectedData);
+  const [selectedRoutineData, setSelectedRoutineData] = useState();
   const [subjectsList, setSubjectsList] = useState([]);
   const [showAlert, setShowAlert] = useState("");
   const [startTime, setStartTime] = useState(null);
 
   useEffect(() => {
-    if (selectedRoutineData && selectedRoutineData.subject_id) {
+    if(selectedData && Object.keys(selectedData).length > 0){
       setIsEditMode(true);
+      setSelectedRoutineData(selectedData);
+    }
+  },[selectedData])
+
+  useEffect(() => {
+    if (selectedRoutineData && selectedRoutineData.subject_id) {
+     
       const currentDateOnly = dayjs().format("YYYY-MM-DD");
       setValue("section_id", selectedRoutineData.section_id);
       setValue("subject_id", selectedRoutineData.subject_id);
       setValue("teacher_id", selectedRoutineData.teacher_id);
-
+  
       // Convert time strings to dayjs objects
       const startTime = dayjs(`${currentDateOnly}T${selectedRoutineData.start_time}`);
       const endTime = dayjs(`${currentDateOnly}T${selectedRoutineData.end_time}`);
-      debugger;
+
       // Set form values
       setValue("start_time", startTime);
       setValue("end_time", endTime);
       setStartTime(startTime);
     }
   }, [selectedRoutineData, setValue]);
+  
 
   useEffect(() => {
     getAllSubjectsData();
@@ -247,11 +254,11 @@ const CreateMasterRoutine = ({
                     }) => (
                       <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <TimePicker
-                          //   minTime={
-                          //     isEditMode
-                          //       ? dayjs(selectedData.start_time).format('HH:mm')
-                          //       : dayjs()
-                          //   }
+                            minTime={
+                              isEditMode
+                                ? startTime
+                                : dayjs()
+                            }
                           format="HH:mm"
                           label="Start Time"
                           value={value || null}
@@ -284,7 +291,7 @@ const CreateMasterRoutine = ({
                     }) => (
                       <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <TimePicker
-                          //  minTime={startTime || dayjs().format('HH:mm')}
+                         minTime={startTime || dayjs()}
                           format="HH:mm"
                           label="End Time"
                           value={value || null}
@@ -310,7 +317,7 @@ const CreateMasterRoutine = ({
               variant="outlined"
               type="reset"
               onClick={() => {
-                setStartTime(null);
+                //setStartTime(null);
                 reset();
               }}
             >
