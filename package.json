@@ -10,7 +10,6 @@
     "proxy": "http://13.200.112.20:5005"
   },
   "dependencies": {
-    "@aldabil/react-scheduler": "^2.8.8",
     "@babel/plugin-proposal-object-rest-spread": "^7.20.7",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
