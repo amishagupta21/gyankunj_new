@@ -76,3 +76,17 @@ a {
 ::-webkit-scrollbar-thumb:hover {
   background: #555; /* Color of the scroll thumb on hover */
 }
+
+.cell{
+  cursor: pointer;
+  height: 75px;
+  font-size: 14px;
+}
+
+.empty-cell:hover{
+  background: rgba(25, 118, 210, 0.1);
+}
+
+.selected-cell{
+  background-color: #1976d2;
+}

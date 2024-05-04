@@ -44,6 +44,10 @@ const viewMasterRoutine = (day, grade) => {
   return apiInstance.get(`/view_master_routine?day=${day}&grade_id=${grade}`);
 };
 
+const getViewMasterRoutineData = (day) => {
+  return apiInstance.get(`/view_master_routine?day=${day}`);
+};
+
 const attendanceOverview = (grade, section) => {
   return apiInstance.get(
     `/get_attendance_overview?grade_id=${grade}&section_id=${section}`
@@ -293,5 +297,6 @@ export {
   verifyLogBook,
   getTeacherLogBook,
   editLogBook,
-  saveLogBook
+  saveLogBook,
+  getViewMasterRoutineData
 };

@@ -46,7 +46,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
-const PResources = () => {
+const TResources = () => {
   const [gradeData, setGradeData] = useState([]);
   const [subjectsList, setSubjectsList] = useState([]);
   const [resourcesData, setResourcesData] = useState([]);
@@ -279,4 +279,4 @@ const PResources = () => {
   );
 };
 
-export default PResources;
+export default TResources;
