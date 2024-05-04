@@ -18,7 +18,11 @@ import {
   Select,
   Grid,
 } from "@mui/material";
-import { getSubjectsList, getTeachersData } from "../../../ApiClient";
+import {
+  createMasterRoutine,
+  getSubjectsList,
+  getTeachersData,
+} from "../../../ApiClient";
 import { showAlertMessage } from "../../AlertMessage";
 import { TimePicker } from "@mui/x-date-pickers";
 
@@ -33,7 +37,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   // Adjust the maxWidth property to increase the width of the dialog
   "& .MuiDialog-paper": {
     maxWidth: "90%", // Adjust the value as needed
-    // width: "75%", // Adjust the value as needed
+    width: "35%", // Adjust the value as needed
     //height: "100%",
     overflow: "hidden",
   },
@@ -51,34 +55,35 @@ const CreateMasterRoutine = ({
   const [selectedRoutineData, setSelectedRoutineData] = useState();
   const [subjectsList, setSubjectsList] = useState([]);
   const [showAlert, setShowAlert] = useState("");
-  const [startTime, setStartTime] = useState(null);
+  const [startTime, setStartTime] = useState(dayjs());
 
   useEffect(() => {
-    if(selectedData && Object.keys(selectedData).length > 0){
+    if (selectedData && selectedData.subject_id) {
       setIsEditMode(true);
-      setSelectedRoutineData(selectedData);
     }
-  },[selectedData])
+    setSelectedRoutineData(selectedData);
+  }, [selectedData]);
 
   useEffect(() => {
     if (selectedRoutineData && selectedRoutineData.subject_id) {
-     
-      const currentDateOnly = dayjs().format("YYYY-MM-DD");
       setValue("section_id", selectedRoutineData.section_id);
       setValue("subject_id", selectedRoutineData.subject_id);
       setValue("teacher_id", selectedRoutineData.teacher_id);
-  
-      // Convert time strings to dayjs objects
-      const startTime = dayjs(`${currentDateOnly}T${selectedRoutineData.start_time}`);
-      const endTime = dayjs(`${currentDateOnly}T${selectedRoutineData.end_time}`);
+      //const currentDateOnly = dayjs().format("YYYY-MM-DD");
+      // // Convert time strings to dayjs objects
+      // const startTime = dayjs(
+      //   `${currentDateOnly}T${selectedRoutineData.start_time}`
+      // );
+      // const endTime = dayjs(
+      //   `${currentDateOnly}T${selectedRoutineData.end_time}`
+      // );
 
-      // Set form values
-      setValue("start_time", startTime);
-      setValue("end_time", endTime);
-      setStartTime(startTime);
+      // // Set form values
+      // setValue("start_time", startTime);
+      // setValue("end_time", endTime);
+      // setStartTime(startTime);
     }
   }, [selectedRoutineData, setValue]);
-  
 
   useEffect(() => {
     getAllSubjectsData();
@@ -109,11 +114,40 @@ const CreateMasterRoutine = ({
   };
 
   const onSubmit = (data) => {
-    console.log(data);
+    const payload = {
+      //start_time: dayjs(data.start_time).format("hh:mm a"),
+      //end_time: dayjs(data.end_time).format("hh:mm a"),
+      period: selectedData.period,
+      grade_id: selectedData.grade_id,
+      section_id: data.section_id,
+      teacher_id: data.teacher_id,
+      subject_id: data.subject_id,
+      day: selectedData.day
+    };
+
+    createMasterRoutine(payload)
+      .then((res) => {
+        if (res?.data?.status === "success") {
+          setShowAlert("success");
+        } else {
+          setShowAlert("error");
+        }
+        setTimeout(() => {
+          handleClose(true);
+          setTimeout(() => {
+            setShowAlert("");
+          }, 2000);
+        }, 1000);
+      })
+      .catch((err) => {
+        setShowAlert("error");
+        setTimeout(() => {
+          setShowAlert("");
+        }, 3000);
+      });
   };
 
   const handleStartTimeChange = (time) => {
-    debugger;
     setStartTime(time);
     setValue("end_time", "");
     console.log("Start time value changed to:", time);
@@ -241,7 +275,7 @@ const CreateMasterRoutine = ({
                 </FormControl>
               </Grid>
             </Grid>
-            <Grid container spacing={2} className="mb-4">
+            {/* <Grid container spacing={2} className="mb-4">
               <Grid item xs={12} md={6}>
                 <FormControl fullWidth>
                   <Controller
@@ -254,12 +288,8 @@ const CreateMasterRoutine = ({
                     }) => (
                       <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <TimePicker
-                            minTime={
-                              isEditMode
-                                ? startTime
-                                : dayjs()
-                            }
-                          format="HH:mm"
+                         // minTime={isEditMode ? startTime : dayjs()}
+                        //  format="HH:mm:ss"
                           label="Start Time"
                           value={value || null}
                           onChange={(newValue) => {
@@ -291,8 +321,8 @@ const CreateMasterRoutine = ({
                     }) => (
                       <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <TimePicker
-                         minTime={startTime || dayjs()}
-                          format="HH:mm"
+                          //minTime={startTime || dayjs()}
+                          //format="HH:mm:ss A"
                           label="End Time"
                           value={value || null}
                           onChange={onChange}
@@ -309,7 +339,7 @@ const CreateMasterRoutine = ({
                   />
                 </FormControl>
               </Grid>
-            </Grid>
+            </Grid> */}
           </DialogContent>
           <DialogActions>
             <Button

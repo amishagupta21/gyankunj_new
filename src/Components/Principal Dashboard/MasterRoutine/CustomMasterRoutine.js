@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { getGradeDetails, getSubjectsList } from "../../../ApiClient";
+import { getGradeDetails, getSubjectsList, getViewMasterRoutineData } from "../../../ApiClient";
 import {
   Box,
   FormControl,
@@ -23,6 +23,7 @@ const CustomMasterRoutine = () => {
     { value: "2", label: 2 },
     { value: "3", label: 3 },
     { value: "4", label: 4 },
+    { value: "break", label: "Break" },
     { value: "5", label: 5 },
     { value: "6", label: 6 },
     { value: "7", label: 7 },
@@ -46,61 +47,7 @@ const CustomMasterRoutine = () => {
   }, []);
 
   useEffect(() => {
-    setIsLoading(true);
-    const tempData = {
-      1: {
-        start_time: "07:00",
-        end_time: "08:00",
-        period: "1",
-        grade_id: 1,
-        section_id: "1",
-        section_name: "A",
-        teacher_name: "JEFFER",
-        teacher_id: "JEFFER",
-        subject_name: "English",
-        subject_id: 12,
-      },
-      2: {
-        start_time: "17:00",
-        end_time: "21:00",
-        period: "2",
-        grade_id: 1,
-        section_id: "1",
-        section_name: "A",
-        teacher_name: "Rajlakshmi",
-        teacher_id: "TEACHER_3",
-        subject_name: "Math",
-        subject_id: 12,
-      },
-      3: {
-        start_time: "08:00",
-        end_time: "09:00",
-        period: "3",
-        grade_id: 4,
-        section_id: "1",
-        section_name: "A",
-        teacher_name: "Devanshu Shekharr",
-        teacher_id: "TEACHER_12",
-        subject_name: "Math",
-        subject_id: 11,
-      },
-      6: {
-        start_time: "01:30",
-        end_time: "2:30",
-        period: "6",
-        grade_id: 4,
-        section_id: "1",
-        section_name: "A",
-        teacher_name: "Puja Kumari",
-        teacher_id: "TEACHER_2",
-        subject_name: "URDU",
-        subject_id: 4,
-      },
-    };
-    setMasterRoutineData(tempData);
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
+    getMasterRoutineData();
   }, [dayFilter]);
 
   const getGradesList = () => {
@@ -113,13 +60,35 @@ const CustomMasterRoutine = () => {
       .catch((err) => console.log(err));
   };
 
-  const handleClickOpen = (data, sectionList = []) => {
-    setSelectedRoutineData(data);
-    setSelectedSectionData(sectionList);
-    setIsAddRoutineModalVisible(true);
+  const getMasterRoutineData = () => {
+    setIsLoading(true);
+    getViewMasterRoutineData(dayFilter)
+      .then((res) => {
+        if (res?.data && Object.keys(res?.data).length > 0) {
+          setMasterRoutineData(res?.data);
+        }
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 1000);
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+      });
   };
 
-  const handleClose = () => {
+  const handleClickOpen = (data, sectionList = [], period) => {
+    if(period !== 'break'){
+      setSelectedRoutineData(data);
+      setSelectedSectionData(sectionList);
+      setIsAddRoutineModalVisible(true);
+    }
+  };
+
+  const handleClose = (isSubmit) => {
+    if(isSubmit){
+      getMasterRoutineData();
+    }
     setIsAddRoutineModalVisible(false);
   };
 
@@ -164,10 +133,10 @@ const CustomMasterRoutine = () => {
         <table>
           <thead>
             <tr>
-              <th className="fs-6">Grade</th>
+              <th className="fs-6 bg-secondary">Grade</th>
               {periodData.map((period) => (
-                <th className="fs-6 text-center" key={period.value}>
-                  Period {period.label}
+                <th className={`fs-6 text-center ${period.value === 'break' ? 'bg-danger': 'bg-secondary'}`} key={period.value}>
+                  {period.value !== 'break' ? 'Period': ''} {period.label}
                 </th>
               ))}
             </tr>
@@ -188,7 +157,7 @@ const CustomMasterRoutine = () => {
                         <div
                           className="p-1 rounded text-center text-white cell selected-cell"
                           onClick={() =>
-                            handleClickOpen(routine, gradeItem.section_list)
+                            handleClickOpen(routine, gradeItem.section_list, period.value)
                           }
                         >
                           <p className="mb-0">
@@ -211,9 +180,9 @@ const CustomMasterRoutine = () => {
                     return (
                       <td className="p-0" key={period.value}>
                         <div
-                          className="text-center cell empty-cell"
+                          className={`text-center cell ${period.value !== 'break' ? 'empty-cell':''}`}
                           onClick={() =>
-                            handleClickOpen({}, gradeItem.section_list)
+                            handleClickOpen({grade_id:gradeItem.grade_id, period: period.value, day: dayFilter}, gradeItem.section_list, period.value)
                           }
                         ></div>
                       </td>
