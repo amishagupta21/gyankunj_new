@@ -1,54 +1,69 @@
 import React, { useState, useEffect } from "react";
-import { getGradeDetails, getSubjectsList, getViewMasterRoutineData } from "../../../ApiClient";
+import {
+  getGradeDetails,
+  getMasterRoutineMetadataInfo,
+  getViewMasterRoutineData,
+} from "../../../ApiClient";
 import {
   Box,
   FormControl,
   InputLabel,
   MenuItem,
   Select,
-  CircularProgress
+  CircularProgress,
 } from "@mui/material";
 import dayjs from "dayjs";
 import CreateMasterRoutine from "./CreateMasterRoutine";
 
 const CustomMasterRoutine = () => {
+  const userInfo = JSON.parse(localStorage.getItem("UserData"));
   const [isLoading, setIsLoading] = useState(false);
   const [gradeData, setGradeData] = useState([]);
   const [masterRoutineData, setMasterRoutineData] = useState();
   const [selectedRoutineData, setSelectedRoutineData] = useState();
   const [selectedSectionData, setSelectedSectionData] = useState([]);
-  const [isAddRoutineModalVisible, setIsAddRoutineModalVisible] = useState(false);
-  const [periodData] = useState([
-    { value: "1", label: 1 },
-    { value: "2", label: 2 },
-    { value: "3", label: 3 },
-    { value: "4", label: 4 },
-    { value: "break", label: "Break" },
-    { value: "5", label: 5 },
-    { value: "6", label: 6 },
-    { value: "7", label: 7 },
-    { value: "8", label: 8 },
-    { value: "9", label: 9 },
-  ]);
-
-  const [daysData] = useState([
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-    "Sunday",
-  ]);
-  const [dayFilter, setDayFilter] = useState(dayjs().format("dddd"));
+  const [isAddRoutineModalVisible, setIsAddRoutineModalVisible] =
+    useState(false);
+  const [periodData, setPeriodData] = useState([]);
+  const [daysData, setDaysData] = useState([]);
+  const [dayFilter, setDayFilter] = useState();
 
   useEffect(() => {
+    getMasterRoutineMetadata();
     getGradesList();
   }, []);
 
   useEffect(() => {
-    getMasterRoutineData();
+    if (dayFilter) getMasterRoutineData();
   }, [dayFilter]);
+
+  const getMasterRoutineMetadata = () => {
+    getMasterRoutineMetadataInfo(userInfo.routine_id)
+      .then((res) => {
+        if (res?.data && res.data.days && res.data.days.length > 0) {
+          const currentDayName = dayjs().format("dddd").toLowerCase();
+          const currentDayObject = res.data.days.find(
+            (day) => day.day_name.toLowerCase() === currentDayName
+          );
+          setDaysData(res.data.days);
+          setDayFilter(currentDayObject.day_id);
+        }
+        if (res?.data && res.data.periods && res.data.periods.length > 0) {
+          const fourthPeriodIndex = res.data.periods.findIndex(
+            (period) => period.period_id === 4
+          );
+          if (fourthPeriodIndex !== -1) {
+            res.data.periods.splice(fourthPeriodIndex + 1, 0, {
+              period_id: res.data.periods.length + 1,
+              period: "Break",
+            });
+          }
+
+          setPeriodData(res.data.periods);
+        }
+      })
+      .catch((err) => console.error(err));
+  };
 
   const getGradesList = () => {
     getGradeDetails()
@@ -57,28 +72,23 @@ const CustomMasterRoutine = () => {
           setGradeData(res.data.grade_details.grade_details);
         }
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.error(err));
   };
 
   const getMasterRoutineData = () => {
     setIsLoading(true);
     getViewMasterRoutineData(dayFilter)
       .then((res) => {
-        if (res?.data && Object.keys(res?.data).length > 0) {
-          setMasterRoutineData(res?.data);
+        if (res?.data && Object.keys(res.data).length > 0) {
+          setMasterRoutineData(res.data);
         }
-        setTimeout(() => {
-          setIsLoading(false);
-        }, 1000);
       })
-      .catch((err) => {
-        console.log(err);
-        setIsLoading(false);
-      });
+      .catch((err) => console.error(err))
+      .finally(() => setIsLoading(false));
   };
 
   const handleClickOpen = (data, sectionList = [], period) => {
-    if(period !== 'break'){
+    if (period !== "Break") {
       setSelectedRoutineData(data);
       setSelectedSectionData(sectionList);
       setIsAddRoutineModalVisible(true);
@@ -86,41 +96,36 @@ const CustomMasterRoutine = () => {
   };
 
   const handleClose = (isSubmit) => {
-    if(isSubmit){
-      getMasterRoutineData();
-    }
+    if (isSubmit) getMasterRoutineData();
     setIsAddRoutineModalVisible(false);
   };
 
-  const FiltersView = () => {
-    return (
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          gap: 2,
-          marginBottom: 2,
-        }}
-      >
-        {/* <h4>Teachers Routine</h4> */}
-        <FormControl fullWidth sx={{ width: "calc(100%/3)" }}>
-          <InputLabel id="day-filter-label">Day</InputLabel>
-          <Select
-            labelId="day-filter-label"
-            value={dayFilter || ""}
-            onChange={(e) => setDayFilter(e.target.value)}
-          >
-            {daysData.map((item) => (
-              <MenuItem key={item} value={item}>
-                {item}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-      </Box>
-    );
-  };
+  const FiltersView = () => (
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        gap: 2,
+        marginBottom: 2,
+      }}
+    >
+      <FormControl fullWidth sx={{ width: "calc(100%/3)" }}>
+        <InputLabel id="day-filter-label">Day</InputLabel>
+        <Select
+          labelId="day-filter-label"
+          value={dayFilter || ""}
+          onChange={(e) => setDayFilter(e.target.value)}
+        >
+          {daysData.map((item) => (
+            <MenuItem key={item.day_id} value={item.day_id}>
+              {item.day_name}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+    </Box>
+  );
 
   return (
     <>
@@ -134,9 +139,14 @@ const CustomMasterRoutine = () => {
           <thead>
             <tr>
               <th className="fs-6 bg-secondary">Grade</th>
-              {periodData.map((period) => (
-                <th className={`fs-6 text-center ${period.value === 'break' ? 'bg-danger': 'bg-secondary'}`} key={period.value}>
-                  {period.value !== 'break' ? 'Period': ''} {period.label}
+              {periodData.map((item) => (
+                <th
+                  className={`fs-6 text-center ${
+                    item.period === "Break" ? "bg-danger" : "bg-secondary"
+                  }`}
+                  key={item.period}
+                >
+                  {item.period !== "Break" ? "Period" : ""} {item.period}
                 </th>
               ))}
             </tr>
@@ -147,17 +157,21 @@ const CustomMasterRoutine = () => {
                 <td className="fw-bold" style={{ fontSize: 14 }}>
                   {gradeItem.grade}
                 </td>
-                {periodData.map((period) => {
+                {periodData.map((item) => {
                   const routine = masterRoutineData
-                    ? masterRoutineData[period.value]
+                    ? masterRoutineData[item.period]
                     : null;
                   if (routine && routine.grade_id === gradeItem.grade_id) {
                     return (
-                      <td className="p-0" key={period.value}>
+                      <td className="p-0" key={item.period}>
                         <div
                           className="p-1 rounded text-center text-white cell selected-cell"
                           onClick={() =>
-                            handleClickOpen(routine, gradeItem.section_list, period.value)
+                            handleClickOpen(
+                              routine,
+                              gradeItem.section_list,
+                              item.period
+                            )
                           }
                         >
                           <p className="mb-0">
@@ -178,11 +192,21 @@ const CustomMasterRoutine = () => {
                     );
                   } else {
                     return (
-                      <td className="p-0" key={period.value}>
+                      <td className="p-0" key={item.period}>
                         <div
-                          className={`text-center cell ${period.value !== 'break' ? 'empty-cell':''}`}
+                          className={`text-center cell ${
+                            item.period !== "Break" ? "empty-cell" : ""
+                          }`}
                           onClick={() =>
-                            handleClickOpen({grade_id:gradeItem.grade_id, period: period.value, day: dayFilter}, gradeItem.section_list, period.value)
+                            handleClickOpen(
+                              {
+                                grade_id: gradeItem.grade_id,
+                                period_id: item.period_id,
+                                day_id: dayFilter,
+                              },
+                              gradeItem.section_list,
+                              item.period
+                            )
                           }
                         ></div>
                       </td>
