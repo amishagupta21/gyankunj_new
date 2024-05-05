@@ -117,12 +117,12 @@ const CreateMasterRoutine = ({
     const payload = {
       //start_time: dayjs(data.start_time).format("hh:mm a"),
       //end_time: dayjs(data.end_time).format("hh:mm a"),
-      period: selectedData.period,
+      period_id: selectedData.period_id,
       grade_id: selectedData.grade_id,
       section_id: data.section_id,
       teacher_id: data.teacher_id,
       subject_id: data.subject_id,
-      day: selectedData.day
+      day_id: selectedData.day_id
     };
 
     createMasterRoutine(payload)
