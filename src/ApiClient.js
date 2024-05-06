@@ -62,9 +62,14 @@ const getReports = (grade, section, userType) => {
 
 const getResources = (grade, section, subject) => {
   return apiInstance.get(
-    `/get_content?grade_id=${grade}&section_id=${section}&subject_id=${subject}`
+    `/get_book_list?grade_id=${grade}&section_id=${section}&subject_id=${subject}`
   );
 };
+
+const getChapterDetails = (chapter_id) => {
+  return apiInstance.get(`/get_chapter_details?chapter_id=${chapter_id}`);
+};
+
 const getAllStudentsAssignmentReport = (AssignmentId) => {
   return apiInstance.get(
     `/get_all_students_assignment_report?assignment_id=${AssignmentId}`
@@ -303,5 +308,6 @@ export {
   editLogBook,
   saveLogBook,
   getViewMasterRoutineData,
-  getMasterRoutineMetadataInfo
+  getMasterRoutineMetadataInfo,
+  getChapterDetails
 };
