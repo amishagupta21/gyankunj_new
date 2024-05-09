@@ -103,7 +103,7 @@ export default function ViewBookChapters({
         </Toolbar>
       </AppBar>
       {selectedData?.chapter_list?.length > 0 ? (
-        <Grid container spacing={2} style={{height: "calc(100% - 50px)"}}>
+        <Grid container spacing={2} className="mt-0" style={{height: "calc(100% - 64px)"}}>
           <Grid item xs={3} className="h-100">
             <Box sx={{ width: "100%", bgcolor: "background.paper" }}>
               <List component="nav" aria-label="main mailbox folders">

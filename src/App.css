@@ -91,12 +91,6 @@ a {
   background-color: #1976d2;
 }
 
-.pdf-viewer{
-  padding: 20px;
-  background: #dedede;
-  margin-top: 10px;
-  height: calc(100% - 10px);
-}
 .react-pdf__Page__canvas{
   width: 100% !important;
   height: auto !important;

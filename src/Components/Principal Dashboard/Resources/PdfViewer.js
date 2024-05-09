@@ -49,11 +49,11 @@ const PdfViewer = ({ data }) => {
   useEffect(() => {
     setTimeout(() => {
       setLoading(false);
-    }, 3000);
+    }, 1000);
   }, [pageNumber]);
 
   return (
-    <div className="pdf-viewer">
+    <div className="bg-body-secondary h-100 p-3 overflow-auto">
       <div className="pdf-buttons mb-2 d-flex justify-content-between align-items-center">
         <p className="page-count fw-bold mb-0">
           Page {pageNumber} of {numPages || "..."}
