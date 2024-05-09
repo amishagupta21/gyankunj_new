@@ -66,8 +66,8 @@ const getResources = (grade, section, subject) => {
   );
 };
 
-const getChapterDetails = (chapter_id) => {
-  return apiInstance.get(`/get_chapter_details?chapter_id=${chapter_id}`);
+const getChapterDetails = (payload) => {
+  return apiInstance.post(`/get_chapter_details`, payload);
 };
 
 const getAllStudentsAssignmentReport = (AssignmentId) => {

@@ -93,7 +93,9 @@ const PResources = () => {
 
   const handeCardSelection = (item) => {
     setSelectedResource(item);
-    setOpen(true);
+    if(item.chapter_list && item.chapter_list.length > 0){
+      setOpen(true);
+    }
   };
 
   const handleClose = () => {

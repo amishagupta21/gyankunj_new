@@ -18,6 +18,7 @@ import ArticleIcon from "@mui/icons-material/Article";
 import CloseIcon from "@mui/icons-material/Close";
 import Slide from "@mui/material/Slide";
 import { getChapterDetails } from "../../../ApiClient";
+import PdfViewer from "./PdfViewer";
 
 const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -28,14 +29,24 @@ export default function ViewBookChapters({
   handleClose,
   selectedData,
 }) {
-  const [selectedChapter, setSelectedChapter] = useState();
+  const [selectedChapter, setSelectedChapter] = useState(selectedData?.chapter_list[0]?.chapter_id);
   const [chapterFileInfo, setChapterFileInfo] = useState();
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (selectedChapter) {
       setIsLoading(true);
-      getChapterDetails(selectedChapter)
+      const payload = {
+        chapter_id: selectedChapter,
+        fetch_all_pages: true,
+        page_config: {},
+
+        // page_config: {
+        //   start_page: 1,
+        //   end_page: 5,
+        // },
+      };
+      getChapterDetails(payload)
         .then((res) => {
           if (res?.data?.chapter_data && res?.data?.chapter_data.length > 0) {
             setChapterFileInfo(res?.data?.chapter_data[0]);
@@ -92,8 +103,8 @@ export default function ViewBookChapters({
         </Toolbar>
       </AppBar>
       {selectedData?.chapter_list?.length > 0 ? (
-        <Grid container spacing={2} className="m-0">
-          <Grid item xs={3}>
+        <Grid container spacing={2} style={{height: "calc(100% - 50px)"}}>
+          <Grid item xs={3} className="h-100">
             <Box sx={{ width: "100%", bgcolor: "background.paper" }}>
               <List component="nav" aria-label="main mailbox folders">
                 {memoizedListItems}
@@ -101,19 +112,15 @@ export default function ViewBookChapters({
             </Box>
           </Grid>
           <Divider orientation="vertical" flexItem />
-          <Grid item xs={8}>
+          <Grid item xs={8} className="h-100">
             {isLoading ? (
               <div className="text-center w-100 mt-5">
                 <CircularProgress color="primary" />
               </div>
             ) : (
-              <object
-                type="application/pdf"
-                data={`data:application/pdf;base64,${chapterFileInfo?.data}`}
-                className="w-100 h-100 border-0"
-              >
-                PDF file
-              </object>
+              chapterFileInfo?.data && (
+                <PdfViewer data={chapterFileInfo?.data} />
+              )
             )}
           </Grid>
         </Grid>
