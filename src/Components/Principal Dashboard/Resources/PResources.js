@@ -4,47 +4,21 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import CloseIcon from "@mui/icons-material/Close";
 
 import {
   getGradeDetails,
   getResources,
   getSubjectsList,
-} from "../../ApiClient";
+} from "../../../ApiClient";
 import {
-  Button,
   Card,
-  CardActions,
   CardContent,
   CardMedia,
   CircularProgress,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  IconButton,
   Typography,
-  styled,
 } from "@mui/material";
-import bookCover from "../../Images/book-cover-placeholder.png";
-
-const BootstrapDialog = styled(Dialog)(({ theme }) => ({
-  "& .MuiDialogContent-root": {
-    padding: theme.spacing(2),
-    height: "calc(100% - 53px)",
-  },
-  "& .MuiDialogActions-root": {
-    padding: theme.spacing(1),
-  },
-  // Adjust the maxWidth property to increase the width of the dialog
-  "& .MuiDialog-paper": {
-    maxWidth: "90%", // Adjust the value as needed
-    width: "75%", // Adjust the value as needed
-    height: "100%",
-    overflow: "hidden",
-  },
-}));
+import bookCover from "../../../Images/book-cover-placeholder.png";
+import ViewBookChepters from "./ViewBookChepters";
 
 const PResources = () => {
   const [gradeData, setGradeData] = useState([]);
@@ -55,8 +29,6 @@ const PResources = () => {
   const [sectionFilter, setSectionFilter] = useState("");
   const [subjectFilter, setSubjectFilter] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [numPages, setNumPages] = useState();
-  const [pageNumber, setPageNumber] = useState(1);
   const [open, setOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
 
@@ -94,9 +66,9 @@ const PResources = () => {
       setResourcesData([]);
       getResources(gradeFilter, sectionFilter, subjectFilter)
         .then((res) => {
-          setResourcesData(res?.data?.content_data || []);
+          setResourcesData(res?.data?.book_data || []);
           setTimeout(() => {
-           setIsLoading(false);
+            setIsLoading(false);
           }, 1000);
         })
         .catch((err) => {
@@ -121,7 +93,9 @@ const PResources = () => {
 
   const handeCardSelection = (item) => {
     setSelectedResource(item);
-    setOpen(true);
+    if(item.chapter_list && item.chapter_list.length > 0){
+      setOpen(true);
+    }
   };
 
   const handleClose = () => {
@@ -204,17 +178,21 @@ const PResources = () => {
     return (
       <div className="mt-5" style={{ display: "flex", flexWrap: "wrap" }}>
         {isLoading ? (
-          <div className="text-center w-100 mt-5"><CircularProgress color="primary" /></div>
+          <div className="text-center w-100 mt-5">
+            <CircularProgress color="primary" />
+          </div>
         ) : resourcesData?.length > 0 ? (
           resourcesData.map((card) => (
             <Card
-              key={card.id}
+              key={card.book_id}
               sx={{
                 minWidth: 120,
                 margin: "10px",
                 cursor: "pointer",
                 transition: "box-shadow 0.3s",
-                boxShadow: isHovered ? "0px 4px 8px rgba(0, 0, 0, 0.2)" : "0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12)",
+                boxShadow: isHovered
+                  ? "0px 4px 8px rgba(0, 0, 0, 0.2)"
+                  : "0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12)",
               }}
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
@@ -222,51 +200,19 @@ const PResources = () => {
             >
               <CardMedia
                 component="img"
-                alt={card.name}
+                alt={card.book_name}
                 height="100"
                 sx={{ padding: "10px", width: "100%" }}
-                image={card.image ?? bookCover}
+                image={card.book_cover_image_content ?? bookCover}
               />
               <CardContent className="text-center">
-                <Typography className="fw-bold">{card.name}</Typography>
+                <Typography className="fw-bold">{card.book_name}</Typography>
               </CardContent>
             </Card>
           ))
         ) : (
           <div className="w-100 text-center text-danger">No data available</div>
         )}
-
-        <BootstrapDialog
-          onClose={handleClose}
-          aria-labelledby="customized-dialog-title"
-          open={open}
-          //  scroll="paper"
-        >
-          <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
-            Book View
-          </DialogTitle>
-          <IconButton
-            aria-label="close"
-            onClick={() => handleClose(false)}
-            sx={{
-              position: "absolute",
-              right: 8,
-              top: 8,
-              color: (theme) => theme.palette.grey[500],
-            }}
-          >
-            <CloseIcon />
-          </IconButton>
-          <DialogContent dividers>
-            <object
-              type="application/pdf"
-              data={`data:application/pdf;base64,${selectedResource?.data}`}
-              className="w-100 h-100 border-0"
-            >
-              PDF file
-            </object>
-          </DialogContent>
-        </BootstrapDialog>
       </div>
     );
   };
@@ -275,6 +221,13 @@ const PResources = () => {
     <>
       <FiltersView />
       <CardList />
+      {open && (
+        <ViewBookChepters
+          isOpen={open}
+          handleClose={handleClose}
+          selectedData={selectedResource}
+        />
+      )}
     </>
   );
 };

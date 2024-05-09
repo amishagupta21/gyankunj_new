@@ -5,6 +5,12 @@ import RoutesContainer from "./Components/RoutesContainer";
 import SidebarContainer from "./Components/SidebarContainer";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
+import { pdfjs } from 'react-pdf';
+
+pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+  'pdfjs-dist/build/pdf.worker.min.js',
+  import.meta.url,
+).toString();
 
 function App() {
   const [userData, setUserData] = useState({});
