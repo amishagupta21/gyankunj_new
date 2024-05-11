@@ -8,7 +8,6 @@ import {
   Form,
   Pagination,
 } from "react-bootstrap";
-import StudentSidebar from "../StudentSidebar";
 import { studentAssignmentList } from "../../../ApiClient";
 import AssignmentSheet from "./StartAssignment";
 import moment from "moment";

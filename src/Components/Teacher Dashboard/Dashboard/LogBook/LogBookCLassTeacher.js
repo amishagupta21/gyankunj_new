@@ -164,7 +164,7 @@ const LogBookCLassTeacher = () => {
   const columns = useMemo(
     () => [
       {
-        accessorKey: "period",
+        accessorKey: "period_id",
         header: "Period",
       },
       {

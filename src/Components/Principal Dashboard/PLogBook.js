@@ -156,7 +156,7 @@ const PLogBook = () => {
   const columns = useMemo(
     () => [
       {
-        accessorKey: "period",
+        accessorKey: "period_id",
         header: "Period",
       },
       {

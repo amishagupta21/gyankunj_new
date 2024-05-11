@@ -13,7 +13,6 @@ import { useState } from "react";
 import { getReports } from "../../../ApiClient";
 import Select from "react-select";
 import SadImg from "../../../Images/SadImg.png";
-import StudentSidebar from "../StudentSidebar";
 
 const StudentReportSection = () => {
   // const [grade, setGrade] = useState('')
