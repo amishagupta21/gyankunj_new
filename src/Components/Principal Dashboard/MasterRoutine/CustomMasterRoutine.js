@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import {
   getGradeDetails,
   getMasterRoutineMetadataInfo,
+  getSubjectsList,
+  getTeachersData,
   getViewMasterRoutineData,
 } from "../../../ApiClient";
 import {
@@ -19,17 +21,21 @@ const CustomMasterRoutine = () => {
   const userInfo = JSON.parse(localStorage.getItem("UserData"));
   const [isLoading, setIsLoading] = useState(false);
   const [gradeData, setGradeData] = useState([]);
-  const [masterRoutineData, setMasterRoutineData] = useState();
-  const [selectedRoutineData, setSelectedRoutineData] = useState();
+  const [masterRoutineData, setMasterRoutineData] = useState({});
+  const [selectedRoutineData, setSelectedRoutineData] = useState(null);
   const [selectedSectionData, setSelectedSectionData] = useState([]);
   const [isAddRoutineModalVisible, setIsAddRoutineModalVisible] =
     useState(false);
   const [periodData, setPeriodData] = useState([]);
+  const [teacherData, setTeacherData] = useState([]);
+  const [subjectsList, setSubjectsList] = useState([]);
   const [daysData, setDaysData] = useState([]);
-  const [dayFilter, setDayFilter] = useState();
+  const [dayFilter, setDayFilter] = useState("");
 
   useEffect(() => {
     getMasterRoutineMetadata();
+    getAllSubjectsData();
+    getAllTeachersData();
     getGradesList();
   }, []);
 
@@ -40,26 +46,24 @@ const CustomMasterRoutine = () => {
   const getMasterRoutineMetadata = () => {
     getMasterRoutineMetadataInfo(userInfo.routine_id)
       .then((res) => {
-        if (res?.data && res.data.days && res.data.days.length > 0) {
+        if (res?.data) {
           const currentDayName = dayjs().format("dddd").toLowerCase();
           const currentDayObject = res.data.days.find(
             (day) => day.day_name.toLowerCase() === currentDayName
           );
+          if (currentDayObject) setDayFilter(currentDayObject.day_id);
+          
+          const updatedPeriodData = res.data.periods.map((period) => {
+            if (period.period_id === 4) {
+              return {
+                ...period,
+                period: "Break",
+              };
+            }
+            return period;
+          });
+          setPeriodData(updatedPeriodData);
           setDaysData(res.data.days);
-          setDayFilter(currentDayObject.day_id);
-        }
-        if (res?.data && res.data.periods && res.data.periods.length > 0) {
-          const fourthPeriodIndex = res.data.periods.findIndex(
-            (period) => period.period_id === 4
-          );
-          if (fourthPeriodIndex !== -1) {
-            res.data.periods.splice(fourthPeriodIndex + 1, 0, {
-              period_id: res.data.periods.length + 1,
-              period: "Break",
-            });
-          }
-
-          setPeriodData(res.data.periods);
         }
       })
       .catch((err) => console.error(err));
@@ -75,11 +79,34 @@ const CustomMasterRoutine = () => {
       .catch((err) => console.error(err));
   };
 
+  const getAllSubjectsData = () => {
+    getSubjectsList()
+      .then((res) => {
+        setSubjectsList([]);
+        if (res.data && res.data.subjects && res.data.subjects.length > 0) {
+          setSubjectsList(res.data.subjects);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const getAllTeachersData = () => {
+    getTeachersData()
+      .then((res) => {
+        if (res.data && res.data.teachers && res.data.teachers.length > 0) {
+          setTeacherData(res.data.teachers);
+        }
+      })
+      .catch((err) => console.log("Teachers err - ", err));
+  };
+
   const getMasterRoutineData = () => {
     setIsLoading(true);
     getViewMasterRoutineData(dayFilter)
       .then((res) => {
-        if (res?.data && Object.keys(res.data).length > 0) {
+        if (res?.data) {
           setMasterRoutineData(res.data);
         }
       })
@@ -88,7 +115,7 @@ const CustomMasterRoutine = () => {
   };
 
   const handleClickOpen = (data, sectionList = [], period) => {
-    if (period !== "Break") {
+    if (period !== "Break" && data) {
       setSelectedRoutineData(data);
       setSelectedSectionData(sectionList);
       setIsAddRoutineModalVisible(true);
@@ -114,7 +141,7 @@ const CustomMasterRoutine = () => {
         <InputLabel id="day-filter-label">Day</InputLabel>
         <Select
           labelId="day-filter-label"
-          value={dayFilter || ""}
+          value={dayFilter}
           onChange={(e) => setDayFilter(e.target.value)}
         >
           {daysData.map((item) => (
@@ -152,16 +179,19 @@ const CustomMasterRoutine = () => {
             </tr>
           </thead>
           <tbody>
-            {gradeData.map((gradeItem) => (
+            {gradeData && gradeData.length > 0 && gradeData.map((gradeItem) => (
               <tr key={gradeItem.grade_id}>
                 <td className="fw-bold" style={{ fontSize: 14 }}>
                   {gradeItem.grade}
                 </td>
                 {periodData.map((item) => {
-                  const routine = masterRoutineData
-                    ? masterRoutineData[item.period]
-                    : null;
-                  if (routine && routine.grade_id === gradeItem.grade_id) {
+                  const routines = masterRoutineData[item.period] || [];
+                  const routine = routines.find(
+                    (r) =>
+                      r.grade_id === gradeItem.grade_id &&
+                      r.day_id === dayFilter
+                  );
+                  if (routine) {
                     return (
                       <td className="p-0" key={item.period}>
                         <div
@@ -176,9 +206,7 @@ const CustomMasterRoutine = () => {
                         >
                           <p className="mb-0">
                             <small>
-                              {routine.start_time}
-                              {" - "}
-                              {routine.end_time}
+                              {routine.start_time} - {routine.end_time}
                             </small>
                           </p>
                           <p className="mb-0">
@@ -223,7 +251,9 @@ const CustomMasterRoutine = () => {
           isOpen={isAddRoutineModalVisible}
           handleClose={handleClose}
           selectedData={selectedRoutineData}
-          selectedSectionData={selectedSectionData}
+          sectionsList={selectedSectionData}
+          teachersList={teacherData}
+          subjectsList={subjectsList}
         />
       )}
     </>

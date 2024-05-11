@@ -7,8 +7,6 @@ import DialogActions from "@mui/material/DialogActions";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import { Controller, useForm } from "react-hook-form";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import dayjs from "dayjs";
 import {
   Button,
@@ -18,13 +16,8 @@ import {
   Select,
   Grid,
 } from "@mui/material";
-import {
-  createMasterRoutine,
-  getSubjectsList,
-  getTeachersData,
-} from "../../../ApiClient";
+import { createMasterRoutine } from "../../../ApiClient";
 import { showAlertMessage } from "../../AlertMessage";
-import { TimePicker } from "@mui/x-date-pickers";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -34,10 +27,9 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogActions-root": {
     padding: theme.spacing(1),
   },
-  // Adjust the maxWidth property to increase the width of the dialog
   "& .MuiDialog-paper": {
-    maxWidth: "90%", // Adjust the value as needed
-    width: "35%", // Adjust the value as needed
+    maxWidth: "90%",
+    width: "35%",
     //height: "100%",
     overflow: "hidden",
   },
@@ -47,15 +39,14 @@ const CreateMasterRoutine = ({
   isOpen,
   handleClose,
   selectedData,
-  selectedSectionData = [],
+  sectionsList = [],
+  teachersList = [],
+  subjectsList = [],
 }) => {
   const { handleSubmit, setValue, reset, control } = useForm();
   const [isEditMode, setIsEditMode] = useState(false);
-  const [teacherData, setTeacherData] = useState([]);
   const [selectedRoutineData, setSelectedRoutineData] = useState();
-  const [subjectsList, setSubjectsList] = useState([]);
   const [showAlert, setShowAlert] = useState("");
-  const [startTime, setStartTime] = useState(dayjs());
 
   useEffect(() => {
     if (selectedData && selectedData.subject_id) {
@@ -69,60 +60,17 @@ const CreateMasterRoutine = ({
       setValue("section_id", selectedRoutineData.section_id);
       setValue("subject_id", selectedRoutineData.subject_id);
       setValue("teacher_id", selectedRoutineData.teacher_id);
-      //const currentDateOnly = dayjs().format("YYYY-MM-DD");
-      // // Convert time strings to dayjs objects
-      // const startTime = dayjs(
-      //   `${currentDateOnly}T${selectedRoutineData.start_time}`
-      // );
-      // const endTime = dayjs(
-      //   `${currentDateOnly}T${selectedRoutineData.end_time}`
-      // );
-
-      // // Set form values
-      // setValue("start_time", startTime);
-      // setValue("end_time", endTime);
-      // setStartTime(startTime);
     }
   }, [selectedRoutineData, setValue]);
 
-  useEffect(() => {
-    getAllSubjectsData();
-    getAllTeachersData();
-  }, []);
-
-  const getAllSubjectsData = () => {
-    getSubjectsList()
-      .then((res) => {
-        setSubjectsList([]);
-        if (res.data && res.data.subjects && res.data.subjects.length > 0) {
-          setSubjectsList(res.data.subjects);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
-  const getAllTeachersData = () => {
-    getTeachersData()
-      .then((res) => {
-        if (res.data && res.data.teachers && res.data.teachers.length > 0) {
-          setTeacherData(res.data.teachers);
-        }
-      })
-      .catch((err) => console.log("Teachers err - ", err));
-  };
-
   const onSubmit = (data) => {
     const payload = {
-      //start_time: dayjs(data.start_time).format("hh:mm a"),
-      //end_time: dayjs(data.end_time).format("hh:mm a"),
       period_id: selectedData.period_id,
       grade_id: selectedData.grade_id,
       section_id: data.section_id,
       teacher_id: data.teacher_id,
       subject_id: data.subject_id,
-      day_id: selectedData.day_id
+      day_id: selectedData.day_id,
     };
 
     createMasterRoutine(payload)
@@ -145,12 +93,6 @@ const CreateMasterRoutine = ({
           setShowAlert("");
         }, 3000);
       });
-  };
-
-  const handleStartTimeChange = (time) => {
-    setStartTime(time);
-    setValue("end_time", "");
-    console.log("Start time value changed to:", time);
   };
 
   return (
@@ -198,7 +140,7 @@ const CreateMasterRoutine = ({
                           value={value || ""}
                           error={!!error}
                         >
-                          {selectedSectionData?.map((item) => (
+                          {sectionsList?.map((item) => (
                             <MenuItem
                               key={item.section_id}
                               value={item.section_id}
@@ -260,7 +202,7 @@ const CreateMasterRoutine = ({
                           value={value || ""}
                           error={!!error}
                         >
-                          {teacherData?.map((item) => (
+                          {teachersList?.map((item) => (
                             <MenuItem
                               key={item.teacher_id}
                               value={item.teacher_id}
@@ -275,81 +217,13 @@ const CreateMasterRoutine = ({
                 </FormControl>
               </Grid>
             </Grid>
-            {/* <Grid container spacing={2} className="mb-4">
-              <Grid item xs={12} md={6}>
-                <FormControl fullWidth>
-                  <Controller
-                    name="start_time"
-                    control={control}
-                    rules={{ required: true }}
-                    render={({
-                      field: { onChange, value },
-                      fieldState: { error },
-                    }) => (
-                      <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <TimePicker
-                         // minTime={isEditMode ? startTime : dayjs()}
-                        //  format="HH:mm:ss"
-                          label="Start Time"
-                          value={value || null}
-                          onChange={(newValue) => {
-                            onChange(newValue);
-                            handleStartTimeChange(newValue);
-                          }}
-                          slotProps={{
-                            textField: {
-                              variant: "outlined",
-                              error: !!error,
-                              helperText: error?.message,
-                            },
-                          }}
-                        />
-                      </LocalizationProvider>
-                    )}
-                  />
-                </FormControl>
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <FormControl fullWidth>
-                  <Controller
-                    name="end_time"
-                    control={control}
-                    rules={{ required: true }}
-                    render={({
-                      field: { onChange, value },
-                      fieldState: { error },
-                    }) => (
-                      <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <TimePicker
-                          //minTime={startTime || dayjs()}
-                          //format="HH:mm:ss A"
-                          label="End Time"
-                          value={value || null}
-                          onChange={onChange}
-                          slotProps={{
-                            textField: {
-                              variant: "outlined",
-                              error: !!error,
-                              helperText: error?.message,
-                            },
-                          }}
-                        />
-                      </LocalizationProvider>
-                    )}
-                  />
-                </FormControl>
-              </Grid>
-            </Grid> */}
           </DialogContent>
           <DialogActions>
             <Button
               className="me-3"
               variant="outlined"
               type="reset"
-              onClick={() => {
-                //setStartTime(null);
-                reset();
-              }}
+              onClick={reset}
             >
               Reset
             </Button>
