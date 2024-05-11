@@ -1,12 +1,3 @@
-import dashboardImg from "../Images/dashboardImg.svg";
-import masterRoutine from "../Images/MasterRoutine.png";
-import lessonPlan from "../Images/LessonPlan.png";
-import attendance from "../Images/Attendance.png";
-import reports from "../Images/Reports.png";
-import resources from "../Images/Resources.png";
-import announcements from "../Images/Announcements.png";
-import notifications from "../Images/Notifications.png";
-
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import SubjectOutlinedIcon from '@mui/icons-material/SubjectOutlined';
 import PlayLessonOutlinedIcon from '@mui/icons-material/PlayLessonOutlined';

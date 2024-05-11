@@ -1,23 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Button, Form, Modal, Row, Col } from "react-bootstrap";
 import Select from "react-select";
-import { saveNotice, publishNotice } from '../../../ApiClient';
+import { saveNotice, publishNotice } from "../../../ApiClient";
 
 const AddAnnouncement = (props) => {
-  const [noticeDescription, setNoticeDescription] = useState('')
-  const [noticeSubject, setNoticeSubject] = useState('')
-  const [showVisibility, setShowVisibility] = useState(false)
-  const [visibilityData, setVisibilityData] = useState('')
-  const [saveNoticeDetails, setSaveNoticeDetails] = useState({})
+  const [noticeDescription, setNoticeDescription] = useState("");
+  const [noticeSubject, setNoticeSubject] = useState("");
+  const [visibilityData, setVisibilityData] = useState("");
+  const [saveNoticeDetails, setSaveNoticeDetails] = useState({});
 
-  const userDetails = JSON.parse(localStorage.getItem('UserData'))
-
-  // useEffect(() => {
-  //   setNoticeSubject(props?.notice?.notice_subject)
-  //   setNoticeDescription(props?.notice?.notice_data)
-  // })
-
-
+  const userDetails = JSON.parse(localStorage.getItem("UserData"));
 
   const visibilityOptions = [
     { value: "teacher", label: "Teacher" },
@@ -26,35 +18,37 @@ const AddAnnouncement = (props) => {
     { value: "student_and_parent", label: "Student and Parent" },
     { value: "teacher_and_parent", label: "Teacher and Parent" },
     { value: "all", label: "Everyone" },
-  ]
+  ];
 
   const saveNoticeData = () => {
     const data = {
       user_id: userDetails?.user_id,
       data: noticeDescription,
-      notice_subject : noticeSubject
-    }
+      notice_subject: noticeSubject,
+    };
     saveNotice(data)
-    .then((res) => {setSaveNoticeDetails(res.data)
-    setShowVisibility(true)})
-    .catch((err) => console.log("Notice Err", err))
-  }
+      .then((res) => {
+        setSaveNoticeDetails(res.data);
+      })
+      .catch((err) => console.log("Notice Err", err));
+  };
 
   const publishNoticeData = () => {
     const data = {
       notice_id: saveNoticeDetails.notice_id,
-      visibility: visibilityData
-    }
+      visibility: visibilityData,
+    };
     publishNotice(data)
-    .then((res) => {console.log("Publish Notice Res", res.data)
-    closeModal();
-    })
-    .catch((err) => console.log("Notice Err", err))
-  }
+      .then((res) => {
+        console.log("Publish Notice Res", res.data);
+        closeModal();
+      })
+      .catch((err) => console.log("Notice Err", err));
+  };
 
   const closeModal = () => {
-    props.onHide()
-  }
+    props.onHide();
+  };
 
   return (
     <>
@@ -77,7 +71,12 @@ const AddAnnouncement = (props) => {
                   controlId="exampleForm.ControlInput1"
                 >
                   <Form.Label>Notice Subject</Form.Label>
-                  <Form.Control type="text" placeholder="Notice Subject" onChange={(e) => setNoticeSubject(e.target.value)} value={noticeSubject} />
+                  <Form.Control
+                    type="text"
+                    placeholder="Notice Subject"
+                    onChange={(e) => setNoticeSubject(e.target.value)}
+                    value={noticeSubject}
+                  />
                 </Form.Group>
               </Col>
             </Row>
@@ -99,9 +98,16 @@ const AddAnnouncement = (props) => {
               </Col>
             </Row>
             <Row>
-              {(saveNoticeDetails?.notice_id) && <Col md={12}>
-              <Select placeholder="Select Visibility" options={visibilityOptions} isSearchable={false} onChange={e => setVisibilityData(e.value)} />
-              </Col>}
+              {saveNoticeDetails?.notice_id && (
+                <Col md={12}>
+                  <Select
+                    placeholder="Select Visibility"
+                    options={visibilityOptions}
+                    isSearchable={false}
+                    onChange={(e) => setVisibilityData(e.value)}
+                  />
+                </Col>
+              )}
             </Row>
           </Form>
         </Modal.Body>
@@ -109,9 +115,26 @@ const AddAnnouncement = (props) => {
           {/* <Button variant="outline-primary" style={{ alignItems: "center" }}>
             Reset
           </Button> */}
-          <Button disabled={(saveNoticeDetails?.notice_id) || !(noticeDescription && noticeSubject)} variant="outline-primary" onClick={saveNoticeData}>Save</Button>
-          <Button disabled={(!(saveNoticeDetails?.notice_id))} variant="outline-primary" onClick={publishNoticeData}>Publish</Button>
-          <Button variant="outline-primary" onClick={closeModal}>Close</Button>
+          <Button
+            disabled={
+              saveNoticeDetails?.notice_id ||
+              !(noticeDescription && noticeSubject)
+            }
+            variant="outline-primary"
+            onClick={saveNoticeData}
+          >
+            Save
+          </Button>
+          <Button
+            disabled={!saveNoticeDetails?.notice_id}
+            variant="outline-primary"
+            onClick={publishNoticeData}
+          >
+            Publish
+          </Button>
+          <Button variant="outline-primary" onClick={closeModal}>
+            Close
+          </Button>
         </Modal.Footer>
       </Modal>
     </>

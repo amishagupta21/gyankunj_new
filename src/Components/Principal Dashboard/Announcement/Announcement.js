@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Row, Col, ButtonGroup, Dropdown, Card, Button } from "react-bootstrap";
+import { Row, Col, Button } from "react-bootstrap";
 import AddAnnouncement from "./AddAnnouncement";
-import PrincipalSidebar from "../PrincipalSidebar";
 import "./noticeCss.css";
-import seeAll from "../../../Images/icon_chevron_see_all.svg";
-import { viewAllNotice, saveNotice } from "../../../ApiClient";
+import { viewAllNotice } from "../../../ApiClient";
 import moment from "moment";
 import { FaAngleDown } from "react-icons/fa";
 import { FaAngleUp } from "react-icons/fa";
@@ -12,9 +10,7 @@ import { FaAngleUp } from "react-icons/fa";
 const Announcements = () => {
   const [showAddAnnouncement, setShowAddAnnouncement] = useState(false);
   const [allNotice, setAllNotice] = useState({});
-  const [indexedPublishNotice, setIndexedPublishNotice] = useState(null);
   const [hideResponse, setHideResponse] = useState([]);
-  const [sectionExpanded, setSectionExpanded] = useState(false);
 
   const userDetails = JSON.parse(localStorage.getItem("UserData"));
 
@@ -40,7 +36,6 @@ const Announcements = () => {
 
   const showPublishModal = (noticeId) => {
     console.log("notice - ", noticeId);
-    setIndexedPublishNotice(noticeId);
     setShowAddAnnouncement(true);
   };
 
@@ -48,13 +43,11 @@ const Announcements = () => {
     let openHandler = [...hideResponse];
     openHandler.push(id);
     setHideResponse([...openHandler]);
-    setSectionExpanded(true);
   };
 
   const hideResponseHandler = (id) => {
     let openHandler = [...hideResponse];
     let findindex = openHandler.indexOf(id);
-    setSectionExpanded(false);
 
     if (findindex > -1) {
       openHandler.splice(findindex, 1);
@@ -125,7 +118,7 @@ const Announcements = () => {
                     ) : (
                       <p className="notPubnoticeTime">
                         Not yet published.{" "}
-                        <a
+                        <button
                           style={{
                             fontStyle: "italic",
                             textDecoration: "underline",
@@ -134,20 +127,10 @@ const Announcements = () => {
                           onClick={() => showPublishModal(notice?.notice_id)}
                         >
                           Click here
-                        </a>{" "}
+                        </button>{" "}
                         to publish.
                       </p>
                     )}
-                    {/* {showAddAnnouncement && indexedPublishNotice  (
-                <AddAnnouncement
-                notice = {notice}
-                  show={showAddAnnouncement}
-                  onHide={() => {
-                    setShowAddAnnouncement(false);
-                  }}
-                  closeAndLoad={closeAndLoad}
-                />
-              )} */}
                     {hideResponse.includes(notice?.notice_id) && (
                       <Row>
                         <Col md={12}>
@@ -159,19 +142,11 @@ const Announcements = () => {
                       </Row>
                     )}
                   </Col>
-                  {/* <Row>
-                            <Col md={12}>
-                              <h6>Description :</h6>
-                              <p>{notice?.notice_data}</p>
-                            </Col>
-                          </Row> */}
                 </Row>
               </fieldset>
             );
           })}
         </div>
-        //   );
-        // })
       )}
       {showAddAnnouncement && (
         <AddAnnouncement

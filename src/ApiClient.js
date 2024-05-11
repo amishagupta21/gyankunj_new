@@ -110,8 +110,8 @@ const getLessonPlanMetadata = (grade, section) => {
   );
 };
 
-const getTeacherRoutine = (userId, day) => {
-  return apiInstance.get(`/view_teacher_routine?user_id=${userId}&day=${day}`);
+const getTeacherRoutine = (userId, day_id) => {
+  return apiInstance.get(`/view_teacher_routine?user_id=${userId}&day_id=${day_id}`);
 };
 
 const viewStudentAttendance = (grade, section, month) => {
@@ -232,7 +232,7 @@ const evaluteAssignment = (AssignmentId, student) => {
   );
 };
 
-const getAllChapterName = (grade, section) => {
+const getAllChaptersList = (grade, section) => {
   return apiInstance.get(
     `/get_subject_chapters?grade_id=${grade}&section_id=${section}`
   );
@@ -256,6 +256,10 @@ const getTeacherLogBook = () => {
 
 const getMasterRoutineMetadataInfo = (routine_id) => {
   return apiInstance.get(`/get_master_routine_metadata?routine_id=${routine_id}`);
+};
+
+const getAllPeriodsList = (routine_id) => {
+  return apiInstance.get(`/fetch_all_periods?routine_id=${routine_id}`);
 };
 
 
@@ -300,7 +304,7 @@ export {
   SaveAssignmentData,
   publishAssignmentData,
   loadAssignmentData,
-  getAllChapterName,
+  getAllChaptersList,
   submitEvaluationReport,
   getStudentAttendances,
   verifyLogBook,
@@ -309,5 +313,6 @@ export {
   saveLogBook,
   getViewMasterRoutineData,
   getMasterRoutineMetadataInfo,
-  getChapterDetails
+  getChapterDetails,
+  getAllPeriodsList
 };
