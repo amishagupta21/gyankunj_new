@@ -61,9 +61,11 @@ const getReports = (grade, section, userType) => {
 };
 
 const getResources = (grade, section, subject) => {
-  return apiInstance.get(
-    `/get_book_list?grade_id=${grade}&section_id=${section}&subject_id=${subject}`
-  );
+  let url = `/get_book_list?grade_id=${grade}&section_id=${section}`;
+  if (subject) {
+    url = `${url}&subject_id=${subject}`;
+  }
+  return apiInstance.get(url);
 };
 
 const getChapterDetails = (payload) => {
@@ -86,10 +88,9 @@ const getGradeDetails = () => {
 };
 
 const saveLessonPlan = (data) => {
-  if(data.lesson_id > 0){
+  if (data.lesson_id > 0) {
     return apiInstance.put(`/edit_lesson_plan`, data);
-  }
-  else{
+  } else {
     return apiInstance.post(`/save_lesson_plan`, data);
   }
 };
@@ -111,7 +112,9 @@ const getLessonPlanMetadata = (grade, section) => {
 };
 
 const getTeacherRoutine = (userId, day_id) => {
-  return apiInstance.get(`/view_teacher_routine?user_id=${userId}&day_id=${day_id}`);
+  return apiInstance.get(
+    `/view_teacher_routine?user_id=${userId}&day_id=${day_id}`
+  );
 };
 
 const viewStudentAttendance = (grade, section, month) => {
@@ -143,10 +146,9 @@ const publishNotice = (noticeDataToPublish) => {
 };
 
 const saveLogBook = (data) => {
-  if(data.log_book_id > 0){
+  if (data.log_book_id > 0) {
     return apiInstance.put(`/edit_log_book`, data);
-  }
-  else{
+  } else {
     return apiInstance.post(`/save_log_book`, data);
   }
 };
@@ -247,7 +249,9 @@ const submitEvaluationReport = (data) => {
 };
 
 const getStudentAttendances = (grade, section, date) => {
-  return apiInstance.get(`/get_student_daily_attendance?grade_id=${grade}&section_id=${section}&date=${date}`);
+  return apiInstance.get(
+    `/get_student_daily_attendance?grade_id=${grade}&section_id=${section}&date=${date}`
+  );
 };
 
 const getTeacherLogBook = () => {
@@ -255,13 +259,24 @@ const getTeacherLogBook = () => {
 };
 
 const getMasterRoutineMetadataInfo = (routine_id) => {
-  return apiInstance.get(`/get_master_routine_metadata?routine_id=${routine_id}`);
+  return apiInstance.get(
+    `/get_master_routine_metadata?routine_id=${routine_id}`
+  );
 };
 
 const getAllPeriodsList = (routine_id) => {
   return apiInstance.get(`/fetch_all_periods?routine_id=${routine_id}`);
 };
 
+const getStudentRoutineData = (grade, section) => {
+  return apiInstance.get(
+    `/view_student_routine?grade_id=${grade}&section_id=${section}`
+  );
+};
+
+const getStudentSubjectData = (student_id) => {
+  return apiInstance.get(`/view_student_subjects?student_id=${student_id}`);
+};
 
 export {
   //loginUser,
@@ -314,5 +329,7 @@ export {
   getViewMasterRoutineData,
   getMasterRoutineMetadataInfo,
   getChapterDetails,
-  getAllPeriodsList
+  getAllPeriodsList,
+  getStudentRoutineData,
+  getStudentSubjectData
 };

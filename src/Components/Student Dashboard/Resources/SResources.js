@@ -20,51 +20,20 @@ import {
 import bookCover from "../../../Images/book-cover-placeholder.png";
 import ViewBookChepters from "./ViewBookChepters";
 
-const PResources = () => {
-  const [gradeData, setGradeData] = useState([]);
-  const [subjectsList, setSubjectsList] = useState([]);
+const SResources = () => {
+  const userInfo = JSON.parse(localStorage.getItem("UserData"));
   const [resourcesData, setResourcesData] = useState([]);
   const [selectedResource, setSelectedResource] = useState({});
-  const [gradeFilter, setGradeFilter] = useState("");
-  const [sectionFilter, setSectionFilter] = useState("");
-  const [subjectFilter, setSubjectFilter] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
 
-  useEffect(() => {
-    getGradesList();
-    getAllSubjectsData();
-  }, []);
-
-  const getGradesList = () => {
-    getGradeDetails()
-      .then((res) => {
-        if (res?.data?.grade_details?.grade_details) {
-          setGradeData(res.data.grade_details.grade_details);
-        }
-      })
-      .catch((err) => console.log(err));
-  };
-
-  const getAllSubjectsData = () => {
-    getSubjectsList()
-      .then((res) => {
-        setSubjectsList([]);
-        if (res.data && res.data.subjects && res.data.subjects.length > 0) {
-          setSubjectsList(res.data.subjects);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
 
   useEffect(() => {
-    if (gradeFilter && sectionFilter) {
+    if (userInfo.grade_id && userInfo.section_id) {
       setIsLoading(true);
       setResourcesData([]);
-      getResources(gradeFilter, sectionFilter, subjectFilter)
+      getResources(userInfo.grade_id, userInfo.section_id)
         .then((res) => {
           setResourcesData(res?.data?.book_data || []);
           setTimeout(() => {
@@ -76,20 +45,7 @@ const PResources = () => {
           setIsLoading(false);
         });
     }
-  }, [gradeFilter, sectionFilter, subjectFilter]);
-
-  const handleGradeChange = (event) => {
-    setGradeFilter(event.target.value);
-    setSectionFilter("");
-  };
-
-  const handleSectionChange = (event) => {
-    setSectionFilter(event.target.value);
-  };
-
-  const handleSubjectChange = (event) => {
-    setSubjectFilter(event.target.value);
-  };
+  }, []);
 
   const handeCardSelection = (item) => {
     setSelectedResource(item);
@@ -114,62 +70,6 @@ const PResources = () => {
     return (
       <>
         <h4 className="mb-3">Resources</h4>
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: 2,
-            marginBottom: 2,
-          }}
-        >
-          <FormControl fullWidth sx={{ width: "calc(100%/3)" }}>
-            <InputLabel id="grade-filter-label">Grade</InputLabel>
-            <Select
-              labelId="grade-filter-label"
-              value={gradeFilter || ""}
-              onChange={handleGradeChange}
-            >
-              {gradeData.map((item) => (
-                <MenuItem key={item.grade_id} value={item.grade_id}>
-                  {item.grade}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-
-          <FormControl fullWidth sx={{ width: "calc(100%/3)" }}>
-            <InputLabel id="section-filter-label">Section</InputLabel>
-            <Select
-              labelId="section-filter-label"
-              value={sectionFilter}
-              onChange={handleSectionChange}
-              disabled={!gradeFilter}
-            >
-              {gradeData
-                .find((grade) => grade.grade_id === gradeFilter)
-                ?.section_list.map((section) => (
-                  <MenuItem key={section.section_id} value={section.section_id}>
-                    {section.section_name}
-                  </MenuItem>
-                ))}
-            </Select>
-          </FormControl>
-
-          <FormControl fullWidth sx={{ width: "calc(100%/3)" }}>
-            <InputLabel id="subject-filter-label">Subject</InputLabel>
-            <Select
-              labelId="subject-filter-label"
-              value={subjectFilter}
-              onChange={handleSubjectChange}
-            >
-              {subjectsList?.map((item) => (
-                <MenuItem key={item.subject_id} value={item.subject_id}>
-                  {item.subject_name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </Box>
       </>
     );
   };
@@ -232,4 +132,4 @@ const PResources = () => {
   );
 };
 
-export default PResources;
+export default SResources;

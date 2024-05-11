@@ -8,20 +8,14 @@ import AttendanceOverview from "./Principal Dashboard/AttendanceOverview";
 import ReportSection from "./Principal Dashboard/Reports";
 import Announcements from "./Principal Dashboard/Announcement/Announcement";
 import Notifications from "./Principal Dashboard/Notifications";
-// import TDashboard from "../Components/Teacher Dashboard/Dashboard/Dashboard";
 import MySubjects from "./Teacher Dashboard/My Subject/MySubjects";
-//import TLessonPlan from "../Components/Teacher Dashboard/LessonPlan/LessonPlan";
-// import LogBook from "../Components/Teacher Dashboard/LogBook/LogBook";
 import TeacherReport from "./Teacher Dashboard/Teacher Report/TeacherReport";
 import TeacherAttendance from "./Teacher Dashboard/TeacherAttendance/TeacherAttendance";
 import TeacherAssignment from "./Teacher Dashboard/Assignment/TeacherAssignment";
-import ResourcesForTeacher from "./Teacher Dashboard/ResourcesForTeacher/ResourcesForTeacher";
 import NoticeForTeacher from "./Teacher Dashboard/NoticeForTeacher/NoticeForTeacher";
 import NotificationsForTeacher from "./Teacher Dashboard/NotificationsForTeacher/NotificationsForTeacher";
 import StudentAssigments from "./Student Dashboard/Assignments/Assignments";
-import StudentDashboard from "./Student Dashboard/StudentDashboard";
 import StudentReportSection from "./Student Dashboard/Report/Reports";
-import ResourcesForStudents from "./Student Dashboard/Resources/StudentResources";
 import NoticeForStudents from "./Student Dashboard/NoticeForStudents/NoticeForStudents";
 import NotificationsForStudent from "./Student Dashboard/Notification/StudentNotification";
 import CreateAssignment from "./Teacher Dashboard/Assignment/CreateAssignment";
@@ -34,9 +28,10 @@ import PLessonPlan from "./Principal Dashboard/PLessonPlan";
 import LogBookCLassTeacher from "./Teacher Dashboard/Dashboard/LogBook/LogBookCLassTeacher";
 import TLessonPlan from "./Teacher Dashboard/LessonPlan/TLessonPlan";
 import PResources from "./Principal Dashboard/Resources/PResources";
-import TResources from "./Teacher Dashboard/TResources";
-import SResources from "./Student Dashboard/SResources";
 import CustomMasterRoutine from "./Principal Dashboard/MasterRoutine/CustomMasterRoutine";
+import TResources from "./Teacher Dashboard/Resources/TResources";
+import SResources from "./Student Dashboard/Resources/SResources";
+import SDashboard from "./Student Dashboard/SDashboard";
 
 // Define routes for different user roles
 const roleRoutes = {
@@ -173,7 +168,7 @@ export default function RoutesContainer({ userData }) {
           <>
             <Route
               path="/studentDashboard/dashboard"
-              element={<ProtectedWrapper Component={StudentDashboard} />}
+              element={<ProtectedWrapper Component={SDashboard} />}
             />
             <Route
               path="/studentDashboard/reports"

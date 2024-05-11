@@ -61,7 +61,7 @@ const TResources = () => {
   };
 
   useEffect(() => {
-    if (gradeFilter && sectionFilter && subjectFilter) {
+    if (gradeFilter && sectionFilter) {
       setIsLoading(true);
       setResourcesData([]);
       getResources(gradeFilter, sectionFilter, subjectFilter)

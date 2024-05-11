@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Row, Col, ButtonGroup, Dropdown, Card, Button } from "react-bootstrap";
-import StudentSidebar from "../StudentSidebar";
 import seeAll from "../../../Images/icon_chevron_see_all.svg";
 import { viewNotice } from "../../../ApiClient";
 import moment from "moment";

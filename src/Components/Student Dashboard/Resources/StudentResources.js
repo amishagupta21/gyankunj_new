@@ -1,5 +1,4 @@
 import React from "react";
-import StudentSidebar from "../StudentSidebar";
 import { Row, Col } from "react-bootstrap";
 
 const ResourcesForStudents = () => {
