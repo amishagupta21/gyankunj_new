@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Row, Col, ButtonGroup, Dropdown, Card, Button } from "react-bootstrap";
-import PrincipalSidebar from "../PrincipalSidebar";
-import seeAll from "../../../Images/icon_chevron_see_all.svg";
-import { viewNotification } from "../../../ApiClient";
-import moment from "moment";
+import { Row, Col } from "react-bootstrap";
+import { viewNotification } from "../../ApiClient";
 import { FaAngleDown } from "react-icons/fa";
 import { FaAngleUp } from "react-icons/fa";
 import Select from "react-select";
@@ -13,9 +10,7 @@ const NotificationsForTeacher = () => {
 
   const [notificationData, setNotificationData] = useState({});
   const [hideResponse, setHideResponse] = useState([]);
-  const [sectionExpanded, setSectionExpanded] = useState(false);
   const [selectedRole, setSelectedRole] = useState("");
-  const [initaialSelectRole, setInitialSelectedRole] = useState("principal");
 
   useEffect(() => {
     allNotification();
@@ -37,13 +32,11 @@ const NotificationsForTeacher = () => {
     let openHandler = [...hideResponse];
     openHandler.push(id);
     setHideResponse([...openHandler]);
-    setSectionExpanded(true);
   };
 
   const hideResponseHandler = (id) => {
     let openHandler = [...hideResponse];
     let findindex = openHandler.indexOf(id);
-    setSectionExpanded(false);
 
     if (findindex > -1) {
       openHandler.splice(findindex, 1);
@@ -54,8 +47,6 @@ const NotificationsForTeacher = () => {
   const handleRoleChange = (e) => {
     setSelectedRole(e.value);
   };
-
-  console.log("notificationData - ", notificationData);
 
   return (
     <div className="resourcesHeader">
@@ -128,12 +119,6 @@ const NotificationsForTeacher = () => {
                       </h6>
                     }
 
-                    {/* <p className="noticeTime">
-                        {moment(notification?.published_at).format(
-                          "DD-MMM-YYYY"
-                        )}
-                      </p> */}
-
                     {hideResponse.includes(notification?.notification_id) && (
                       <Row>
                         <Col md={12}>
@@ -145,19 +130,11 @@ const NotificationsForTeacher = () => {
                       </Row>
                     )}
                   </Col>
-                  {/* <Row>
-                    <Col md={12}>
-                      <h6>Description :</h6>
-                      <p>{notice?.notice_data}</p>
-                    </Col>
-                  </Row> */}
                 </Row>
               </fieldset>
             );
           })}
         </div>
-        //   );
-        // })
       }
     </div>
   );

@@ -1,68 +1,27 @@
 import React from "react";
-import {
-  Row,
-  Col,
-  ButtonGroup,
-  ToggleButton,
-  Dropdown,
-  Table,
-  ProgressBar,
-  Button,
-  Form,
-} from "react-bootstrap";
+import { Row, Col, Table, ProgressBar, Button, Form } from "react-bootstrap";
 import { useState } from "react";
-import {
-  attendanceOverview,
-  viewAttendanceReport,
-  getGradeDetails,
-} from "../../../ApiClient";
+import { viewAttendanceReport, getGradeDetails } from "../../ApiClient";
 import { useEffect } from "react";
-import Select from "react-select";
-import PrincipalSidebar from "../PrincipalSidebar";
 
 const AttendanceOverview = () => {
-  const [checked, setChecked] = useState(false);
-  const [radioValue, setRadioValue] = useState("");
-  const [tableData, setTableData] = useState([]);
-  const [overallAttendance, setOverallAttendance] = useState({});
-  const [grade, setGrade] = useState("");
   const [gradeData, setGradeData] = useState([]);
-  const [section, setSection] = useState("");
   const [yearData, setYear] = useState("");
   const [teacherTabActive, setTeacherTabActive] = useState(true);
   const [sectionSelect, setSectionSelect] = useState("");
   const [classSelect, setClassSelect] = useState("");
-  const [gradeSelect, setGradeSelect] = useState("");
   const [teacherTotalAttendance, setTeacherTotalAttendance] = useState({});
   const [studentTotalAttendance, setStudentTotalAttendance] = useState({});
 
-  //   useEffect(() => {
-  //     getAttendanceOverview()
-  //     getFullAttendanceData()
-  // },[grade, section])
-
   useEffect(() => {
     getAllGradeDetails();
-  }, [grade, section]);
+  }, []);
 
   const sectionOptions = [
     { value: "1", label: "A" },
     { value: "2", label: "B" },
     { value: "3", label: "C" },
     { value: "4", label: "D" },
-  ];
-
-  const gradeOptions = [
-    { value: "1", label: 1 },
-    { value: "2", label: 2 },
-    { value: "3", label: 3 },
-    { value: "4", label: 4 },
-    { value: "5", label: 5 },
-    { value: "6", label: 6 },
-    { value: "7", label: 7 },
-    { value: "8", label: 8 },
-    { value: "9", label: 9 },
-    { value: "10", label: 10 },
   ];
 
   const yearOptions = [
@@ -74,18 +33,6 @@ const AttendanceOverview = () => {
 
   const now = "100";
 
-  const radios = [
-    { name: "A", value: "1" },
-    { name: "B", value: "2" },
-    { name: "C", value: "3" },
-    { name: "D", value: "4" },
-  ];
-
-  const attendanceRadios = [
-    { name: "Teacher", value: "userTypeTeacher" },
-    { name: "Student", value: "userTypeStudent" },
-  ];
-
   const handleGradeChange = (e) => {
     setClassSelect(e.target.value);
   };
@@ -94,27 +41,8 @@ const AttendanceOverview = () => {
     setSectionSelect(e.target.value);
   };
 
-  const handleClassChange = (e) => {
-    setClassSelect(e.value);
-    setGrade(e.value);
-  };
-
   const handleYearChange = (e) => {
     setYear(e.target.value);
-  };
-
-  // const handleSectionChange = (e) => {
-  //   console.log("e -", e)
-  //   setSection(e.target.defaultValue)
-  //   setRadioValue(e.currentTarget.value)
-  // }
-
-  const getAttendanceOverview = () => {
-    const grade_id = grade;
-    const section_id = section;
-    attendanceOverview(grade_id, section_id)
-      .then((res) => setOverallAttendance(res.data))
-      .then((err) => console.log(err));
   };
 
   const getFullAttendanceData = () => {
@@ -124,7 +52,6 @@ const AttendanceOverview = () => {
     const user_type = teacherTabActive ? "teacher" : "student";
     viewAttendanceReport(grade_id, section_id, year, user_type)
       .then((res) => {
-        // console.log('Attendance - ', res.data.student_report.attendance_data)
         setTeacherTotalAttendance(res.data);
         setStudentTotalAttendance(res.data);
       })
@@ -157,155 +84,6 @@ const AttendanceOverview = () => {
             <h4>Attendance Overview</h4>
           </Col>
         </Row>
-        {/* <Row>
-              <Col
-                md={3}
-                className="attendanceOverviewInner"
-                style={{
-                  borderRight: "1px solid #EFF1F4",
-                  height: "175px",
-                  paddingTop: "20px",
-                }}
-              >
-                <h6
-                  style={{
-                    marginLeft: "12px",
-                    paddingTop: "5px",
-                    textAlign: "center",
-                    font: "normal normal medium 14px/15px Roboto",
-                    letterSpacing: "0px",
-                    color: "#821CE8",
-                    opacity: "1",
-                  }}
-                >
-                  Teacher
-                </h6>
-                <Row style={{ margin: "10px 0px" }}>
-                  <Col>
-                    <span>Present</span>
-                  </Col>
-                  <Col>
-                    <p>
-                      {overallAttendance?.attendance_overview?.teacher?.present}
-                    </p>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col>
-                    <span>Absent</span>
-                  </Col>
-                  <Col>
-                    <p>
-                      {overallAttendance?.attendance_overview?.teacher?.absent}
-                    </p>
-                  </Col>
-                </Row>
-              </Col>
-              <Col md={9} className="attendanceOverviewInner">
-                <Row>
-                  <Col md={9}>
-                    <h6
-                      style={{
-                        background: "#DEFABD 0% 0% no-repeat padding-box",
-                        marginLeft: "12px",
-                        paddingTop: "5px",
-                        textAlign: "center",
-                        font: "normal normal medium 14px/15px Roboto",
-                        letterSpacing: "0px",
-                        color: "#608E29",
-                        opacity: "1",
-                      }}
-                    >
-                      Student
-                    </h6>
-                  </Col>
-                  <Col md={3}>
-                  </Col>
-                </Row>
-
-                <Row style={{ width: "70%" }}>
-                  <Col md={4}>
-                    <span style={{ marginRight: "20px" }}>Overview</span>
-                    <span
-                      style={{
-                        textAlign: "center",
-                        font: "normal normal bold 27px/35px Roboto",
-                        letterSpacing: "0px",
-                        color: "#608E29",
-                        opacity: "1",
-                      }}
-                    >
-                      {overallAttendance?.attendance_overview?.student?.total}
-                    </span>
-                  </Col>
-                  <Col>
-                    <span style={{ marginRight: "20px" }}>Present</span>
-                    <span
-                      style={{
-                        textAlign: "center",
-                        font: "normal normal bold 27px/35px Roboto",
-                        letterSpacing: "0px",
-                        color: "#608E29",
-                        opacity: "1",
-                      }}
-                    >
-                      {overallAttendance?.attendance_overview?.student?.present}
-                    </span>
-                  </Col>
-                  <Col>
-                    <span style={{ marginRight: "20px" }}>Absent</span>
-                    <span
-                      style={{
-                        textAlign: "center",
-                        font: "normal normal bold 27px/35px Roboto",
-                        letterSpacing: "0px",
-                        color: "#608E29",
-                        opacity: "1",
-                      }}
-                    >
-                      {overallAttendance?.attendance_overview?.student?.absent}
-                    </span>
-                  </Col>
-                </Row>
-                <Row
-                  style={{
-                    width: "70%",
-                    marginTop: "12px",
-                    border: "1px solid #EFF1F4",
-                    borderRadius: "8px",
-                    backgroundColor: "#E1E9F3",
-                    height: "53px",
-                    paddingTop: "7px",
-                  }}
-                >
-                  <Col>
-                    <h5>Select Section</h5>
-                  </Col>
-                  <Col>
-                    <ButtonGroup>
-                      {radios.map((radio, idx) => (
-                        <ToggleButton
-                          className="toggleBtn"
-                          key={idx}
-                          id={`radio-${idx}`}
-                          type="radio"
-                          variant={
-                            idx % 1 ? "outline-success" : "outline-primary"
-                          }
-                          name="radio"
-                          value={radio.value}
-                          checked={radioValue === radio.value}
-                          onChange={(e) => handleSectionChange(e)}
-                          disabled={!grade}
-                        >
-                          {radio.name}
-                        </ToggleButton>
-                      ))}
-                    </ButtonGroup>
-                  </Col>
-                </Row>
-              </Col>
-            </Row> */}
       </div>
 
       <div>
@@ -338,11 +116,7 @@ const AttendanceOverview = () => {
           <Col
             md={6}
             style={{
-              // borderBottom: !teacherTabActive
-              //   ? "7px solid #1E79B6"
-              //   : "",
               backgroundColor: !teacherTabActive ? "cornflowerblue" : "",
-              // borderTop: !teacherTabActive ? "7px solid blueviolet" : "",
               borderRadius: !teacherTabActive ? "10px" : "",
               cursor: "pointer",
             }}
@@ -387,7 +161,6 @@ const AttendanceOverview = () => {
               >
                 <option value="">--Grade--</option>
                 {gradeData?.grade_details?.grade_details?.map((grade) => {
-                  // console.log("grade - ", grade)
                   return (
                     <option value={grade?.grade_id}>{grade?.grade_id}</option>
                   );
@@ -417,7 +190,6 @@ const AttendanceOverview = () => {
             </Col>
             <Col md={2} className="teacherRoutingDD">
               <span>
-                {/* <Select placeholder="Select Year" isSearchable={false} options={yearOptions} onChange={e => handleYearChange(e)} /> */}
                 <select
                   className="principalGradeView"
                   name="year"

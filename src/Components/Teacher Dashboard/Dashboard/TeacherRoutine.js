@@ -9,31 +9,63 @@ import { getTeacherRoutine } from "../../../ApiClient";
 import dayjs from "dayjs";
 
 const TeacherRoutine = () => {
+  const userInfo = JSON.parse(localStorage.getItem("UserData"));
   const [timeSchedulesList, setTimeSchedulesList] = useState();
-  const [dayFilter, setDayFilter] = useState(dayjs().format('dddd'));
+  const [dayFilter, setDayFilter] = useState();
   const [daysData, setDaysData] = useState([
-    { value: "Monday", title: "Monday" },
-    { value: "Tuesday", title: "Tuesday" },
-    { value: "Wednesday", title: "Wednesday" },
-    { value: "Thursday", title: "Thursday" },
-    { value: "Friday", title: "Friday" },
-    { value: "Saturday", title: "Saturday" },
-    { value: "Sunday", title: "Sunday" }
+    {
+      day_id: 1,
+      day_name: "Monday",
+    },
+    {
+      day_id: 2,
+      day_name: "Tuesday",
+    },
+    {
+      day_id: 3,
+      day_name: "Wednesday",
+    },
+    {
+      day_id: 4,
+      day_name: "Thursday",
+    },
+    {
+      day_id: 5,
+      day_name: "Friday",
+    },
+    {
+      day_id: 6,
+      day_name: "Saturday",
+    },
+    {
+      day_id: 7,
+      day_name: "Sunday",
+    },
   ]);
 
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    setIsLoading(true);
-    getTeacherRoutine("teacher", dayFilter)
-      .then((res) => {
-        setTimeSchedulesList(res?.data);
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        console.log(err);
-        setIsLoading(false);
-      });
+    const currentDayName = dayjs().format("dddd").toLowerCase();
+    const currentDayObject = daysData.find(
+      (day) => day.day_name.toLowerCase() === currentDayName
+    );
+    if (currentDayObject) setDayFilter(currentDayObject.day_id);
+  },[daysData])
+
+  useEffect(() => {
+    if(dayFilter){
+      setIsLoading(true);
+      getTeacherRoutine(userInfo?.user_id, dayFilter)
+        .then((res) => {
+          setTimeSchedulesList(res?.data);
+          setIsLoading(false);
+        })
+        .catch((err) => {
+          console.log(err);
+          setIsLoading(false);
+        }); 
+    }
   }, [dayFilter]);
 
   const handleDayChange = (event) => {
@@ -54,8 +86,8 @@ const TeacherRoutine = () => {
             onChange={handleDayChange}
           >
             {daysData.map((item, index) => (
-              <MenuItem key={index} value={item.value}>
-                {item.title}
+              <MenuItem key={index} value={item.day_id}>
+                {item.day_name}
               </MenuItem>
             ))}
           </Select>
@@ -86,7 +118,7 @@ const TeacherRoutine = () => {
       {
         accessorKey: "time_range",
         header: "Time",
-      }
+      },
     ],
     []
   );

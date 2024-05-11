@@ -38,7 +38,7 @@ const SubmissionsPage = () => {
           </tr>
         </thead>
         <tbody>
-          {submissions.map((submission) => (
+          {submissions?.map((submission) => (
             <tr key={submission?.student_id}>
               <td>{submission?.name}</td>
               <td>{submission?.status}</td>

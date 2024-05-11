@@ -65,7 +65,7 @@ const LogBook = () => {
   const columns = useMemo(
     () => [
       {
-        accessorKey: "period",
+        accessorKey: "period_id",
         header: "Period",
       },
       {

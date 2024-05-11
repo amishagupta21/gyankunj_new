@@ -18,6 +18,7 @@ import {
   Grid,
 } from "@mui/material";
 import {
+  getAllPeriodsList,
   getGradeDetails,
   getSubjectsList,
   saveLogBook,
@@ -48,18 +49,9 @@ const CreateLogBook = ({ isOpen, handleClose, selectedLog = {} }) => {
   const [selectedLogBookData] = useState(selectedLog);
   const [isEditMode, setIsEditMode] = useState(false);
   const [gradeData, setGradeData] = useState([]);
+  const [periodsList, setPeriodsList] = useState([]);
   const [subjectsList, setSubjectsList] = useState([]);
   const [showAlert, setShowAlert] = useState("");
-  const periodsList = [
-    { value: "1", label: 1 },
-    { value: "2", label: 2 },
-    { value: "3", label: 3 },
-    { value: "4", label: 4 },
-    { value: "5", label: 5 },
-    { value: "6", label: 6 },
-    { value: "7", label: 7 },
-    { value: "8", label: 8 },
-  ];
 
   useEffect(() => {
     if (selectedLogBookData && Object.keys(selectedLogBookData).length > 0) {
@@ -67,14 +59,14 @@ const CreateLogBook = ({ isOpen, handleClose, selectedLog = {} }) => {
       const {
         grade_id,
         section_id,
-        period,
+        period_id,
         subject_id,
         content_taught,
         home_work,
       } = selectedLogBookData;
       setValue("grade_id", grade_id);
       setValue("section_id", section_id);
-      setValue("period", period);
+      setValue("period_id", period_id);
       setValue("subject_id", subject_id);
       setValue("content_taught", content_taught);
       setValue("home_work", home_work);
@@ -85,7 +77,18 @@ const CreateLogBook = ({ isOpen, handleClose, selectedLog = {} }) => {
   useEffect(() => {
     getGradesList();
     getAllSubjectsData();
+    getAllPeriodsData();
   }, []);
+
+  const getAllPeriodsData = () => {
+    getAllPeriodsList(userInfo.routine_id)
+      .then((res) => {
+        if (res?.data?.periods && res.data.periods.length > 0) {
+          setPeriodsList(res.data.periods);
+        }
+      })
+      .catch((err) => console.log(err));
+  };
 
   const getGradesList = () => {
     getGradeDetails()
@@ -288,7 +291,7 @@ const CreateLogBook = ({ isOpen, handleClose, selectedLog = {} }) => {
               <Grid item xs={12} md={6}>
                 <FormControl fullWidth>
                   <Controller
-                    name="period"
+                    name="period_id"
                     control={control}
                     rules={{ required: true }}
                     render={({
@@ -304,8 +307,8 @@ const CreateLogBook = ({ isOpen, handleClose, selectedLog = {} }) => {
                           error={!!error}
                         >
                           {periodsList?.map((item) => (
-                            <MenuItem key={item.value} value={item.value}>
-                              {item.label}
+                            <MenuItem key={item.period_id} value={item.period_id}>
+                              {item.period}
                             </MenuItem>
                           ))}
                         </Select>

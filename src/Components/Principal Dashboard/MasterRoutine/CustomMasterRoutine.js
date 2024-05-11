@@ -52,16 +52,23 @@ const CustomMasterRoutine = () => {
             (day) => day.day_name.toLowerCase() === currentDayName
           );
           if (currentDayObject) setDayFilter(currentDayObject.day_id);
-          
-          const updatedPeriodData = res.data.periods.map((period) => {
-            if (period.period_id === 4) {
-              return {
-                ...period,
-                period: "Break",
-              };
-            }
-            return period;
-          });
+
+          const updatedPeriodData = res.data.periods.reduce(
+            (acc, period, index) => {
+              acc.push(period);
+              if (index === 3) {
+                acc.push({
+                  period: "Break",
+                  // Assuming other properties of period object need to be set
+                  // If not, you can omit other properties
+                  // For example: start_time: null, end_time: null, etc.
+                });
+              }
+              return acc;
+            },
+            []
+          );
+
           setPeriodData(updatedPeriodData);
           setDaysData(res.data.days);
         }
@@ -179,70 +186,72 @@ const CustomMasterRoutine = () => {
             </tr>
           </thead>
           <tbody>
-            {gradeData && gradeData.length > 0 && gradeData.map((gradeItem) => (
-              <tr key={gradeItem.grade_id}>
-                <td className="fw-bold" style={{ fontSize: 14 }}>
-                  {gradeItem.grade}
-                </td>
-                {periodData.map((item) => {
-                  const routines = masterRoutineData[item.period] || [];
-                  const routine = routines.find(
-                    (r) =>
-                      r.grade_id === gradeItem.grade_id &&
-                      r.day_id === dayFilter
-                  );
-                  if (routine) {
-                    return (
-                      <td className="p-0" key={item.period}>
-                        <div
-                          className="p-1 rounded text-center text-white cell selected-cell"
-                          onClick={() =>
-                            handleClickOpen(
-                              routine,
-                              gradeItem.section_list,
-                              item.period
-                            )
-                          }
-                        >
-                          <p className="mb-0">
-                            <small>
-                              {routine.start_time} - {routine.end_time}
-                            </small>
-                          </p>
-                          <p className="mb-0">
-                            <small>{routine.subject_name}</small>
-                          </p>
-                          <p className="mb-0">
-                            <small>{routine.teacher_name}</small>
-                          </p>
-                        </div>
-                      </td>
+            {gradeData &&
+              gradeData.length > 0 &&
+              gradeData.map((gradeItem) => (
+                <tr key={gradeItem.grade_id}>
+                  <td className="fw-bold" style={{ fontSize: 14 }}>
+                    {gradeItem.grade}
+                  </td>
+                  {periodData.map((item) => {
+                    const routines = masterRoutineData[item.period] || [];
+                    const routine = routines.find(
+                      (r) =>
+                        r.grade_id === gradeItem.grade_id &&
+                        r.day_id === dayFilter
                     );
-                  } else {
-                    return (
-                      <td className="p-0" key={item.period}>
-                        <div
-                          className={`text-center cell ${
-                            item.period !== "Break" ? "empty-cell" : ""
-                          }`}
-                          onClick={() =>
-                            handleClickOpen(
-                              {
-                                grade_id: gradeItem.grade_id,
-                                period_id: item.period_id,
-                                day_id: dayFilter,
-                              },
-                              gradeItem.section_list,
-                              item.period
-                            )
-                          }
-                        ></div>
-                      </td>
-                    );
-                  }
-                })}
-              </tr>
-            ))}
+                    if (routine) {
+                      return (
+                        <td className="p-0" key={item.period}>
+                          <div
+                            className="p-1 rounded text-center text-white cell selected-cell"
+                            onClick={() =>
+                              handleClickOpen(
+                                routine,
+                                gradeItem.section_list,
+                                item.period
+                              )
+                            }
+                          >
+                            <p className="mb-0">
+                              <small>
+                                {routine.start_time} - {routine.end_time}
+                              </small>
+                            </p>
+                            <p className="mb-0">
+                              <small>{routine.subject_name}</small>
+                            </p>
+                            <p className="mb-0">
+                              <small>{routine.teacher_name}</small>
+                            </p>
+                          </div>
+                        </td>
+                      );
+                    } else {
+                      return (
+                        <td className="p-0" key={item.period}>
+                          <div
+                            className={`text-center cell ${
+                              item.period !== "Break" ? "empty-cell" : ""
+                            }`}
+                            onClick={() =>
+                              handleClickOpen(
+                                {
+                                  grade_id: gradeItem.grade_id,
+                                  period_id: item.period_id,
+                                  day_id: dayFilter,
+                                },
+                                gradeItem.section_list,
+                                item.period
+                              )
+                            }
+                          ></div>
+                        </td>
+                      );
+                    }
+                  })}
+                </tr>
+              ))}
           </tbody>
         </table>
       )}

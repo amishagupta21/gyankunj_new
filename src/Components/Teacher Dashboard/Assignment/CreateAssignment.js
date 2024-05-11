@@ -7,6 +7,8 @@ import {
   getLessonPlanMetadata,
   getGradeDetails,
   createAssignment,
+  getSubjectsList,
+  getAllChaptersList,
 } from "../../../ApiClient";
 import "./createAssignment.css";
 
@@ -19,12 +21,12 @@ const CreateAssignment = () => {
   });
   const userDetails = JSON.parse(localStorage.getItem("UserData"));
   const [assignmentName, setAssignmentName] = useState("");
-  const [assignmentGrade, setAssignmentGrade] = useState("");
+  const [assignmentGrade, setAssignmentGrade] = useState();
   const [gradeDetailList, setGradeDetailList] = useState([]);
   const [sectionList, setSectionList] = useState([]);
+  const [cheptersList, setCheptersList] = useState([]);
   const [section, setSection] = useState("");
   const [subjectList, setSubjectList] = useState([]);
-  // const [subject, setSubject] = useState({});
   const [type, setType] = useState("");
   const [duration, setDuration] = useState("0");
   const [chapter, setChapter] = useState("");
@@ -53,6 +55,13 @@ const CreateAssignment = () => {
     setThirdFieldCompleted(subject !== null);
   }, [subject]);
 
+  
+  useEffect(() => {
+    if(assignmentGrade && section){
+      getAllChaptersData();
+    }
+  }, [assignmentGrade, section]);
+
   useEffect(() => {
     setFourthFieldCompleted(chapter !== "");
   }, [chapter]);
@@ -64,13 +73,25 @@ const CreateAssignment = () => {
   }, [type, duration]);
 
   useEffect(() => {
-    GradeDetails();
+    gradeDetails();
   }, []);
 
-  const GradeDetails = () => {
+  const gradeDetails = () => {
     getGradeDetails().then((res) => {
       setGradeDetailList(res?.data?.grade_details?.grade_details);
     });
+  };
+
+  const getAllChaptersData = () => {
+    getAllChaptersList(assignmentGrade, section)
+      .then((res) => {
+        if (res.data && res.data.metadata && res.data.metadata.length > 0) {
+          setSubjectList(res.data.metadata);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   const handleAssignmentName = (e) => {
@@ -91,20 +112,22 @@ const CreateAssignment = () => {
 
   const handleSection = async (e) => {
     const selectionId = e.target.value;
-    var subjects = await getLessonPlanMetadata(assignmentGrade, selectionId);
-    setSubjectList(subjects?.data?.metadata);
     setSection(selectionId);
   };
 
   const handleSubject = (e) => {
-    for (let i = 0; i < subjectList.length; i++) {
-      if (subjectList[i].subject_name == e.target.value) {
-        setSubject(subjectList[i]);
-        return;
+    const subjectId = e.target.value;
+    setSubject(subjectId);
+    setCheptersList([]);
+    if(subjectList && subjectList.length > 0){
+      for (let i = 0; i < subjectList.length; i++) {
+        if (subjectList[i].subject_id == e.target.value) {
+          if(subjectList[i].chapters && subjectList[i].chapters.length > 0){
+            setCheptersList(subjectList[i].chapters);
+          }
+        }
       }
     }
-    setSubject({});
-    return;
   };
 
   const handleChapter = (e) => {
@@ -191,7 +214,7 @@ const CreateAssignment = () => {
                   <option value="">--Grade--</option>
                   {gradeDetailList?.map((grade) => (
                     <option value={grade.grade_id} key={grade.grade_id}>
-                      {grade.grade_id}
+                      {grade.grade}
                     </option>
                   ))}
                 </Form.Select>
@@ -234,10 +257,10 @@ const CreateAssignment = () => {
                       onClick={(e) => handleSubject(e)}
                     >
                       <option value="">--Subject--</option>
-                      {subjectList?.map((subject) => (
+                      {subjectList?.map((subject, index) => (
                         <option
-                          key={subject.subject_id}
-                          value={subject.subject_name}
+                          key={subject.index}
+                          value={subject.subject_id}
                         >
                           {subject.subject_name}
                         </option>
@@ -261,17 +284,15 @@ const CreateAssignment = () => {
                       value={chapter}
                       onChange={(e) => handleChapter(e)}
                     >
-                      <option value="">--Chapter--</option>
-                      {subject ? (
+                      <option value="">--Subject--</option>
+                      {cheptersList?.map((subject) => (
                         <option
                           key={subject.chapter_id}
                           value={subject.chapter_id}
                         >
-                          {subject.chapter_number}
+                          {subject.chapter_name}
                         </option>
-                      ) : (
-                        <></>
-                      )}
+                      ))}
                     </Form.Control>
                   </Form.Group>
                 </Col>
