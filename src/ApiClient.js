@@ -278,6 +278,10 @@ const getStudentSubjectData = (student_id) => {
   return apiInstance.get(`/view_student_subjects?student_id=${student_id}`);
 };
 
+const getDaysData = () => {
+  return apiInstance.get(`/fetch_all_days`);
+};
+
 export {
   //loginUser,
   evaluteAssignment,
@@ -331,5 +335,6 @@ export {
   getChapterDetails,
   getAllPeriodsList,
   getStudentRoutineData,
-  getStudentSubjectData
+  getStudentSubjectData,
+  getDaysData
 };

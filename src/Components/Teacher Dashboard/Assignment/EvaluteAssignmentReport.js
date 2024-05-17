@@ -7,11 +7,19 @@ import TeacherSidebar from "../TeacherSidebar";
 import { Col, Row, Table, Form } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faTimes } from "@fortawesome/free-solid-svg-icons";
+import {
+  FormControlLabel,
+  Stack,
+  Switch,
+  Typography,
+  styled,
+} from "@mui/material";
 
 const EvaluteAssignmentReport = () => {
   const { assignmentId, studentId } = useParams();
   const [evaluationData, setEvaluationData] = useState(null);
   const [marksForWriteAnswer, setMarksForWriteAnswer] = useState({});
+  const [isPassed, setIsPassed] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -31,6 +39,7 @@ const EvaluteAssignmentReport = () => {
       overall_time: "0 seconds",
       assignment_id: assignmentId,
       student_id: studentId,
+      assignment_passed: isPassed
     };
 
     let totalTimeTaken = 0;
@@ -65,7 +74,7 @@ const EvaluteAssignmentReport = () => {
       requestPayload.overall_time = formatElapsedTime(totalTimeTaken);
       requestPayload.assignment_data = { ...tempData };
     }
-    
+
     submitEvaluationReport(requestPayload)
       .then((response) => {
         if (response.data.status === "success") {
@@ -107,6 +116,10 @@ const EvaluteAssignmentReport = () => {
   if (evaluationData === null) {
     return <div>Loading...</div>;
   }
+
+  const handleChange = (event) => {
+    setIsPassed(event.target.checked);
+  };
 
   return (
     <>
@@ -265,10 +278,21 @@ const EvaluteAssignmentReport = () => {
           )}
         </div>
       </div>
-      <div className="evaluation-report">
-        <Button className="mt-3" onClick={submitReport}>
-          Submit Evaluation
-        </Button>
+      <div className="d-flex-center flex-column">
+        <Stack direction="row" spacing={1} alignItems="center">
+          <Typography className="fw-bold">Fail</Typography>
+          <Switch
+            checked={isPassed}
+            onChange={handleChange}
+            inputProps={{ "aria-label": "controlled" }}
+          />
+          <Typography className="fw-bold">Pass</Typography>
+        </Stack>
+        <Stack direction="row" spacing={1} alignItems="center">
+          <Button className="mt-2" onClick={submitReport}>
+            Submit Evaluation
+          </Button>
+        </Stack>
       </div>
     </>
   );

@@ -25,11 +25,6 @@
   width: 128px;
 }
 
-.attendanceOverviewInner {
-  height: 175px;
-  padding-top: 20px;
-}
-
 .attendanceOverviewInner span {
   text-align: left;
   font: normal normal normal 16px/21px Roboto;
