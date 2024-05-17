@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { getStudentRoutineData } from "../../ApiClient";
-import { Divider, Paper, Stack, styled } from "@mui/material";
+import { Box, Card, CardContent, Divider, Paper, Stack, Typography, styled } from "@mui/material";
 
 const DemoPaper = styled(Paper)(({ theme }) => ({
     width: 250,
@@ -26,20 +26,27 @@ const StudentRoutine = () => {
   }, []);
 
   return (
-    <div>
-      <h4 className="text-center">My Routine</h4>
-      {studentRoutineData && studentRoutineData.length > 0 && (
-        <Stack direction="column" className="d-flex align-items-center" spacing={2}>
-          {studentRoutineData.map((item, index) => (
-            <DemoPaper key={index} className="bg-primary text-white" variant="outlined">
-              <p>{item.day}</p>
-              <Divider className="bg-white mb-3" />
-              <p className="text-truncate" title={item.subject_name}>{item.subject_name}</p>
-            </DemoPaper>
-          ))}
-        </Stack>
-      )}
-    </div>
+<Box className="border-bottom text-center pb-3 mb-3">
+            <h4 className="mb-3">My Routine</h4>
+            <Box>
+            {studentRoutineData && studentRoutineData.length > 0 ? (
+              studentRoutineData?.map((routine, index) => {
+                return (
+                  <Card className="mb-1 bg-info"
+                    key={index}
+                  >
+                    <CardContent className="text-center text-white">
+                      <Typography className="border-bottom pb-1 mb-1">{routine.period}</Typography>
+                      <Typography>{routine.subject_name}</Typography>
+                    </CardContent>
+                  </Card>
+                );
+              })
+            ) : (
+              <Typography className="text-center text-danger">No Schedule Available</Typography>
+            )}
+          </Box>
+          </Box>
   );
 };
 
