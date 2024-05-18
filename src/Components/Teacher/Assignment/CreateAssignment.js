@@ -3,10 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { Row, Col, Button, Form } from "react-bootstrap";
 import CustomToast from "./Toast";
 import {
-  getLessonPlanMetadata,
   getGradeDetails,
   createAssignment,
-  getSubjectsList,
   getAllChaptersList,
 } from "../../../ApiClient";
 import "./createAssignment.css";
@@ -36,11 +34,7 @@ const CreateAssignment = () => {
   ];
   const [firstTwoFieldsCompleted, setFirstTwoFieldsCompleted] = useState(false);
   const [secondFieldCompleted, setSecondFieldCompleted] = useState(false);
-  const [thirdFieldCompleted, setThirdFieldCompleted] = useState(false);
   const [subject, setSubject] = useState(null);
-
-  const [fourthFieldCompleted, setFourthFieldCompleted] = useState(false);
-  const [fifthFieldCompleted, setFifthFieldCompleted] = useState(false);
 
   useEffect(() => {
     setFirstTwoFieldsCompleted(assignmentName !== "" && assignmentGrade !== "");
@@ -51,25 +45,10 @@ const CreateAssignment = () => {
   }, [section]);
 
   useEffect(() => {
-    setThirdFieldCompleted(subject !== null);
-  }, [subject]);
-
-  
-  useEffect(() => {
-    if(assignmentGrade && section){
+    if (assignmentGrade && section) {
       getAllChaptersData();
     }
   }, [assignmentGrade, section]);
-
-  useEffect(() => {
-    setFourthFieldCompleted(chapter !== "");
-  }, [chapter]);
-
-  useEffect(() => {
-    setFifthFieldCompleted(
-      type !== "" && (type !== "3" || (type === "3" && duration !== "0"))
-    );
-  }, [type, duration]);
 
   useEffect(() => {
     gradeDetails();
@@ -118,10 +97,10 @@ const CreateAssignment = () => {
     const subjectId = e.target.value;
     setSubject(subjectId);
     setCheptersList([]);
-    if(subjectList && subjectList.length > 0){
+    if (subjectList && subjectList.length > 0) {
       for (let i = 0; i < subjectList.length; i++) {
         if (subjectList[i].subject_id == e.target.value) {
-          if(subjectList[i].chapters && subjectList[i].chapters.length > 0){
+          if (subjectList[i].chapters && subjectList[i].chapters.length > 0) {
             setCheptersList(subjectList[i].chapters);
           }
         }
@@ -257,10 +236,7 @@ const CreateAssignment = () => {
                     >
                       <option value="">--Subject--</option>
                       {subjectList?.map((subject, index) => (
-                        <option
-                          key={subject.index}
-                          value={subject.subject_id}
-                        >
+                        <option key={subject.index} value={subject.subject_id}>
                           {subject.subject_name}
                         </option>
                       ))}
@@ -323,73 +299,6 @@ const CreateAssignment = () => {
             )}
           </Row>
 
-          {/* {thirdFieldCompleted && (
-                        <>
-                            <Form.Group className="mb-3" controlId="formBasicEmail">
-                                <Row>
-                                    <Col md={3}>
-                                        <Form.Label>Chapter Number</Form.Label>
-                                    </Col>
-                                    <Col md={9}>
-                                        <Form.Control
-                                            className="lessonPlanSubject"
-                                            as="select"
-                                            name="chapter"
-                                            value={chapter}
-                                            onChange={(e) => handleChapter(e)}
-                                        >
-                                            <option value="">--Chapter--</option>
-                                            {subject ? (
-                                                <option key={subject.chapter_id} value={subject.chapter_id}>{subject.chapter_number}</option>
-                                            ) : (
-                                                <></>
-                                            )}
-                                        </Form.Control>
-                                    </Col>
-                                </Row>
-                            </Form.Group>
-                        </>
-                    )}
-
-                    {fourthFieldCompleted && (
-                        <>
-                            <Form.Group className="mb-3" controlId="formBasicEmail">
-                                <Row>
-                                    <Col md={3}>
-                                        <Form.Label>Assignment Type</Form.Label>
-                                    </Col>
-                                    <Col md={9}>
-                                        <Form.Select
-                                            name="type"
-                                            onChange={e => handleType(e)}
-                                        >
-                                            <option value="">--Type--</option>
-                                            {assignmentTypes.map((type) => (
-                                                <option key={type.value} value={type.value}>{type.label}</option>
-                                            ))}
-                                        </Form.Select>
-                                    </Col>
-                                </Row>
-                            </Form.Group>
-                        </>
-                    )} */}
-
-          {/* {fifthFieldCompleted && (
-                        <>
-                           {type === "3" && (
-    <Form.Group className="mb-3" controlId="formBasicEmail">
-        <Form.Label>Duration</Form.Label>
-        <Form.Control
-            type="duration"
-            placeholder="Enter Duration"
-            value={duration}
-            onChange={(e) => handledurationb(e)}
-        />
-    </Form.Group>
-)}
-
-                        </>
-                    )} */}
           <div
             style={{
               display: "flex",

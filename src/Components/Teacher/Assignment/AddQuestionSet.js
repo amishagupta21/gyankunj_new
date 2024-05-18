@@ -1,27 +1,14 @@
-import React, { useEffect, useState } from "react";
-import { Button, Form, Modal, Row, Col } from "react-bootstrap";
+import React, { useState } from "react";
+import { Button, Modal, Row, Col } from "react-bootstrap";
 import Select from "react-select";
-import {
-  saveLessonPlan,
-  getLessonPlanMetadata,
-  getGradeDetails,
-} from "../../../ApiClient";
 import "./assignment.css";
 
 const AddQuestionSet = (props) => {
-  const [fullscreen, setFullscreen] = useState(true);
   const [questionType, setQuestionType] = useState("");
-  const [AssignmentDataFromSingleChild, setAssignmentDataFromSingleChild] =
-    useState([]);
-  const [assignmentFinalQuestionData, setAssignmentFinalQuestionData] =
-    useState([]);
-  const [questionData, setQuestionData] = useState(false);
-  const [dataToSend, setDataToSend] = useState([]);
   const [answerOptions, setAnswerOptions] = useState([{}]);
-  const [ansOptionData, setAnsOptionData] = useState("");
   const [questionText, setQuestionText] = useState("");
   const [savedData, setSavedData] = useState([]);
-  const [disableQuestionSet, setDisableQuestionSet] = useState(false);
+  const [disableQuestionSet] = useState(false);
   const [fillBlankQuestionData, setFillBlankQuestionData] = useState("");
   const [correctAnswerData, setCorrectAnswerData] = useState("");
   const [multipleAnswerOptions, setMultipleAnswerOptions] = useState([{}]);
@@ -29,9 +16,7 @@ const AddQuestionSet = (props) => {
   const [subjectiveQuestionData, setSubjectiveQuestionData] = useState("");
   const [answerJumbleOptions, setAnswerUnjumbleOptions] = useState([{}]);
   const [unJumblequestionText, setUnJumbleQuestionText] = useState("");
-  const [marksData, setmarksData] = useState('')
-
-  const userDetails = JSON.parse(localStorage.getItem("UserData"));
+  const [marksData, setmarksData] = useState("");
 
   const questionTypeOptions = [
     { value: "fill_in_the_blanks", label: "Fill in the blanks" },
@@ -40,9 +25,6 @@ const AddQuestionSet = (props) => {
     { value: "subjective", label: "Subjective" },
     { value: "unjumble", label: "Unjumble the word" },
   ];
-
-
-  // Single Choice
 
   const addOptions = () => {
     setAnswerOptions([...answerOptions, {}]);
@@ -61,7 +43,7 @@ const AddQuestionSet = (props) => {
     setAnswerOptions(optionList);
   };
 
-  console.log("marksData = ", marksData)
+  console.log("marksData = ", marksData);
 
   const saveSingleOptionAssignment = () => {
     let dataFromSingleSelect = [...savedData];
@@ -76,10 +58,8 @@ const AddQuestionSet = (props) => {
     dataFromSingleSelect = [...dataFromSingleSelect, savedAssignmentData];
     setSavedData(dataFromSingleSelect);
 
-    // setSavedData(savedAssignmentData)
-    // setDisableQuestionSet(true)
-    props.finalDataSetFromChild(savedAssignmentData)
-    props.closeModal()
+    props.finalDataSetFromChild(savedAssignmentData);
+    props.closeModal();
   };
 
   // Fill In The Blanks
@@ -89,8 +69,8 @@ const AddQuestionSet = (props) => {
   };
 
   const handleMarksData = (e) => {
-    setmarksData(e.target.value)
-  }
+    setmarksData(e.target.value);
+  };
 
   const handleCorrectAnswer = (e) => {
     setCorrectAnswerData(e.target.value);
@@ -106,12 +86,12 @@ const AddQuestionSet = (props) => {
       marks: marksData,
     };
 
-    console.log("savedAssignmentData - ", savedAssignmentData)
+    console.log("savedAssignmentData - ", savedAssignmentData);
 
     dataFromSingleSelect = [...dataFromSingleSelect, savedAssignmentData];
     setSavedData(dataFromSingleSelect);
-    props.finalDataSetFromChild(savedAssignmentData)
-    props.closeModal()
+    props.finalDataSetFromChild(savedAssignmentData);
+    props.closeModal();
   };
 
   // Multi Choice
@@ -146,8 +126,8 @@ const AddQuestionSet = (props) => {
     dataFromSingleSelect = [...dataFromSingleSelect, savedAssignmentData];
     setSavedData(dataFromSingleSelect);
     dataFromSingleSelect = [...dataFromSingleSelect, savedAssignmentData];
-    props.finalDataSetFromChild(savedAssignmentData)
-    props.closeModal()
+    props.finalDataSetFromChild(savedAssignmentData);
+    props.closeModal();
   };
 
   // Subjective Questions
@@ -167,8 +147,8 @@ const AddQuestionSet = (props) => {
     };
     dataFromSingleSelect = [...dataFromSingleSelect, savedAssignmentData];
     setSavedData(dataFromSingleSelect);
-    props.finalDataSetFromChild(savedAssignmentData)
-    props.closeModal()
+    props.finalDataSetFromChild(savedAssignmentData);
+    props.closeModal();
   };
 
   // UnJumble the word
@@ -205,8 +185,8 @@ const AddQuestionSet = (props) => {
 
     // setSavedData(savedAssignmentData)
     // setDisableQuestionSet(true)
-    props.finalDataSetFromChild(savedAssignmentData)
-    props.closeModal()
+    props.finalDataSetFromChild(savedAssignmentData);
+    props.closeModal();
   };
 
   console.log("savedData - ", savedData);
@@ -277,7 +257,6 @@ const AddQuestionSet = (props) => {
                           </Col>
                         </Row>
                         <Row className="addFillBlankSection">
-                          
                           <Col md={2}>
                             <Button
                               varient="outline-primary"
@@ -305,7 +284,7 @@ const AddQuestionSet = (props) => {
                           </Col>
                         </Row>
                         <Row>
-                        <Col md={4}>
+                          <Col md={4}>
                             <input
                               type="text"
                               placeholder="Add Marks"
@@ -403,7 +382,7 @@ const AddQuestionSet = (props) => {
                           </Col>
                         </Row>
                         <Row>
-                        <Col md={4}>
+                          <Col md={4}>
                             <input
                               type="text"
                               placeholder="Add Marks"
@@ -449,7 +428,6 @@ const AddQuestionSet = (props) => {
                                   );
                                 })}
                               </Col>
-                              {/* <Col md={2}></Col> */}
                             </Row>
                           </Col>
                           <Col md={4} style={{ paddingLeft: "48px" }}>
@@ -499,7 +477,7 @@ const AddQuestionSet = (props) => {
                           </Col>
                         </Row>
                         <Row>
-                        <Col md={4}>
+                          <Col md={4}>
                             <input
                               type="text"
                               placeholder="Add Marks"
@@ -537,7 +515,7 @@ const AddQuestionSet = (props) => {
                           </Col>
                         </Row>
                         <Row>
-                        <Col md={4}>
+                          <Col md={4}>
                             <input
                               type="text"
                               placeholder="Add Marks"
@@ -585,7 +563,6 @@ const AddQuestionSet = (props) => {
                                   );
                                 })}
                               </Col>
-                              {/* <Col md={2}></Col> */}
                             </Row>
                           </Col>
                           <Col md={4} style={{ paddingLeft: "48px" }}>

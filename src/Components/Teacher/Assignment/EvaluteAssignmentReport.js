@@ -2,16 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { evaluteAssignment, submitEvaluationReport } from "../../../ApiClient";
 import "./EvaluteAssignmentReport.css";
-import { Badge, Button } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 import { Form } from "react-bootstrap";
 import { FaCheck, FaTimes } from "react-icons/fa";
-import {
-  FormControlLabel,
-  Stack,
-  Switch,
-  Typography,
-  styled,
-} from "@mui/material";
+import { Stack, Switch, Typography } from "@mui/material";
 
 const EvaluteAssignmentReport = () => {
   const { assignmentId, studentId } = useParams();
@@ -37,7 +31,7 @@ const EvaluteAssignmentReport = () => {
       overall_time: "0 seconds",
       assignment_id: assignmentId,
       student_id: studentId,
-      assignment_passed: isPassed
+      assignment_passed: isPassed,
     };
 
     let totalTimeTaken = 0;

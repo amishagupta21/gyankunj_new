@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { Button, Form, Modal, Row, Col } from "react-bootstrap";
-import Select from "react-select";
-import {  saveLessonPlan, getLessonPlanMetadata, getGradeDetails } from "../../../ApiClient";
+import {
+  saveLessonPlan,
+  getLessonPlanMetadata,
+  getGradeDetails,
+} from "../../../ApiClient";
 
 const AddLessonPlan = (props) => {
   const [grade, setGrade] = useState("");
   const [gradeData, setGradeData] = useState([]);
   const [subject, setSubject] = useState("");
-  const [teacherName, setTeacherName] = useState();
   const [section, setSection] = useState("");
-  const [fullscreen, setFullscreen] = useState(true);
+  const [fullscreen] = useState(true);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [topicName, setTopicName] = useState("");
@@ -17,36 +19,15 @@ const AddLessonPlan = (props) => {
   const [teachingMethod, setTeachingMethod] = useState("");
   const [learningOutcomes, setLearningOutcomes] = useState("");
   const [teachingAids, setTeachingAids] = useState("");
-  const [chapterName, setChapterName] = useState('')
-  const [lessonMetadata, setLessonMetadata] = useState([])
+  const [chapterName, setChapterName] = useState("");
+  const [lessonMetadata, setLessonMetadata] = useState([]);
 
   useEffect(() => {
-    lessonPlanMetadata()
-    getAllGradeDetails()
-  },[grade, section])
+    lessonPlanMetadata();
+    getAllGradeDetails();
+  }, [grade, section]);
 
-
-  const userDetails = JSON.parse(window.localStorage.getItem('UserData'))
-
-  const gradeOptions = [
-    {value: "1", label: "1"},
-    {value: "2", label: "2"},
-    {value: "3", label: "3"},
-    {value: "4", label: "4"},
-    {value: "5", label: "5"},
-    {value: "6", label: "6"},
-    {value: "7", label: "7"},
-    {value: "8", label: "8"},
-    {value: "9", label: "9"},
-    {value: "10", label: "10"},
-   ]
-
-  const subjectOptions = [
-    { value: 1, label: "Maths" },
-    { value: 2, label: "English" },
-    { value: 3, label: "Hindi" },
-    { value: 4, label: "Geography" },
-  ];
+  const userDetails = JSON.parse(window.localStorage.getItem("UserData"));
 
   const sectionOptions = [
     { value: 1, label: "A" },
@@ -58,43 +39,44 @@ const AddLessonPlan = (props) => {
 
   const createLessonPlan = () => {
     const lessonPlanData = {
-      "grade_id": grade,
-    "section_id": section,
-    "subject_id": subject,
-    "teacher_id": userDetails.user_id,
-    "start_date": startDate,
-    "end_date": endDate,
-    "chapter_id": chapterName,
-    "topic_name": topicName,
-    "learning_objectives" : lObjective,
-    "teaching_methods": teachingMethod,
-    "learning_outcome": learningOutcomes,
-    "teaching_aid_references": teachingAids
-    }
+      grade_id: grade,
+      section_id: section,
+      subject_id: subject,
+      teacher_id: userDetails.user_id,
+      start_date: startDate,
+      end_date: endDate,
+      chapter_id: chapterName,
+      topic_name: topicName,
+      learning_objectives: lObjective,
+      teaching_methods: teachingMethod,
+      learning_outcome: learningOutcomes,
+      teaching_aid_references: teachingAids,
+    };
     saveLessonPlan(lessonPlanData)
-      .then((data) => {console.log(data, "data")
-      props.onHide()})
+      .then((data) => {
+        console.log(data, "data");
+        props.onHide();
+      })
       .catch((err) => console.log(err, "err"));
   };
 
   const lessonPlanMetadata = () => {
-    const grade_id = grade
-    const section_id = section
+    const grade_id = grade;
+    const section_id = section;
     getLessonPlanMetadata(grade_id, section_id)
-    .then((res) => setLessonMetadata(res.data))
-    .catch((err) => console.log("metadata err - "))
-  }
+      .then((res) => setLessonMetadata(res.data))
+      .catch((err) => console.log("metadata err - "));
+  };
 
   const getAllGradeDetails = () => {
     getGradeDetails()
-    .then((res) => setGradeData(res.data))
-    .catch((err) => console.log(err))
-    }
-
+      .then((res) => setGradeData(res.data))
+      .catch((err) => console.log(err));
+  };
 
   const handleChapterName = (e) => {
-    setChapterName(e.target.value)
-  }
+    setChapterName(e.target.value);
+  };
 
   return (
     <>
@@ -121,13 +103,10 @@ const AddLessonPlan = (props) => {
                 >
                   <option value="">--Grade--</option>
                   {gradeData?.grade_details?.grade_details?.map((grade) => {
-                      // console.log("grade - ", grade)
-                      return (
-                        <option value={grade?.grade_id}>
-                          {grade?.grade_id}
-                        </option>
-                      );
-                    })}
+                    return (
+                      <option value={grade?.grade_id}>{grade?.grade_id}</option>
+                    );
+                  })}
                 </select>
               </Col>
               <Col md={3}>
@@ -139,17 +118,13 @@ const AddLessonPlan = (props) => {
                 >
                   <option value="">--Section--</option>
                   {sectionOptions?.map((section) => {
-                    return <option value={section.value}>{section.label}</option>;
+                    return (
+                      <option value={section.value}>{section.label}</option>
+                    );
                   })}
                 </select>
               </Col>
               <Col md={3}>
-                {/* <span>Subject</span> <br /> */}
-                {/* <Select
-                  options={subjectOptions}
-                  onChange={(e) => setSubject(e.value)}
-                  placeholder="Add Subject"
-                /> */}
                 <select
                   className="lessonPlanSubject"
                   name="subject"
@@ -168,7 +143,6 @@ const AddLessonPlan = (props) => {
                 </select>
               </Col>
               <Col md={3}>
-                {/* <span>Teacher</span> */}
                 <fieldset disabled>
                   <Form.Group
                     className="mb-3"
@@ -222,7 +196,7 @@ const AddLessonPlan = (props) => {
                   <option value="">Select Chapter Number</option>
                   {lessonMetadata?.status == "success" &&
                     lessonMetadata?.metadata?.map((chapter) => {
-                      console.log("chapter - ", chapter)
+                      console.log("chapter - ", chapter);
                       return (
                         <option value={chapter.chapter_id}>
                           {chapter.chapter_id}
@@ -329,20 +303,25 @@ const AddLessonPlan = (props) => {
           <Button variant="outline-primary" style={{ alignItems: "center" }}>
             Reset
           </Button>
-
-          {/* "grade_id": grade,
-    "section_id": section,
-    "subject_id": subject,
-    "teacher_id": userDetails.user_id,
-    "start_date": startDate,
-    "end_date": endDate,
-    "chapter_id": chapterName,
-    "topic_name": topicName,
-    "learning_objectives" : lObjective,
-    "teaching_methods": teachingMethod,
-    "learning_outcome": learningOutcomes,
-    "teaching_aid_references": teachingAids */}
-          <Button variant="outline-primary" disabled = {!(grade && section &&subject &&startDate &&endDate &&topicName &&lObjective &&teachingMethod &&learningOutcomes &&teachingAids &&chapterName)} onClick={createLessonPlan}>
+          <Button
+            variant="outline-primary"
+            disabled={
+              !(
+                grade &&
+                section &&
+                subject &&
+                startDate &&
+                endDate &&
+                topicName &&
+                lObjective &&
+                teachingMethod &&
+                learningOutcomes &&
+                teachingAids &&
+                chapterName
+              )
+            }
+            onClick={createLessonPlan}
+          >
             Submit
           </Button>
         </Modal.Footer>

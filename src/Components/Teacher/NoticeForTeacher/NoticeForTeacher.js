@@ -1,16 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Row, Col, ButtonGroup, Dropdown, Card, Button } from "react-bootstrap";
+import { Row, Col } from "react-bootstrap";
 import { viewNotice } from "../../../ApiClient";
 import { FaAngleDown } from "react-icons/fa";
 import { FaAngleUp } from "react-icons/fa";
 import dayjs from "dayjs";
 
 const NoticeForTeacher = () => {
-  const userDetails = JSON.parse(localStorage.getItem("UserData"));
-
   const [allNotice, setAllNotice] = useState({});
   const [hideResponse, setHideResponse] = useState([]);
-  const [sectionExpanded, setSectionExpanded] = useState(false);
 
   useEffect(() => {
     allNotices();
@@ -24,17 +21,14 @@ const NoticeForTeacher = () => {
   };
 
   const showResponseHandler = (id) => {
-    // allNotices();
     let openHandler = [...hideResponse];
     openHandler.push(id);
     setHideResponse([...openHandler]);
-    setSectionExpanded(true);
   };
 
   const hideResponseHandler = (id) => {
     let openHandler = [...hideResponse];
     let findindex = openHandler.indexOf(id);
-    setSectionExpanded(false);
 
     if (findindex > -1) {
       openHandler.splice(findindex, 1);
@@ -56,8 +50,7 @@ const NoticeForTeacher = () => {
         <Col md={7}>
           <h4>Notice</h4>
         </Col>
-        <Col md={2} className="teacherRoutingDD">
-        </Col>
+        <Col md={2} className="teacherRoutingDD"></Col>
       </Row>
 
       {allNotice?.status == "failure" ? (
@@ -112,19 +105,11 @@ const NoticeForTeacher = () => {
                       </Row>
                     )}
                   </Col>
-                  {/* <Row>
-                            <Col md={12}>
-                              <h6>Description :</h6>
-                              <p>{notice?.notice_data}</p>
-                            </Col>
-                          </Row> */}
                 </Row>
               </fieldset>
             );
           })}
         </div>
-        //   );
-        // })
       )}
     </div>
   );

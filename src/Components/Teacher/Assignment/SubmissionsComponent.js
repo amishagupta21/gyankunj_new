@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { getAllStudentsAssignmentReport } from "../../../ApiClient";
-import { Col, Row, Table } from "react-bootstrap";
+import { Table } from "react-bootstrap";
 import { FaCheckCircle, FaUserEdit, FaClock } from "react-icons/fa";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
@@ -43,7 +42,7 @@ const SubmissionsPage = () => {
               <td>{submission?.status}</td>
               <td>{submission?.student_id}</td>
               <td>
-              {submission.status === "New" && (
+                {submission.status === "New" && (
                   <FaClock
                     className="cursor-pointer h-6 w-6 text-secondary"
                     title="Waitingfor Evaluate Assignment"

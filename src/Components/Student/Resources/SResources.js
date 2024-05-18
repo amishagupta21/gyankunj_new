@@ -1,15 +1,6 @@
 import React, { useState, useEffect } from "react";
-import Box from "@mui/material/Box";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
 
-import {
-  getGradeDetails,
-  getResources,
-  getSubjectsList,
-} from "../../../ApiClient";
+import { getResources } from "../../../ApiClient";
 import {
   Card,
   CardContent,
@@ -20,14 +11,12 @@ import {
 import bookCover from "../../../Images/book-cover-placeholder.png";
 import ViewBookChepters from "./ViewBookChepters";
 
-const SResources = ({title = "Resources"}) => {
+const SResources = ({ title = "Resources" }) => {
   const userInfo = JSON.parse(localStorage.getItem("UserData"));
   const [resourcesData, setResourcesData] = useState([]);
   const [selectedResource, setSelectedResource] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [open, setOpen] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
-
 
   useEffect(() => {
     if (userInfo.grade_id && userInfo.section_id) {
@@ -49,7 +38,7 @@ const SResources = ({title = "Resources"}) => {
 
   const handeCardSelection = (item) => {
     setSelectedResource(item);
-    if(item.chapter_list && item.chapter_list.length > 0){
+    if (item.chapter_list && item.chapter_list.length > 0) {
       setOpen(true);
     }
   };
@@ -58,16 +47,8 @@ const SResources = ({title = "Resources"}) => {
     setOpen(false);
   };
 
-  const handleMouseEnter = () => {
-    setIsHovered(true);
-  };
-
-  const handleMouseLeave = () => {
-    setIsHovered(false);
-  };
-
   const FiltersView = () => {
-    return <h4 className="mb-3">{title}</h4>
+    return <h4 className="mb-3">{title}</h4>;
   };
 
   const CardList = () => {
@@ -86,12 +67,7 @@ const SResources = ({title = "Resources"}) => {
                 margin: "10px",
                 cursor: "pointer",
                 transition: "box-shadow 0.3s",
-                // boxShadow: isHovered
-                //   ? "0px 4px 8px rgba(0, 0, 0, 0.2)"
-                //   : "0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12)",
               }}
-              onMouseEnter={handleMouseEnter}
-              onMouseLeave={handleMouseLeave}
               onClick={() => handeCardSelection(card)}
             >
               <CardMedia

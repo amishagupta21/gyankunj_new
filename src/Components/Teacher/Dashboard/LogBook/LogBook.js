@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect } from "react";
 import CommonMatTable from "../../../../SharedComponents/CommonMatTable";
 import Box from "@mui/material/Box";
-import { getGradeDetails, getTeacherLogBook } from "../../../../ApiClient";
+import { getTeacherLogBook } from "../../../../ApiClient";
 import { Button } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import Edit from "@mui/icons-material/Edit";

@@ -1,19 +1,8 @@
 import React from "react";
-import {
-  Row,
-  Col,
-  ButtonGroup,
-  ToggleButton,
-  Dropdown,
-  Table,
-  ProgressBar,
-  Button,
-  Form,
-} from "react-bootstrap";
+import { Row, Col, Table, Button, Form } from "react-bootstrap";
 import { useState } from "react";
 import AddLogBook from "./AddLogbook";
 import { viewLogBook, getGradeDetails } from "../../../ApiClient";
-import Select from "react-select";
 import { useEffect } from "react";
 
 const LogBook = () => {
@@ -21,9 +10,7 @@ const LogBook = () => {
   const [section, setSection] = useState("");
   const [classData, setClassData] = useState("");
   const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
   const [logBookDetails, setLogBookDetails] = useState([]);
-  const [grade, setGrade] = useState("");
   const [gradeData, setGradeData] = useState([]);
 
   useEffect(() => {
@@ -33,19 +20,6 @@ const LogBook = () => {
   const handleShowLogBook = () => {
     setShowAddLogbook(true);
   };
-
-  const classOptions = [
-    { value: 1, label: 1 },
-    { value: 2, label: 2 },
-    { value: 3, label: 3 },
-    { value: 4, label: 4 },
-    { value: 5, label: 5 },
-    { value: 6, label: 6 },
-    { value: 7, label: 7 },
-    { value: 8, label: 8 },
-    { value: 9, label: 9 },
-    { value: 10, label: 10 },
-  ];
 
   const sectionOptions = [
     { value: "1", label: "A" },
@@ -63,9 +37,6 @@ const LogBook = () => {
   };
 
   const showLogBookData = () => {
-    const date = startDate;
-    const grade_id = classData;
-    const section_id = section;
     viewLogBook(startDate, classData, section)
       .then((res) => setLogBookDetails(res.data))
       .catch((err) => console.log(err));
@@ -79,7 +50,6 @@ const LogBook = () => {
 
   const closeAndLoad = () => {
     setShowAddLogbook(false);
-    // showLogBookData();
   };
 
   return (
@@ -99,9 +69,6 @@ const LogBook = () => {
             <h4>Log Book</h4>
           </Col>
           <Col md={2} className="teacherRoutingDD">
-            {/* <span>
-            <Select placeholder="Select Section" isSearchable={false} options={sectionOptions} onChange={e => handleSectionChange(e)} />
-                </span> */}
             <select
               className="principalGradeView"
               name="grade"
@@ -110,7 +77,6 @@ const LogBook = () => {
             >
               <option value="">--Grade--</option>
               {gradeData?.grade_details?.grade_details?.map((grade) => {
-                // console.log("grade - ", grade)
                 return (
                   <option value={grade?.grade_id}>{grade?.grade_id}</option>
                 );
@@ -118,9 +84,6 @@ const LogBook = () => {
             </select>
           </Col>
           <Col md={2} className="teacherRoutingDD">
-            {/* <span>
-            <Select placeholder="Select Class" isSearchable={false} options={classOptions} onChange={e => handleClassChange(e)} />
-                </span> */}
             <select
               className="principalGradeView"
               name="section"

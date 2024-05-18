@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Form, Modal, Row, Col, Card } from "react-bootstrap";
+import { Row, Col } from "react-bootstrap";
 import './studentAssignment.css'
 
 const AnswerTypeFillTheBlank = ({...props}) => {
@@ -16,7 +16,6 @@ const AnswerTypeFillTheBlank = ({...props}) => {
 
   const handleBlankAnswer = (e) => {
     setBlankData(e.target.value)
-    // props.getAnswerFromChild(e.target.value)
     assignmentDataFinal()
   }
 

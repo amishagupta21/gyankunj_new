@@ -7,7 +7,6 @@ import {
 } from "../../../ApiClient";
 
 const CreateNewAssignment = (props) => {
-  const [verifyAndClose, setVerifyAndClose] = useState(false);
   const [grade, setGrade] = useState("");
   const [gradeData, setGradeData] = useState("");
   const [sectionData, setSectionData] = useState([]);
@@ -28,7 +27,6 @@ const CreateNewAssignment = (props) => {
 
   const handleGradeChange = (e) => {
     setGrade(e.target.value);
-    // setSectionData(gradeData?.grade_details?.grade_details?.find((grade) => grade?.grade_id === e.target.value).sectionData)
   };
 
   const handleAssignmentName = (e) => {
@@ -36,7 +34,7 @@ const CreateNewAssignment = (props) => {
   };
 
   const handleAssignmentType = (e) => {
-    console.log(e.target.value)
+    console.log(e.target.value);
     setAssignmentType(e.target.value);
   };
 
@@ -89,7 +87,9 @@ const CreateNewAssignment = (props) => {
         centered
       >
         <Modal.Header closeButton>
-          <Modal.Title style={{font: "normal normal bold 22px/34px Roboto"}}>Create Assignment</Modal.Title>
+          <Modal.Title style={{ font: "normal normal bold 22px/34px Roboto" }}>
+            Create Assignment
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form>
@@ -97,7 +97,6 @@ const CreateNewAssignment = (props) => {
               <Col md={5}>
                 <Form.Group className="mb-3" controlId="teacherId">
                   <Form.Label>Teacher Name</Form.Label> <br />
-                  {/* <Form.Control type="Teacher" placeholder="Enter email" /> */}
                   <Form.Text className="text-muted">
                     {userDetails?.name}
                   </Form.Text>
@@ -128,7 +127,6 @@ const CreateNewAssignment = (props) => {
                   >
                     <option value="">--Grade--</option>
                     {gradeData?.grade_details?.grade_details?.map((grade) => {
-                      // console.log("grade - ", grade)
                       return (
                         <option value={grade?.grade_id}>
                           {grade?.grade_id}
@@ -168,7 +166,6 @@ const CreateNewAssignment = (props) => {
                     name="section"
                     id="section"
                     onChange={(e) => setChapterNumber(e.target.value)}
-                    // disabled={!(grade && sectionData)}
                   >
                     <option value="">--Chapter--</option>
                     {lessonMetadata?.status == "success" &&
@@ -199,11 +196,22 @@ const CreateNewAssignment = (props) => {
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          {/* <Button variant="outline-primary" style={{ alignItems: "center" }} onClick={resetData}>
-            Reset
-          </Button> */}
-          <Button variant="outline-primary" onClick={() => props.onHide()}>Cancel</Button>
-          <Button variant="outline-primary" onClick={createAssignmentData} disabled={!(grade && sectionData && chapterNumber && assignmentType && assignmentName)}>
+          <Button variant="outline-primary" onClick={() => props.onHide()}>
+            Cancel
+          </Button>
+          <Button
+            variant="outline-primary"
+            onClick={createAssignmentData}
+            disabled={
+              !(
+                grade &&
+                sectionData &&
+                chapterNumber &&
+                assignmentType &&
+                assignmentName
+              )
+            }
+          >
             Create
           </Button>
         </Modal.Footer>

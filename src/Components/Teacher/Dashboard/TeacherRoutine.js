@@ -12,7 +12,7 @@ const TeacherRoutine = () => {
   const userInfo = JSON.parse(localStorage.getItem("UserData"));
   const [timeSchedulesList, setTimeSchedulesList] = useState();
   const [dayFilter, setDayFilter] = useState();
-  const [daysData, setDaysData] = useState([
+  const [daysData] = useState([
     {
       day_id: 1,
       day_name: "Monday",
@@ -51,10 +51,10 @@ const TeacherRoutine = () => {
       (day) => day.day_name.toLowerCase() === currentDayName
     );
     if (currentDayObject) setDayFilter(currentDayObject.day_id);
-  },[daysData])
+  }, [daysData]);
 
   useEffect(() => {
-    if(dayFilter){
+    if (dayFilter) {
       setIsLoading(true);
       getTeacherRoutine(userInfo?.user_id, dayFilter)
         .then((res) => {
@@ -64,7 +64,7 @@ const TeacherRoutine = () => {
         .catch((err) => {
           console.log(err);
           setIsLoading(false);
-        }); 
+        });
     }
   }, [dayFilter]);
 

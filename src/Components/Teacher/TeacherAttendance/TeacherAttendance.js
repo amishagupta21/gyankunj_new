@@ -14,23 +14,6 @@ const TeacherAttendance = () => {
     getAllGradeDetails();
   }, []);
 
-  // useEffect(() => {
-  //   fetchStudentAttendance()
-  // }, [gradeToFetch, sectionSelect, monthData])
-
-  const gradeOptions = [
-    { value: "1", label: 1 },
-    { value: "2", label: 2 },
-    { value: "3", label: 3 },
-    { value: "4", label: 4 },
-    { value: "5", label: 5 },
-    { value: "6", label: 6 },
-    { value: "7", label: 7 },
-    { value: "8", label: 8 },
-    { value: "9", label: 9 },
-    { value: "10", label: 10 },
-  ];
-
   const monthOptions = [
     { value: "1", label: "January" },
     { value: "2", label: "February" },
@@ -100,9 +83,6 @@ const TeacherAttendance = () => {
           <h4>Attendance</h4>
         </Col>
         <Col md={2} className="teacherRoutingDD">
-          {/* <span>
-                    <Select placeholder="Select Section" isSearchable={false} options={sectionOptions} onChange={e => handleSectionSelectChange(e)} />
-                  </span> */}
           <select
             className="principalGradeView"
             name="grade"
@@ -111,20 +91,11 @@ const TeacherAttendance = () => {
           >
             <option value="">--Grade--</option>
             {gradeData?.grade_details?.grade_details?.map((grade) => {
-              // console.log("grade - ", grade)
               return <option value={grade?.grade_id}>{grade?.grade_id}</option>;
             })}
           </select>
         </Col>
         <Col md={2} className="teacherRoutingDD">
-          {/* <span>
-                    <Select
-                      placeholder="Select Class"
-                      isSearchable={false}
-                      options={gradeOptions}
-                      onChange={(e) => handleClassChange(e)}
-                    />
-                  </span> */}
           <select
             className="principalGradeView"
             name="section"
@@ -232,9 +203,6 @@ const TeacherAttendance = () => {
               <th>31</th>
             </tr>
           </thead>
-          {/* {studentTotalAttendance?.student_report?.attendance_data.map(
-                    (studentAttendance, indx) => {
-                      return ( */}
           <tbody>
             {studentAttendance?.student_attendance?.length > 0 ? (
               studentAttendance?.student_attendance?.map((attendance, indx) => {
@@ -259,7 +227,6 @@ const TeacherAttendance = () => {
                         );
                       }
                     )}
-                    {/* <td>{attendance?.attendance.value}</td> */}
                   </tr>
                 );
               })
@@ -276,9 +243,6 @@ const TeacherAttendance = () => {
               </td>
             )}
           </tbody>
-          {/* );
-                    }
-                  )} */}
         </Table>
       </div>
     </div>

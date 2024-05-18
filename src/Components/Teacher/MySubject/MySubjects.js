@@ -1,15 +1,5 @@
 import React from "react";
-import {
-  Row,
-  Col,
-  ButtonGroup,
-  ToggleButton,
-  Dropdown,
-  Table,
-  ProgressBar,
-  Card,
-} from "react-bootstrap";
-import { useState } from "react";
+import { Row, Col, Card } from "react-bootstrap";
 import "./MySubjects.css";
 const MySubjects = () => {
   const Subjects = [
@@ -33,21 +23,6 @@ const MySubjects = () => {
         <Col md={10}>
           <h4>My Subjects</h4>
         </Col>
-        {/* <Col md={2} className="teacherRoutingDD">
-            <span>
-                  <Dropdown>
-                    <Dropdown.Toggle className="dropdownHead" id="dropdown-basic">
-                    Select Date
-                    </Dropdown.Toggle>
-
-                    <Dropdown.Menu>
-                      <Dropdown.Item href="#/action-1">1</Dropdown.Item>
-                      <Dropdown.Item href="#/action-2">2 </Dropdown.Item>
-                      <Dropdown.Item href="#/action-3">3 </Dropdown.Item>
-                    </Dropdown.Menu>
-                  </Dropdown>
-                </span>
-            </Col> */}
       </Row>
       <Row style={{ marginTop: "50px" }}>
         {Subjects.map((subject, indx) => {
@@ -55,8 +30,6 @@ const MySubjects = () => {
             <Col md={3}>
               <Card
                 bg={subject.color}
-                // key={variant}
-                // text={variant.toLowerCase() === 'light' ? 'dark' : 'white'}
                 style={{ width: "18rem", marginRight: "110px" }}
                 className="mb-2"
               >

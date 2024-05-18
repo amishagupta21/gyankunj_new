@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Button, Form, Modal, Row, Col, Table } from "react-bootstrap";
+import { Button, Modal, Row, Col } from "react-bootstrap";
 import { loadAssignmentData } from "../../../ApiClient";
-import { viewStudentAssignment } from "../../../ApiClient";
 import "./studentAssignment.css";
 
 const AssignmentSheet = (props) => {
   console.log("Assignment Status:", props.assignmentStatus);
 
-  const [fullscreen, setFullscreen] = useState(true);
-  // const [assignmentFullData, setassignmentFullData] = useState({});
+  const [fullscreen] = useState(true);
   const [assignlist, setAssignList] = useState([]);
   const [userAnswers, setUserAnswers] = useState({});
 
@@ -20,9 +18,7 @@ const AssignmentSheet = (props) => {
   const [assignmentDuration, setAssignmentDuration] = useState(null);
   const [timeLeft, setTimeLeft] = useState(null);
   const [showTimeWarning, setShowTimeWarning] = useState(false);
-  const [showSubmitWarning, setShowSubmitWarning] = useState(false);
-  const [timerIntervals, setTimerIntervals] = useState([]);
-  const [assignmentFullData, setAssignmentFullData] = useState({});
+  const [showSubmitWarning] = useState(false);
 
   useEffect(() => {
     fetchAssignmentData();
@@ -96,7 +92,6 @@ const AssignmentSheet = (props) => {
     const userId = JSON.parse(localStorage.getItem("UserData"))?.user_id;
     loadAssignmentData(AssignmentId, userId)
       .then((res) => {
-        setAssignmentFullData(res.data.assignment_data);
         setAssignList(Object.values(res.data.assignment_data));
         setTimers(
           new Array(Object.values(res.data.assignment_data).length).fill({
@@ -106,9 +101,6 @@ const AssignmentSheet = (props) => {
           })
         );
         setAssignmentDuration(res.data.assignment_duration);
-        setTimerIntervals(
-          new Array(Object.values(res.data.assignment_data).length).fill(null)
-        ); // Initialize timer intervals array
         setTimeLeft(res.data.assignment_duration * 60);
       })
       .catch((err) => console.log("AssignmentData err - ", err));
@@ -172,31 +164,6 @@ const AssignmentSheet = (props) => {
     });
   };
 
-  const handleMoveToQuestion = (index) => {
-    if (show.index !== "") {
-      const newTimers = [...timers];
-      const now = Date.now();
-      const elapsed = now - newTimers[show.index].startTime;
-      newTimers[show.index].endTime = now;
-      newTimers[show.index].elapsedTime += elapsed;
-      setTimers(newTimers);
-
-      const newElapsedTimes = { ...elapsedTimes };
-      newElapsedTimes[show.index] = newTimers[show.index].elapsedTime;
-      setElapsedTimes(newElapsedTimes);
-    }
-
-    startTimerForQuestion(index);
-  };
-  const handleSubmitAnswer = (index) => {
-    const newTimers = [...timers];
-    const now = Date.now();
-    const elapsed = now - newTimers[index].startTime;
-    newTimers[index].endTime = now;
-    newTimers[index].elapsedTime += elapsed;
-    setTimers(newTimers);
-  };
-
   const formatElapsedTime = (elapsedTime) => {
     const hours = Math.floor(elapsedTime / (1000 * 60 * 60));
     const minutes = Math.floor((elapsedTime % (1000 * 60 * 60)) / (1000 * 60));
@@ -212,23 +179,6 @@ const AssignmentSheet = (props) => {
     formattedTime += seconds + "s";
 
     return formattedTime;
-  };
-
-  const startTimer = (index) => {
-    const newTimers = [...timers];
-    newTimers[index] = { startTime: Date.now(), endTime: null, elapsedTime: 0 };
-    setTimers(newTimers);
-  };
-
-  const handleSubmitAssignment = () => {
-    if (show.index !== "") {
-      const newTimers = [...timers];
-      const now = Date.now();
-      const elapsed = now - newTimers[show.index].startTime;
-      newTimers[show.index].endTime = now;
-      newTimers[show.index].elapsedTime += elapsed;
-      setTimers(newTimers);
-    }
   };
 
   const formatTime = (seconds) => {
@@ -253,7 +203,7 @@ const AssignmentSheet = (props) => {
       updatedList[questionIndex].selected_answer = value;
       return updatedList;
     });
-  };  
+  };
 
   const saveOrSubmitAssignment = (submit) => {
     if (show.index !== "") {
@@ -267,7 +217,10 @@ const AssignmentSheet = (props) => {
     }
 
     // Calculate total time taken for all questions
-  const totalTimeTaken = timers.reduce((total, timer) => total + timer.elapsedTime, 0);
+    const totalTimeTaken = timers.reduce(
+      (total, timer) => total + timer.elapsedTime,
+      0
+    );
 
     const assignmentData = assignlist.map((question, index) => {
       const questionId = `question_number_${index + 1}`;
@@ -284,7 +237,7 @@ const AssignmentSheet = (props) => {
         },
       };
     });
-    
+
     const overallTime = formatElapsedTime(totalTimeTaken);
 
     const requestBody = {

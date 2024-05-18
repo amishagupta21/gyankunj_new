@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { getQuestions } from "../../../ApiClient";
-import { Col, Row, Card, Badge } from "react-bootstrap";
+import { Card, Badge } from "react-bootstrap";
 
 const Viewreport = () => {
   const location = useLocation();

@@ -16,10 +16,6 @@ const StudentAssigments = () => {
   const userDetails = JSON.parse(localStorage.getItem("UserData"));
   const [assignmentFullList, setAssignmentFullList] = useState([]);
   const [editIndex, setEditIndex] = useState(null);
-  const [assignmentId, setAssignmentId] = useState(null);
-  const [assignmentType, setAssignmentType] = useState(null);
-  const [assignmentName, setAssignmentName] = useState(null);
-  const [selectedAnswers, setSelectedAnswers] = useState({});
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [assignmentsPerPage] = useState(10);
@@ -43,15 +39,6 @@ const StudentAssigments = () => {
   const startAssignment = (id) => {
     setEditIndex(id);
     setShowAssignmentSheet(true);
-    const assignment = assignmentFullList?.student_assignments.find(
-      (assignment) => assignment.assignment_id === id
-    );
-    if (assignment) {
-      setAssignmentId(assignment.assignment_id);
-      setAssignmentType(assignment.assignment_type_name);
-      setAssignmentName(assignment.assignment_name);
-      setSelectedAnswers(assignment.selected_answers || {});
-    }
   };
 
   const closeAssignment = () => {

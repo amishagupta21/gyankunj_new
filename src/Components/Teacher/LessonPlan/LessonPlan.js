@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Row, Col, Dropdown, Button, Table } from "react-bootstrap";
+import { Row, Col, Button } from "react-bootstrap";
 import "./LessonPlan.css";
-import SamplePdf from "../../../Images/MSAK.pdf";
-import { Document, Page } from "react-pdf/dist/esm/entry.webpack";
 import AddLessonPlan from "./AddLessonPlan";
 import LessonPlanDetails from "./LessonPlanDetails";
 import { getLessonPlan } from "../../../ApiClient";

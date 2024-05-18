@@ -43,7 +43,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 }));
 
 const CreateLogBook = ({ isOpen, handleClose, selectedLog = {} }) => {
-  const { handleSubmit, getValues, setValue, reset, control } = useForm();
+  const { handleSubmit, setValue, reset, control } = useForm();
   const userInfo = JSON.parse(localStorage.getItem("UserData"));
   const [selectedGradeId, setSelectedGradeId] = useState(0);
   const [selectedLogBookData] = useState(selectedLog);
@@ -157,7 +157,6 @@ const CreateLogBook = ({ isOpen, handleClose, selectedLog = {} }) => {
   return (
     <React.Fragment>
       <BootstrapDialog
-        // onClose={() => handleClose(false)}
         aria-labelledby="customized-dialog-title"
         open={isOpen}
         scroll="paper"
@@ -307,7 +306,10 @@ const CreateLogBook = ({ isOpen, handleClose, selectedLog = {} }) => {
                           error={!!error}
                         >
                           {periodsList?.map((item) => (
-                            <MenuItem key={item.period_id} value={item.period_id}>
+                            <MenuItem
+                              key={item.period_id}
+                              value={item.period_id}
+                            >
                               {item.period}
                             </MenuItem>
                           ))}

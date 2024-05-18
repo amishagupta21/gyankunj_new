@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { getStudentRoutineData, getStudentSubjectData } from "../../ApiClient";
-import { Divider, Paper, Stack, styled } from "@mui/material";
+import { getStudentSubjectData } from "../../ApiClient";
+import { Paper, Stack, styled } from "@mui/material";
 
 const DemoPaper = styled(Paper)(({ theme }) => ({
     width: 200,

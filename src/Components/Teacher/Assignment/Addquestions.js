@@ -13,7 +13,6 @@ import "./addQuestion.css";
 const AddQuestions = () => {
   const navigate = useNavigate();
   const { state: id } = useLocation();
-  const userDetails = JSON.parse(localStorage.getItem("UserData"));
   const [questionList, setQuestionList] = useState({});
   const [questions, setQuestions] = useState([]);
 
@@ -23,8 +22,11 @@ const AddQuestions = () => {
 
   const getQueries = async (id) => {
     const res = await getQuestions(id);
-    if(res?.data?.assignment_details && res?.data?.assignment_details.length > 0){
-      setQuestionList(res?.data?.assignment_details[0]?.assignment_data); 
+    if (
+      res?.data?.assignment_details &&
+      res?.data?.assignment_details.length > 0
+    ) {
+      setQuestionList(res?.data?.assignment_details[0]?.assignment_data);
     }
   };
 
@@ -43,7 +45,10 @@ const AddQuestions = () => {
     const tempQues = [...questions];
     if (tempQues && tempQues.length > 0) {
       tempQues.map((item, index) => {
-        if(item.type === 'fill_in_the_blanks' && typeof item.correct_answer !== 'string'){
+        if (
+          item.type === "fill_in_the_blanks" &&
+          typeof item.correct_answer !== "string"
+        ) {
           item.correct_answer = item.correct_answer.join();
         }
         requestPayload[`question_number_${index + 1}`] = item;
@@ -58,16 +63,15 @@ const AddQuestions = () => {
       const saveRes = await SaveAssignmentData(result);
 
       if (saveRes.data.status === "success") {
-        if(isPublish){
+        if (isPublish) {
           const publishRes = await publishAssignmentData(id);
           if (publishRes.data.status === "success") {
             navigate("/teacherDashboard/assignments");
           } else {
             console.log("ERR", publishRes.data.status);
             navigate("/teacherDashboard/assignments");
-          } 
-        }
-        else{
+          }
+        } else {
           navigate("/teacherDashboard/assignments");
         }
       } else {
@@ -109,7 +113,10 @@ const AddQuestions = () => {
           <Button variant="outline-primary" onClick={handleBack}>
             Back
           </Button>
-          <Button variant="outline-primary mx-3" onClick={() => handlePublish(false)}>
+          <Button
+            variant="outline-primary mx-3"
+            onClick={() => handlePublish(false)}
+          >
             Save
           </Button>
           <Button variant="outline-primary" onClick={() => handlePublish(true)}>

@@ -10,7 +10,7 @@ import Edit from "@mui/icons-material/Edit";
 const TLessonPlan = () => {
   //const userInfo = JSON.parse(localStorage.getItem("UserData"));
   const [lessonPlanData, setLessonPlanData] = useState([]);
-  const [userInfo, setuserInfo] = useState(JSON.parse(localStorage.getItem("UserData")));
+  const [userInfo] = useState(JSON.parse(localStorage.getItem("UserData")));
   const [selectedLessonId, setSelectedLessonId] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const [refreshTable, setRefreshTable] = useState(false);

@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react'
-import { Button, Form, Modal, Row, Col, Card } from "react-bootstrap";
+import React, { useState } from 'react'
+import { Button, Form, Row, Col } from "react-bootstrap";
 import './studentAssignment.css'
 
 const AnswerTypeMultiSelect = (props) => {
-  const [validated, setValidated] = useState(false);
-  const [testanswer,setTestAnswer] = useState(props.question.test_answer);
+  const [validated] = useState(false);
   const handleCancel = () => {
 
   }
@@ -31,7 +30,7 @@ const AnswerTypeMultiSelect = (props) => {
         <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
           {props.question.all_options.map((item,index) => (
             <>
-              <Form.Check // prettier-ignore
+              <Form.Check
                 type="checkbox"
                 value={index}
                 label={item}

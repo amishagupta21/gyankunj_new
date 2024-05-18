@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Button, Form, Modal, Row, Col, Card } from "react-bootstrap";
+import { Button, Form, Row, Col } from "react-bootstrap";
 import './studentAssignment.css'
 
 const AnswerTypeSubjective = (props) => {

@@ -1,27 +1,20 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Row, Col, Table, Button, Form, Modal } from "react-bootstrap";
-import { AiFillDelete } from "react-icons/ai";
+import React, { useState, useEffect } from "react";
+import { Row, Col, Button, Form, Modal } from "react-bootstrap";
 import { v4 as uuid } from "uuid";
-import { BsPlus, BsPlusSquareDotted } from "react-icons/bs";
+import { BsPlus } from "react-icons/bs";
 import { BsTrash } from "react-icons/bs";
-import { SaveAssignmentData } from "../../../../ApiClient";
 
 import "./index.css";
 
 const BaseQuestion = (props) => {
-  const [cancel, setCancel] = useState(true);
   const [questionName, setQuestionName] = useState("");
   const [marks, setMarks] = useState("");
   const [type, setType] = useState("");
-  const [validated, setValidated] = useState(false);
-  const [correctAnswer, setCorrectAnswer] = useState("");
+  const [validated] = useState(false);
   const [other, setOther] = useState(true);
   const [fill, setfill] = useState(false);
   const [single, setSingle] = useState(false);
   const [multi, setMulti] = useState(false);
-  const [multicount, setMultiCount] = useState([1, 2]);
-  const [addsingle, setAddSingle] = useState(false);
-  const [addmulti, setAddMulti] = useState(false);
   const [showQuestionModal, setShowQuestionModal] = useState(false);
   const [isQuestionIncomplete, setIsQuestionIncomplete] = useState(false);
   const [isQuestionValid, setIsQuestionValid] = useState(true);
@@ -57,9 +50,6 @@ const BaseQuestion = (props) => {
     setfill(false);
     setSingle(false);
     setMulti(false);
-    setMultiCount([1, 2]);
-    setAddSingle(false);
-    setAddMulti(false);
     setShowQuestionModal(false);
     setData({
       question: "",
@@ -152,13 +142,6 @@ const BaseQuestion = (props) => {
     setIsQuestionIncomplete(!questionValue.includes("__"));
     setQuestionName(questionValue);
     setIsQuestionValid(true);
-  };
-
-  const handleotherAnswer = (e) => {
-    setData({
-      ...data,
-      correct_answer: e.target.value,
-    });
   };
 
   const handleMarks = (e) => {
@@ -266,6 +249,13 @@ const BaseQuestion = (props) => {
         setfill(false);
         setOther(true);
         setType("subjective");
+        break;
+      default:
+        setSingle(false);
+        setMulti(false);
+        setfill(false);
+        setOther(false);
+        setType("default");
         break;
     }
 
