@@ -1,0 +1,190 @@
+.assignmentHeader{
+    text-align: left;
+font: normal normal bold 26px/34px Roboto;
+letter-spacing: 0px;
+color: #2A2D2F;
+opacity: 1;
+}
+
+.assignmentName{
+    text-align: left;
+font: normal normal normal 20px/34px Roboto;
+letter-spacing: 0px;
+color: #2A2D2F;
+opacity: 1;
+}
+
+.assignmentNameHeader{
+    box-shadow: 0px 3px 6px #B4B3B329;
+    height: 84px;
+}
+
+.assignmentDataInner{
+    width: 65%;
+height: auto;
+/* UI Properties */
+background: #FFFFFF 0% 0% no-repeat padding-box;
+box-shadow: 0px 3px 4px #0000001A;
+border: 1px solid #D8D8D8;
+border-radius: 8px;
+opacity: 1;
+padding: 23px 38px;
+margin-left: 2%;
+}
+
+/* .questionSetHeader{
+
+} */
+
+.questionSetSidebar{
+    width: 30%;
+    height: auto;
+    /* UI Properties */
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    box-shadow: 0px 3px 4px #0000001A;
+    border: 1px solid #D8D8D8;
+    border-radius: 8px;
+}
+
+.questionSetHeaderText{
+    text-align: left;
+font: normal normal bold 26px/34px Roboto;
+letter-spacing: 0px;
+color: #2A2D2F;
+opacity: 1;
+}
+
+.questionSetText{
+    text-align: left;
+    font: normal normal bold 20px/34px Roboto;
+    letter-spacing: 0px;
+    color: #2A2D2F;
+    opacity: 1;
+}
+
+.fillBlankAnswer{
+    width: 100%;
+    height: 40px;
+    margin-bottom: 36px;
+    border: none;
+    border-bottom: 1px solid;
+}
+
+.card-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+  
+  .questionCard {
+    flex-basis: calc(33.33% - 20px); 
+    margin-bottom: 20px;
+    background-color: #FFFFFF;
+    border: 1px solid #EFF1F4;
+    box-shadow: 0px 3px 6px #B4B3B3;
+    border-radius: 8px;
+  }
+  
+  .answerCard {
+    padding: 20px;
+  }
+  
+  .questionSetText {
+    cursor: pointer;
+    padding: 20px;
+  }
+  .checkbox-label.selected input[type="checkbox"]::before {
+    content: "\2713"; /* Filled checkbox character */
+    display: inline-block;
+    font-size: 14px;
+    width: 1em;
+    text-align: center;
+  }
+  
+  .card-container {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .question-card {
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .question-card:hover {
+    background-color: #e9ecef;
+  }
+  
+  .question-text {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .answer-section {
+    font-size: 16px;
+  }
+  
+  .type-info {
+    margin-bottom: 10px;
+  }
+  
+  .options-container {
+    margin-bottom: 15px;
+  }
+  
+  .options-list {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .option-label {
+    display: flex;
+    align-items: center;
+  }
+  
+  .option-text {
+    margin-left: 10px;
+  }
+  
+  .selected-indicator {
+    color: green;
+    font-weight: bold;
+  }
+  
+  .answer-container {
+    margin-bottom: 15px;
+  }
+  
+  .answer-textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    resize: vertical;
+  }
+  .headerRow {
+    height: 68px;
+    box-shadow: 0px 3px 6px #B4B3B329;
+    position: relative;
+    left: 12px;
+    width: 100%;
+  }
+  
+  .assignmentTable {
+    justify-content: space-evenly;
+    padding-top: 20px;
+  }
+  
+  .paginationRow {
+    margin-top: 20px;
+  }
+  .assignmentTableContainer {
+    height: 100vh;
+    overflow-y: auto; /* Add scrollbar if content overflows */
+  }
+    

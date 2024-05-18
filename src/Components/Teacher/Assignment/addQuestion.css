@@ -1,0 +1,52 @@
+
+.reportSection {
+    padding: 20px;
+  }
+  
+  .d-flex.align-items-center h4 {
+    font-size: 24px;
+    margin-right: 10px;
+  }
+  
+  .d-flex.justify-content-end .btn {
+    margin-left: 10px;
+    font-size: 16px;
+  }
+  
+  .question-card {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    padding: 20px;
+  }
+  
+  .question-card .question {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 15px;
+  }
+  
+  .question-card .answer {
+    color: #666;
+  }
+  
+  .base-question {
+    margin-top: 20px;
+  }
+  
+  .go-to-assignments-btn {
+    cursor: pointer;
+    font-size: 16px;
+    padding: 10px 15px;
+    border: 1px solid #007bff;
+    color: #007bff;
+    border-radius: 5px;
+  }
+  
+  .go-to-assignments-btn:hover {
+    background-color: #007bff;
+    color: #fff;
+  }
+  

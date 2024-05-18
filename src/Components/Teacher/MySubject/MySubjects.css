@@ -1,0 +1,39 @@
+.routinemain {
+    padding: 50px;
+    margin: 107px 26px;
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+box-shadow: 0px 3px 4px #0000001A;
+border: 1px solid #EFF1F4;
+border-radius: 8px;
+opacity: 1;
+}
+
+.masterRoutineheader {
+    margin-top: -40px;
+    padding-top: 17px;
+    height: 74px;
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    box-shadow: 0px 3px 6px #B4B3B329;
+    border-radius: 8px 8px 0px 0px;
+    opacity: 1;
+    width: 100%;
+}
+
+.dayHeader{
+    height: 54px;
+    background: #7A9ABF 0% 0% no-repeat padding-box;
+    border-radius: 4px 4px 0px 0px;
+    opacity: 1;
+    padding: 14px;
+}
+
+.dayHeader h5{
+font: normal normal bold 20px/26px Roboto;
+letter-spacing: 0px;
+color: #FFFFFF;
+opacity: 1;
+}
+
+.SubjectStyle{
+    display: flex;
+}

@@ -1,0 +1,98 @@
+.assignmentSectionOuter{
+    height: auto;
+    width: 100%;
+}
+
+.fillBlankQuest{
+    width: 100%;
+    height: 40px;
+    border-radius: 10px;
+    margin-bottom: 36px;
+}
+
+.addFillBlankSection {
+    padding: 0px 52px 0px 97px;
+}
+
+.addSingleSelect{
+    margin-bottom: 15px;
+}
+
+.correctAnsInput {
+    height: 40px;
+    width: 100%;
+    border-radius: 10px;
+}
+
+.assignmentData{
+    padding: 10px;
+}
+
+.assignmentCardExpanded{
+    margin-bottom: 10px; 
+    height: auto;
+    max-height: 500px;
+    /* padding: 30px; */
+}
+
+.assignmentCard{
+    margin-bottom: 10px;
+    height: 55px;
+    overflow: hidden;
+}
+.basic-label{
+    font-size: larger;
+}
+
+
+.reportSection {
+    padding: 20px;
+  }
+  
+  .d-flex.align-items-center h4 {
+    font-size: 24px;
+    margin-right: 10px;
+  }
+  
+  .d-flex.justify-content-end .btn {
+    margin-left: 10px;
+    font-size: 16px;
+  }
+  
+  .question-card {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    padding: 20px;
+  }
+  
+  .question-card .question {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 15px;
+  }
+  
+  .question-card .answer {
+    color: #666;
+  }
+  
+  .base-question {
+    margin-top: 20px;
+  }
+  
+  .go-to-assignments-btn {
+    cursor: pointer;
+    font-size: 16px;
+    padding: 10px 15px;
+    border: 1px solid #007bff;
+    color: #007bff;
+    border-radius: 5px;
+  }
+  
+  .go-to-assignments-btn:hover {
+    background-color: #007bff;
+    color: #fff;
+  }
+  
