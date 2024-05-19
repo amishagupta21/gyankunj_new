@@ -2,6 +2,7 @@
   "name": "gyaankunj",
   "version": "0.1.0",
   "private": true,
+  "homepage": ".",
   "options": {
     "allowedHosts": [
       "localhost",
@@ -48,7 +49,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "webpack --config webpack.prod.js",
+    "build": "webpack --config webpack.prod.js --env production",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

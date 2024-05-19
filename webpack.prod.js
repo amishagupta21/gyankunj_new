@@ -4,6 +4,7 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = (env) => {
   const isProduction = env && env.production === true;
@@ -60,6 +61,10 @@ module.exports = (env) => {
         test: /\.js$|\.css$|\.html$/,
         threshold: 10240,
         minRatio: 0.8,
+      }),
+      new HtmlWebpackPlugin({
+        template: path.resolve(__dirname, 'public/index.html'),
+        filename: 'index.html',
       }),
       new webpack.DefinePlugin({
         'process.env.NODE_ENV': JSON.stringify(isProduction ? 'production' : 'development'),
