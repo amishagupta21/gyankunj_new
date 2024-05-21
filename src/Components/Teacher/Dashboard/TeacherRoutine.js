@@ -5,52 +5,33 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import { getTeacherRoutine } from "../../../ApiClient";
+import { getDaysData, getTeacherRoutine } from "../../../ApiClient";
 import dayjs from "dayjs";
 
 const TeacherRoutine = () => {
   const userInfo = JSON.parse(localStorage.getItem("UserData"));
   const [timeSchedulesList, setTimeSchedulesList] = useState();
   const [dayFilter, setDayFilter] = useState();
-  const [daysData] = useState([
-    {
-      day_id: 1,
-      day_name: "Monday",
-    },
-    {
-      day_id: 2,
-      day_name: "Tuesday",
-    },
-    {
-      day_id: 3,
-      day_name: "Wednesday",
-    },
-    {
-      day_id: 4,
-      day_name: "Thursday",
-    },
-    {
-      day_id: 5,
-      day_name: "Friday",
-    },
-    {
-      day_id: 6,
-      day_name: "Saturday",
-    },
-    {
-      day_id: 7,
-      day_name: "Sunday",
-    },
-  ]);
+  const [daysData, setDaysData] = useState([]);
 
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    const currentDayName = dayjs().format("dddd").toLowerCase();
-    const currentDayObject = daysData.find(
-      (day) => day.day_name.toLowerCase() === currentDayName
-    );
-    if (currentDayObject) setDayFilter(currentDayObject.day_id);
+    getDaysData().then((res) => {
+      if (res?.data?.days && res?.data?.days.length > 0) {
+        setDaysData(res?.data?.days);
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    if (daysData && daysData.length > 0) {
+      const currentDayName = dayjs().format("dddd").toLowerCase();
+      const currentDayObject = daysData.find(
+        (day) => day.day_name.toLowerCase() === currentDayName
+      );
+      if (currentDayObject) setDayFilter(currentDayObject.day_id);
+    }
   }, [daysData]);
 
   useEffect(() => {
@@ -116,8 +97,8 @@ const TeacherRoutine = () => {
         header: "Subject",
       },
       {
-        accessorKey: "time_range",
         header: "Time",
+        accessorFn: (row) => <div>{row.start_time} - {row.end_time}</div>,
       },
     ],
     []

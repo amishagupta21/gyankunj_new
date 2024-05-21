@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Row, Col, Table, Button } from "react-bootstrap";
 import { viewStudentAttendance, getGradeDetails } from "../../../ApiClient";
 import Select from "react-select";
+import TeacherAttendanceV2 from "./TeacherAttendanceV2";
 
 const TeacherAttendance = () => {
   const [studentAttendance, setStudentAttendance] = useState([]);
@@ -68,8 +69,193 @@ const TeacherAttendance = () => {
       .catch((err) => console.log(err));
   };
 
-  return (
-    <div className="reportSection">
+  const data = {
+    "status": "success",
+    "student_attendance": [
+        {
+            "student_id": "STUD_1",
+            "roll_no": 1,
+            "name": "Rumita Chatterjee",
+            "attendance": {
+                "2024-04-01": "Absent",
+                "2024-04-02": "Absent",
+                "2024-04-03": "Absent",
+                "2024-04-04": "Absent",
+                "2024-04-05": "Absent",
+                "2024-04-06": "Absent",
+                "2024-04-07": "Absent",
+                "2024-04-08": "Present",
+                "2024-04-09": "Present",
+                "2024-04-10": "Present",
+                "2024-04-11": "Present",
+                "2024-04-12": "Absent",
+                "2024-04-13": "Present",
+                "2024-04-14": "Present",
+                "2024-04-15": "Present",
+                "2024-04-16": "Present",
+                "2024-04-17": "Present",
+                "2024-04-18": "Present",
+                "2024-04-19": "Present",
+                "2024-04-20": "Present",
+                "2024-04-21": "Present",
+                "2024-04-22": "Present",
+                "2024-04-23": "Present",
+                "2024-04-24": "Present",
+                "2024-04-25": "Present",
+                "2024-04-26": "Present",
+                "2024-04-27": "Present",
+                "2024-04-28": "Present",
+                "2024-04-29": "Absent",
+                "2024-04-30": "Present",
+                "2024-05-01": "Present",
+                "2024-05-02": "Present",
+                "2024-05-03": "Present",
+                "2024-05-04": "Present",
+                "2024-05-05": "Present",
+                "2024-05-06": "Present",
+                "2024-05-07": "Present",
+                "2024-05-08": "Present",
+                "2024-05-09": "Present",
+                "2024-05-10": "Present",
+                "2024-05-11": "Present",
+                "2024-05-12": "Present",
+                "2024-05-13": "Present",
+                "2024-05-14": "Absent",
+                "2024-05-15": "Present",
+                "2024-05-16": "Present",
+                "2024-05-17": "Present",
+                "2024-05-18": "Present",
+                "2024-05-19": "Present",
+                "2024-05-20": "Present",
+                "2024-05-21": "Present"
+            },
+            "attendance_percentage": 80.39
+        },
+        {
+            "student_id": "STUD_2",
+            "roll_no": 2,
+            "name": "Kirti Chatterjee",
+            "attendance": {
+                "2024-04-01": "Present",
+                "2024-04-02": "Present",
+                "2024-04-03": "Absent",
+                "2024-04-04": "Present",
+                "2024-04-05": "Present",
+                "2024-04-06": "Present",
+                "2024-04-07": "Absent",
+                "2024-04-08": "Present",
+                "2024-04-09": "Present",
+                "2024-04-10": "Absent",
+                "2024-04-11": "Present",
+                "2024-04-12": "Present",
+                "2024-04-13": "Present",
+                "2024-04-14": "Present",
+                "2024-04-15": "Present",
+                "2024-04-16": "Present",
+                "2024-04-17": "Present",
+                "2024-04-18": "Present",
+                "2024-04-19": "Present",
+                "2024-04-20": "Present",
+                "2024-04-21": "Present",
+                "2024-04-22": "Present",
+                "2024-04-23": "Present",
+                "2024-04-24": "Present",
+                "2024-04-25": "Present",
+                "2024-04-26": "Present",
+                "2024-04-27": "Present",
+                "2024-04-28": "Present",
+                "2024-04-29": "Present",
+                "2024-04-30": "Present",
+                "2024-05-01": "Present",
+                "2024-05-02": "Present",
+                "2024-05-03": "Present",
+                "2024-05-04": "Present",
+                "2024-05-05": "Present",
+                "2024-05-06": "Present",
+                "2024-05-07": "Present",
+                "2024-05-08": "Present",
+                "2024-05-09": "Present",
+                "2024-05-10": "Present",
+                "2024-05-11": "Present",
+                "2024-05-12": "Present",
+                "2024-05-13": "Present",
+                "2024-05-14": "Present",
+                "2024-05-15": "Present",
+                "2024-05-16": "Present",
+                "2024-05-17": "Present",
+                "2024-05-18": "Present",
+                "2024-05-19": "Present",
+                "2024-05-20": "Present",
+                "2024-05-21": "Present"
+            },
+            "attendance_percentage": 94.12
+        },
+        {
+            "student_id": "STUD_5",
+            "roll_no": 5,
+            "name": "Jonita Chatterjee",
+            "attendance": {
+                "2024-04-01": "Present",
+                "2024-04-02": "Present",
+                "2024-04-03": "Present",
+                "2024-04-04": "Present",
+                "2024-04-05": "Present",
+                "2024-04-06": "Present",
+                "2024-04-07": "Absent",
+                "2024-04-08": "Present",
+                "2024-04-09": "Present",
+                "2024-04-10": "Present",
+                "2024-04-11": "Present",
+                "2024-04-12": "Absent",
+                "2024-04-13": "Present",
+                "2024-04-14": "Present",
+                "2024-04-15": "Present",
+                "2024-04-16": "Present",
+                "2024-04-17": "Present",
+                "2024-04-18": "Present",
+                "2024-04-19": "Present",
+                "2024-04-20": "Present",
+                "2024-04-21": "Present",
+                "2024-04-22": "Present",
+                "2024-04-23": "Present",
+                "2024-04-24": "Present",
+                "2024-04-25": "Present",
+                "2024-04-26": "Present",
+                "2024-04-27": "Present",
+                "2024-04-28": "Present",
+                "2024-04-29": "Present",
+                "2024-04-30": "Present",
+                "2024-05-01": "Present",
+                "2024-05-02": "Present",
+                "2024-05-03": "Present",
+                "2024-05-04": "Present",
+                "2024-05-05": "Present",
+                "2024-05-06": "Present",
+                "2024-05-07": "Present",
+                "2024-05-08": "Present",
+                "2024-05-09": "Present",
+                "2024-05-10": "Present",
+                "2024-05-11": "Present",
+                "2024-05-12": "Present",
+                "2024-05-13": "Present",
+                "2024-05-14": "Present",
+                "2024-05-15": "Present",
+                "2024-05-16": "Present",
+                "2024-05-17": "Present",
+                "2024-05-18": "Present",
+                "2024-05-19": "Present",
+                "2024-05-20": "Present",
+                "2024-05-21": "Present"
+            },
+            "attendance_percentage": 96.08
+        }
+    ],
+    "class_teacher": "TEACHER_1",
+    "message": ""
+}
+
+  return (<>
+  <div className="reportSection">
       <Row
         style={{
           height: "74px",
@@ -91,7 +277,7 @@ const TeacherAttendance = () => {
           >
             <option value="">--Grade--</option>
             {gradeData?.grade_details?.grade_details?.map((grade) => {
-              return <option value={grade?.grade_id}>{grade?.grade_id}</option>;
+              return <option value={grade?.grade_id}>{grade?.grade}</option>;
             })}
           </select>
         </Col>
@@ -131,8 +317,7 @@ const TeacherAttendance = () => {
         </Col>
       </Row>
       <div className="routineSection">
-        <div>
-          <Row>
+        {studentAttendance?.class_teacher && <Row>
             <Col md={2}>
               <h6
                 style={{
@@ -155,9 +340,9 @@ const TeacherAttendance = () => {
             <Col md={3} style={{ textAlign: "initial" }}>
               {studentAttendance?.class_teacher}
             </Col>
-          </Row>
-        </div>
-        <Table bordered striped hover responsive>
+          </Row>}
+
+        {/* <Table bordered striped hover responsive>
           <thead>
             <tr
               style={{
@@ -243,9 +428,11 @@ const TeacherAttendance = () => {
               </td>
             )}
           </tbody>
-        </Table>
+        </Table> */}
+        <TeacherAttendanceV2 data={studentAttendance} />
       </div>
     </div>
+  </>
   );
 };
 

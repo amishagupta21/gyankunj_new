@@ -195,8 +195,7 @@ const LogBookCLassTeacher = () => {
               <div className="fw-bold text-danger">Sent back</div>
             ) : (
               <>
-                {row.grade_id === userInfo?.class_teacher_details?.grade_id &&
-                  row.teacher_id !== userInfo.user_id && (
+                {row.grade_id === userInfo?.class_teacher_details?.grade_id && (
                     <div>
                       <Button
                         size="small"
