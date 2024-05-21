@@ -1,37 +1,37 @@
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { ProtectedWrapper } from "../ProtectedRoute";
-import DashboardSectionContent from "./DashboardSectionContent";
+import LandingDashboard from "./LandingDashboard";
 import PageNotFound from "./PageNotFound";
-import PDashboard from "./Principal Dashboard/PDashboard";
-import AttendanceOverview from "./Principal Dashboard/AttendanceOverview";
-import ReportSection from "./Principal Dashboard/Reports";
-import Announcements from "./Principal Dashboard/Announcement/Announcement";
-import Notifications from "./Principal Dashboard/Notifications";
-import MySubjects from "./Teacher Dashboard/My Subject/MySubjects";
-import TeacherReport from "./Teacher Dashboard/Teacher Report/TeacherReport";
-import TeacherAttendance from "./Teacher Dashboard/TeacherAttendance/TeacherAttendance";
-import TeacherAssignment from "./Teacher Dashboard/Assignment/TeacherAssignment";
-import NoticeForTeacher from "./Teacher Dashboard/NoticeForTeacher/NoticeForTeacher";
-import NotificationsForTeacher from "./Teacher Dashboard/NotificationsForTeacher/NotificationsForTeacher";
-import StudentAssigments from "./Student Dashboard/Assignments/Assignments";
-import StudentReportSection from "./Student Dashboard/Report/Reports";
-import NoticeForStudents from "./Student Dashboard/NoticeForStudents/NoticeForStudents";
-import NotificationsForStudent from "./Student Dashboard/Notification/StudentNotification";
-import CreateAssignment from "./Teacher Dashboard/Assignment/CreateAssignment";
-import Addquestions from "./Teacher Dashboard/Assignment/Addquestions";
-import SubmissionsPage from "./Teacher Dashboard/Assignment/SubmissionsComponent";
-import Viewreport from "./Teacher Dashboard/Assignment/Viewreport";
-import EvaluteAssignmentReport from "./Teacher Dashboard/Assignment/EvaluteAssignmentReport";
-import TDashboard from "./Teacher Dashboard/Dashboard/TDashboard";
-import PLessonPlan from "./Principal Dashboard/PLessonPlan";
-import LogBookCLassTeacher from "./Teacher Dashboard/Dashboard/LogBook/LogBookCLassTeacher";
-import TLessonPlan from "./Teacher Dashboard/LessonPlan/TLessonPlan";
-import PResources from "./Principal Dashboard/Resources/PResources";
-import CustomMasterRoutine from "./Principal Dashboard/MasterRoutine/CustomMasterRoutine";
-import TResources from "./Teacher Dashboard/Resources/TResources";
-import SResources from "./Student Dashboard/Resources/SResources";
-import SDashboard from "./Student Dashboard/SDashboard";
+import PDashboard from "./Principal/PDashboard";
+import AttendanceOverview from "./Principal/AttendanceOverview";
+import ReportSection from "./Principal/Reports";
+import Announcements from "./Principal/Announcement/Announcement";
+import Notifications from "./Principal/Notifications";
+import MySubjects from "./Teacher/MySubject/MySubjects";
+import TeacherReport from "./Teacher/TeacherReport/TeacherReport";
+import TeacherAttendance from "./Teacher/TeacherAttendance/TeacherAttendance";
+import TeacherAssignment from "./Teacher/Assignment/TeacherAssignment";
+import NoticeForTeacher from "./Teacher/NoticeForTeacher/NoticeForTeacher";
+import NotificationsForTeacher from "./Teacher/NotificationsForTeacher/NotificationsForTeacher";
+import StudentAssigments from "./Student/Assignments/Assignments";
+import StudentReportSection from "./Student/Report/Reports";
+import NoticeForStudents from "./Student/NoticeForStudents/NoticeForStudents";
+import NotificationsForStudent from "./Student/Notification/StudentNotification";
+import CreateAssignment from "./Teacher/Assignment/CreateAssignment";
+import Addquestions from "./Teacher/Assignment/Addquestions";
+import SubmissionsPage from "./Teacher/Assignment/SubmissionsComponent";
+import Viewreport from "./Teacher/Assignment/Viewreport";
+import EvaluteAssignmentReport from "./Teacher/Assignment/EvaluteAssignmentReport";
+import TDashboard from "./Teacher/Dashboard/TDashboard";
+import PLessonPlan from "./Principal/PLessonPlan";
+import LogBookCLassTeacher from "./Teacher/Dashboard/LogBook/LogBookCLassTeacher";
+import TLessonPlan from "./Teacher/LessonPlan/TLessonPlan";
+import PResources from "./Principal/Resources/PResources";
+import CustomMasterRoutine from "./Principal/MasterRoutine/CustomMasterRoutine";
+import TResources from "./Teacher/Resources/TResources";
+import SResources from "./Student/Resources/SResources";
+import SDashboard from "./Student/SDashboard";
 
 // Define routes for different user roles
 const roleRoutes = {
@@ -55,7 +55,7 @@ export default function RoutesContainer({ userData }) {
     return (
       <Routes>
         <Route path="/" element={<Navigate to={roleRoutes[userData.role]} />} />
-        {/* Principal Dashboard Routes */}
+        {/* Principal Routes */}
         {userData.role === "ADMIN" || userData.role === "PRINCIPAL" ? (
           <>
             <Route
@@ -92,7 +92,7 @@ export default function RoutesContainer({ userData }) {
             />
           </>
         ) : null}
-        {/* Teacher Dashboard Routes */}
+        {/* Teacher Routes */}
         {userData.role === "TEACHER" ? (
           <>
             <Route
@@ -163,7 +163,7 @@ export default function RoutesContainer({ userData }) {
             />
           </>
         ) : null}
-        {/* Student Dashboard Routes */}
+        {/* Student Routes */}
         {userData.role === "STUDENT" ? (
           <>
             <Route
@@ -203,5 +203,5 @@ export default function RoutesContainer({ userData }) {
   }
 
   // If user doesn't have permission, show DashboardSectionContent
-  return <DashboardSectionContent />;
+  return <LandingDashboard />;
 }

@@ -119,7 +119,7 @@ const getTeacherRoutine = (userId, day_id) => {
 
 const viewStudentAttendance = (grade, section, month) => {
   return apiInstance.get(
-    `/get_student_attendance?grade_id=${grade}&section_id=${section}&month_id=${month}`
+    `/get_student_attendance?grade_id=${grade}&section_id=${section}&month=${month}`
   );
 };
 

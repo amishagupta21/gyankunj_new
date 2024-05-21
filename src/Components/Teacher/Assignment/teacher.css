@@ -1,0 +1,118 @@
+.teacher-assignment-container {
+  padding: 20px;
+}
+
+.report-section {
+  background-color:#ffffff;
+  border-radius: 8px;
+  box-shadow: 0px 3px 6px #B4B3B329;
+}
+
+.report-section h4 {
+  color: #333;
+}
+
+.mb-4 {
+  margin-bottom: 1.5rem;
+}
+
+.d-flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.table th,
+.table td {
+  text-align: center;
+  font-size: 16px;
+}
+
+thead tr {
+  /* background-color: #7A9ABF; */
+  /* color: white; */
+  /* font-weight: bold;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px; */
+
+}
+
+th {
+  padding: 10px;
+  text-align: left;
+}
+
+.Table {
+  width: 100%;
+  border-collapse: collapse;
+  overflow-x: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.table th,
+.table td {
+  padding: 12px;
+
+  border: 1px solid #e0e0e0;
+  
+}
+
+.table th {
+  background-color:#bbfbf5;
+  color: rgb(46, 45, 45);
+  font-size: 16px;
+  font-weight: bold;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  
+
+}
+/* .assignment-header{
+  border-top-left-radius: 30px;
+}
+.actions-header {
+  border-top-right-radius: 30px;
+} */
+.table tbody tr:hover {
+  background-color: #f5f5f5;
+}
+
+.table td {
+  background-color: #fff;
+}
+
+.table td.actions {
+  display: flex;
+  justify-content: center;
+}
+
+.table td.actions > * {
+  margin-right: 8px; 
+}
+
+@media (max-width: 767px) {
+  .Table {
+    overflow-x: auto;
+  }
+
+  .table th,
+  .table td {
+    white-space: nowrap;
+  }
+}
+.assignment-container {
+  margin-top: 20px; 
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}

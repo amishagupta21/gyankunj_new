@@ -1,0 +1,97 @@
+.routinemain {
+    padding: 50px;
+    margin: 107px 26px;
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+box-shadow: 0px 3px 4px #0000001A;
+border: 1px solid #EFF1F4;
+border-radius: 8px;
+opacity: 1;
+}
+
+.masterRoutineheader {
+    margin-top: -40px;
+    padding-top: 17px;
+    height: 74px;
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    box-shadow: 0px 3px 6px #B4B3B329;
+    border-radius: 8px 8px 0px 0px;
+    opacity: 1;
+    width: 100%;
+}
+
+.dayHeader{
+    height: 54px;
+    background: #7A9ABF 0% 0% no-repeat padding-box;
+    border-radius: 4px 4px 0px 0px;
+    opacity: 1;
+    padding: 14px;
+}
+
+.dayHeader h5{
+font: normal normal bold 20px/26px Roboto;
+letter-spacing: 0px;
+color: #FFFFFF;
+opacity: 1;
+}
+
+.lessonPlanCard{
+    margin-bottom: 10px;
+    height: 70px;
+}
+
+.lessonPlanCardHeader{
+    height: 43px;
+    margin-bottom: 10px;
+    background-color: peachpuff;
+}
+
+.lessonHeading{
+font: normal normal bold 20px/34px Roboto;
+letter-spacing: 0px;
+color: #2A2D2F;
+}
+
+.lessonPlanCardExpanded{
+    margin-bottom: 10px; 
+    height: auto;
+    max-height: 500px;
+    /* padding: 30px; */
+}
+
+.lessonName{
+    font: normal normal normal 22px/34px Roboto;
+    text-align: left;
+}
+
+.gradeName{
+    font: normal normal normal 22px/34px Roboto; 
+}
+
+.subjectName{
+    font: normal normal normal 22px/34px Roboto; 
+}
+
+.lessonData {
+    padding: 10px;
+}
+
+.addLessonForm{
+    padding: 30px;
+}
+
+.addLessonForm span{
+    font: normal normal normal 18px/21px Roboto;
+letter-spacing: 0px;
+}
+
+.lessonPlanChName {
+    width: 700px;
+    height: 44px;
+    border-radius: 7px;
+}
+
+.lessonPlanSubject{
+    width: 337px;
+    height: 38px;
+    border-radius: 4px;
+}
