@@ -4,13 +4,11 @@ import { ProtectedWrapper } from "../ProtectedRoute";
 import LandingDashboard from "./LandingDashboard";
 import PageNotFound from "./PageNotFound";
 import PDashboard from "./Principal/PDashboard";
-import AttendanceOverview from "./Principal/AttendanceOverview";
 import ReportSection from "./Principal/Reports";
 import Announcements from "./Principal/Announcement/Announcement";
 import Notifications from "./Principal/Notifications";
 import MySubjects from "./Teacher/MySubject/MySubjects";
 import TeacherReport from "./Teacher/TeacherReport/TeacherReport";
-import TeacherAttendance from "./Teacher/TeacherAttendance/TeacherAttendance";
 import TeacherAssignment from "./Teacher/Assignment/TeacherAssignment";
 import NoticeForTeacher from "./Teacher/NoticeForTeacher/NoticeForTeacher";
 import NotificationsForTeacher from "./Teacher/NotificationsForTeacher/NotificationsForTeacher";
@@ -32,6 +30,8 @@ import CustomMasterRoutine from "./Principal/MasterRoutine/CustomMasterRoutine";
 import TResources from "./Teacher/Resources/TResources";
 import SResources from "./Student/Resources/SResources";
 import SDashboard from "./Student/SDashboard";
+import TeacherAttendance from "./Teacher/TeacherAttendance/TeacherAttendance";
+import AttendancesOverview from "./Principal/Attendance/AttendancesOverview";
 
 // Define routes for different user roles
 const roleRoutes = {
@@ -72,7 +72,7 @@ export default function RoutesContainer({ userData }) {
             />
             <Route
               path="/principalDashboard/attendanceOverview"
-              element={<ProtectedWrapper Component={AttendanceOverview} />}
+              element={<ProtectedWrapper Component={AttendancesOverview} />}
             />
             <Route
               path="/principalDashboard/reports"

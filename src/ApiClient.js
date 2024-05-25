@@ -95,9 +95,9 @@ const saveLessonPlan = (data) => {
   }
 };
 
-const viewAttendanceReport = (grade, section, year, userType) => {
+const viewAttendanceReport = (grade, section, userType) => {
   return apiInstance.get(
-    `/view_attendance_report?grade_id=${grade}&section_id=${section}&year=${year}&user_type=${userType}`
+    `/view_attendance_report?grade_id=${grade}&section_id=${section}&user_type=${userType}`
   );
 };
 
