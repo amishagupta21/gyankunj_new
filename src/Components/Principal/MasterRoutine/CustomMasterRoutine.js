@@ -172,10 +172,10 @@ const CustomMasterRoutine = () => {
         <table>
           <thead>
             <tr>
-              <th className="fs-6 bg-secondary">Grade</th>
+              <th className="fs-6 bg-secondary text-white">Grade</th>
               {periodData.map((item) => (
                 <th
-                  className={`fs-6 text-center ${
+                  className={`fs-6 text-center text-white ${
                     item.period === "Break" ? "bg-danger" : "bg-secondary"
                   }`}
                   key={item.period}
