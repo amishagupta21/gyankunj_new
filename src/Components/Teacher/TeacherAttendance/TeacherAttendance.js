@@ -9,6 +9,8 @@ import {
 import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
 import { getGradeDetails, viewStudentAttendance } from "../../../ApiClient";
+import HowToRegIcon from '@mui/icons-material/HowToReg';
+import PersonOffIcon from '@mui/icons-material/PersonOff';
 
 const TeacherAttendance = () => {
   const [gradeData, setGradeData] = useState([]);
@@ -112,6 +114,51 @@ const TeacherAttendance = () => {
     return `${day}${suffix(day)}`;
   };
 
+  const getAttendanceClass = (status) => {
+    switch (status) {
+      case "Present":
+        return "text-success";
+      case "Absent":
+        return "text-danger";
+      // case "Holiday":
+      //   return "text-white bg-info";
+      // case "Sunday":
+      //   return "text-white bg-warning";
+      default:
+        return "";
+    }
+  };
+
+  const getAttendanceText = (status) => {
+    switch (status) {
+      case "Present":
+        return <HowToRegIcon />;
+      case "Absent":
+        return <PersonOffIcon />;
+      case "Holiday":
+        return "H";
+      case "Sunday":
+        return "S";
+      default:
+        return "";
+    }
+  };
+
+  const getAttendanceTitle = (status) => {
+    switch (status) {
+      case "Present":
+        return "Present";
+      case "Absent":
+        return "Absent";
+      case "Holiday":
+        return "Holiday";
+      case "Sunday":
+        return "Sunday";
+      default:
+        return "";
+    }
+  };
+
   return (
     <>
       <Box
@@ -188,11 +235,13 @@ const TeacherAttendance = () => {
             </div>
           ) : (
             <table border="1">
-              <thead>
-                <tr style={{ background: "#bbfbf5" }}>
-                  <th style={{ minWidth: 80 }}>Roll No</th>
-                  <th style={{ minWidth: 150 }}>Name</th>
-                  <th style={{ width: 60 }}>%</th>
+              <thead className="bg-info-subtle">
+                <tr>
+                  <th className="text-center" style={{ minWidth: 80 }}>Roll No</th>
+                  <th className="text-center" style={{ minWidth: 150 }}>Name</th>
+                  <th className="text-center">MTD</th>
+                  <th className="text-center" style={{ minWidth: 150 }}>Days Present</th>
+                  <th className="text-center" style={{ width: 60 }}>%</th>
                   {allDatesOfSelectedMonth.map((date) => (
                     <th style={{ width: 60, padding: 10 }} key={date}>
                       {formatDate(date)}
@@ -200,28 +249,23 @@ const TeacherAttendance = () => {
                   ))}
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="bg-body-secondary">
                 {studentsAttendanceData?.student_attendance?.map((student) => (
                   <tr key={student.student_id}>
-                    <td>{student.roll_no}</td>
-                    <td>{student.name}</td>
-                    <td>{student.attendance_percentage}%</td>
+                    <td className="text-center">{student.roll_no}</td>
+                    <td className="text-center">{student.name}</td>
+                    <td className="text-center">{student.mtd}</td>
+                    <td className="text-center">{student.days_present}</td>
+                    <td className="text-center">{student.attendance_percentage}%</td>
                     {allDatesOfSelectedMonth.map((date) => (
                       <td
-                        className={`text-center ${
-                          student.attendance[date] === "Present"
-                            ? "text-white bg-success"
-                            : student.attendance[date] === "Absent"
-                            ? "text-white bg-danger"
-                            : "N/A"
-                        }`}
+                        className={`text-center ${getAttendanceClass(
+                          student.attendance[date]
+                        )}`}
                         key={date}
+                        title={getAttendanceTitle(student.attendance[date])}
                       >
-                        {student.attendance[date] === "Present"
-                          ? "P"
-                          : student.attendance[date] === "Absent"
-                          ? "A"
-                          : ""}
+                        {getAttendanceText(student.attendance[date])}
                       </td>
                     ))}
                   </tr>

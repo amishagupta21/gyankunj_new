@@ -147,6 +147,8 @@ const LogBookCLassTeacher = () => {
         user_id: userInfo?.user_id,
         verification_status: isVerified,
         message: !isVerified ? comment : undefined,
+        grade_id: gradeFilter,
+        section_id: sectionFilter
       };
 
       verifyLogBook(dataToVerify)
@@ -164,8 +166,12 @@ const LogBookCLassTeacher = () => {
   const columns = useMemo(
     () => [
       {
-        accessorKey: "period_id",
-        header: "Period",
+        header: "Period + Teacher",
+        accessorFn: (row) => (
+          <div>
+            <span>{row.period_id} - {row.teacher_name}</span>
+          </div>
+        ),
       },
       {
         accessorKey: "students_present",
