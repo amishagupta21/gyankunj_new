@@ -106,8 +106,8 @@ const LogBook = () => {
                 <div className="fw-bold text-success">Verified</div>
               )}
 
-            {row.secondary_verification_status !== true &&
-              row.primary_verification_status !== true && (
+            {(row.secondary_verification_status === false ||
+              row.primary_verification_status === false) && (
                 <Button
                   size="small"
                   color="primary"
