@@ -247,9 +247,10 @@ const LogBookCLassTeacher = () => {
           <h1 style={{ fontSize: 18, marginTop: 10 }}>Log book</h1>
         )}
       />
-      <ClassTeacher teacher={logBookDetails?.class_teacher_name} />
-      <AbsenteesList absentees={logBookDetails?.name_of_absentees} />
-      <DefaultersList defaulters={logBookDetails?.name_of_dress_defaulters} />
+      {logBookDetails?.class_teacher_name && <ClassTeacher teacher={logBookDetails?.class_teacher_name} />}
+      {logBookDetails?.name_of_absentees && <AbsenteesList absentees={logBookDetails?.name_of_absentees} />}
+      {logBookDetails?.name_of_dress_defaulters && <DefaultersList defaulters={logBookDetails?.name_of_dress_defaulters} />}
+
       <Dialog
         open={open}
         onClose={handleClose}

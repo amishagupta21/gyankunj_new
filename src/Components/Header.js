@@ -13,6 +13,7 @@ function Header({ isTabScreen, userData }) {
   const navigate = useNavigate();
   const [showLogin, setShowLogin] = useState(false);
   const [showDrawer, setShowDrawer] = useState(false);
+  const [isHoveredOnUser, setIsHoveredOnUser] = useState(false);
 
   const openLoginPage = () => {
     setShowLogin(true);
@@ -22,6 +23,14 @@ function Header({ isTabScreen, userData }) {
     localStorage.clear();
     navigate("/");
     window.location.reload();
+  };
+
+  const handleMouseEnter = () => {
+    setIsHoveredOnUser(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHoveredOnUser(false);
   };
 
   return (
@@ -35,30 +44,34 @@ function Header({ isTabScreen, userData }) {
         )}
         {userData?.token ? (
           <Nav className="ms-auto">
-            <NavDropdown
-              align="end"
-              title={
-                <>
-                  <img
-                    src={profilePic}
-                    alt="Profile"
-                    className="rounded-circle"
-                    style={{ width: 40, height: 40, marginRight: 5 }}
-                  />
+          <NavDropdown
+            align="end"
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+            title={
+              <div className="profile-title">
+                <img
+                  src={profilePic}
+                  alt="Profile"
+                  className="rounded-circle"
+                  style={{ width: 40, height: 40, marginRight: 5 }}
+                />
+                <span className={`username ${isHoveredOnUser ? 'show' : ''}`}>
                   <strong className="ms-1 me-1">{userData.name}</strong>
                   <FaAngleDown />
-                </>
-              }
-              id="basic-nav-dropdown"
-              renderMenuOnMount={true}
-            >
-              <NavDropdown.Item disabled>{userData.role}</NavDropdown.Item>
-              <NavDropdown.Divider />
-              <NavDropdown.Item onClick={logoutFunction}>
-                Logout
-              </NavDropdown.Item>
-            </NavDropdown>
-          </Nav>
+                </span>
+              </div>
+            }
+            id="basic-nav-dropdown"
+            renderMenuOnMount={true}
+          >
+            <NavDropdown.Item disabled>{userData.role}</NavDropdown.Item>
+            <NavDropdown.Divider />
+            <NavDropdown.Item onClick={logoutFunction}>
+              Logout
+            </NavDropdown.Item>
+          </NavDropdown>
+        </Nav>
         ) : (
           <button className="btn-primary" onClick={openLoginPage}>
             Log In
