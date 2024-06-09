@@ -35,12 +35,14 @@ const LandingDashboard = () => {
           <div className="d-flex gap-2">
             <Button
               variant="contained"
+              className="bg-gradient"
               onClick={() => (window.location.href = "#check-section")}
             >
               Check Module
             </Button>
             <Button
               variant="contained"
+              className="bg-gradient"
               onClick={() => (window.location.href = "#learn-more-section")}
             >
               Learn more
@@ -97,7 +99,8 @@ const LandingDashboard = () => {
         </div>
       </div>
       <div
-        className="p-3 text-center" id="check-section"
+        className="p-3 text-center"
+        id="check-section"
         style={{
           background:
             "linear-gradient(95deg, #e878cf 2.39%, #6171bc 32.45%, #236eb4 97.66%)",
@@ -111,17 +114,25 @@ const LandingDashboard = () => {
           with educational content platforms to provide additional resources and
           practice materials.
         </p>
-        <div class="row justify-content-center">
-          <div class="d-flex flex-sm-wrap justify-content-around w-75">
-            <div class="card m-4 p-3 shadow-sm text-left" style={{width: 300, height: 300}}>
-              <span class="h4 font-weight-bold mb-2 text-primary-emphasis">Tracking & Reporting</span>
+        <div className="row justify-content-center">
+          <div className="d-flex flex-sm-wrap justify-content-around w-75">
+            <div
+              className="card m-4 p-3 shadow-sm text-left"
+              style={{ width: 300, height: 300 }}
+            >
+              <span className="h4 font-weight-bold mb-2 text-primary-emphasis">
+                Tracking & Reporting
+              </span>
               <span>
                 Simple and secure control of your organization’s financial and
                 legal transactions. Send customized invoices and contracts.
               </span>
             </div>
-            <div class="card m-4 p-3 shadow-sm text-left" style={{width: 300, height: 300}}>
-              <span class="h4 font-weight-bold mb-2 text-primary-emphasis">
+            <div
+              className="card m-4 p-3 shadow-sm text-left"
+              style={{ width: 300, height: 300 }}
+            >
+              <span className="h4 font-weight-bold mb-2 text-primary-emphasis">
                 Any Academy or System
               </span>
               <span>
@@ -129,29 +140,49 @@ const LandingDashboard = () => {
                 campuses. Keep detailed records of student attendance.
               </span>
             </div>
-            <div class="card m-4 p-3 shadow-sm text-left" style={{width: 300, height: 300}}>
-              <span class="h4 font-weight-bold mb-2 text-primary-emphasis">Student Tracking</span>
+            <div
+              className="card m-4 p-3 shadow-sm text-left"
+              style={{ width: 300, height: 300 }}
+            >
+              <span className="h4 font-weight-bold mb-2 text-primary-emphasis">
+                Student Tracking
+              </span>
               <span>
                 Automate and track emails to individuals or groups. Skilline’s
                 built-in system helps organize your organization.
               </span>
             </div>
-            <div class="card m-4 p-3 shadow-sm text-left" style={{width: 300, height: 300}}>
-              <span class="h4 font-weight-bold mb-2 text-primary-emphasis">End to End solution</span>
+            <div
+              className="card m-4 p-3 shadow-sm text-left"
+              style={{ width: 300, height: 300 }}
+            >
+              <span className="h4 font-weight-bold mb-2 text-primary-emphasis">
+                End to End solution
+              </span>
               <span>
                 Simple and secure control of your organization’s financial and
                 legal transactions. Send customized invoices and contracts.
               </span>
             </div>
-            <div class="card m-4 p-3 shadow-sm text-left" style={{width: 300, height: 300}}>
-              <span class="h4 font-weight-bold mb-2 text-primary-emphasis">Secure & Relatable</span>
+            <div
+              className="card m-4 p-3 shadow-sm text-left"
+              style={{ width: 300, height: 300 }}
+            >
+              <span className="h4 font-weight-bold mb-2 text-primary-emphasis">
+                Secure & Relatable
+              </span>
               <span>
                 Simple and secure control of your organization’s financial and
                 legal transactions. Send customized invoices and contracts.
               </span>
             </div>
-            <div class="card m-4 p-3 shadow-sm text-left" style={{width: 300, height: 300}}>
-              <span class="h4 font-weight-bold mb-2 text-primary-emphasis">Well informed</span>
+            <div
+              className="card m-4 p-3 shadow-sm text-left"
+              style={{ width: 300, height: 300 }}
+            >
+              <span className="h4 font-weight-bold mb-2 text-primary-emphasis">
+                Well informed
+              </span>
               <span>
                 Simple and secure control of your organization’s financial and
                 legal transactions. Send customized invoices and contracts.
@@ -161,9 +192,7 @@ const LandingDashboard = () => {
         </div>
       </div>
 
-      <div
-        className="p-3 text-center" id="learn-more-section"
-      >
+      <div className="p-3 text-center" id="learn-more-section">
         <p className="display-5">Features of Gyankoonj</p>
         <p className="lead">
           Gyankoonj is a platform that allows educators to create online classes
@@ -186,7 +215,7 @@ const LandingDashboard = () => {
             </div>
           </div>
 
-          <div className="image-container">
+          <div className="image-container mb-4">
             <img src={student} alt="student" className="w-100" />
             <div className="hover-content">
               <p>FOR STUDENTS</p>
@@ -249,25 +278,40 @@ const LandingDashboard = () => {
         </div>
       </div>
 
-      <div className="footer">
-        <div className="footer1">
-          <img src={Gyankoonj_logo} alt="Logo" />
-          <div className="border"></div>
+      <div className="text-white text-center p-4" style={{background: '#252641'}}>
+        <div className="mb-3">
+          <img
+            src={Gyankoonj_logo}
+            alt="Logo"
+            className="mb-2"
+            style={{ width: 150 }}
+          />
+          <div
+            className="border bg-white mx-auto mb-2"
+            style={{ width: 100, height: 2 }}
+          ></div>
           <p>Virtual Class for Students</p>
         </div>
-        <div className="footer2">
+        <div className="footer2 mb-3">
           <p>Subscribe to get our Newsletter</p>
-          <div className="resources">
-            <input placeholder="Your Email" />
-            <button>Subscribe</button>
+          <div className="resources d-flex justify-content-center mt-2">
+            <input
+              className="form-control me-2"
+              type="email"
+              placeholder="Your Email"
+              style={{ width: "auto" }}
+            />
+             <Button
+              variant="contained"
+              className="bg-gradient" >
+              Subscribe
+            </Button>
           </div>
         </div>
-
-        <p>© 2023 Gyankoonj. </p>
+        <p>©2024 Gyankoonj.</p>
       </div>
       <style jsx="true">
         {`
-
           .card {
             width: 300px;
             height: 300px;
@@ -279,7 +323,7 @@ const LandingDashboard = () => {
             justify-content: center;
             align-items: center;
             flex-direction: column;
-        }
+          }
           .images {
             display: flex;
             justify-content: center;
@@ -311,60 +355,6 @@ const LandingDashboard = () => {
 
           .image-container:hover .hover-content {
             display: block;
-          }
-
-          .footer {
-            padding: 50px 20px;
-            background: #1f5ba1;
-            color: white;
-            text-align: center;
-          }
-
-          .footer1,
-          .footer2 {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 20px;
-          }
-
-          .footer1 img {
-            width: 150px;
-            margin-bottom: 10px;
-          }
-
-          .footer1 .border {
-            width: 50px;
-            height: 2px;
-            background: white;
-            margin-bottom: 10px;
-          }
-
-          .resources {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-          }
-
-          .resources input {
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            font-size: 1rem;
-          }
-
-          .resources button {
-            padding: 10px 20px;
-            border: none;
-            background: #164d82;
-            color: white;
-            font-size: 1rem;
-            cursor: pointer;
-            border-radius: 5px;
-          }
-
-          .resources button:hover {
-            background: #123a6a;
           }
         `}
       </style>

@@ -95,3 +95,21 @@ a {
   width: 100% !important;
   height: auto !important;
 }
+
+.profile-title {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.username {
+  max-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  transition: max-width 0.5s ease;
+}
+
+
+.username.show {
+  max-width: 150px; /* Adjust this value according to the length of the username */
+}
