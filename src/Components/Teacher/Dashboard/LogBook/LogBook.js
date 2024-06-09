@@ -55,7 +55,7 @@ const LogBook = () => {
         sx={{ display: "flex", alignItems: "center", gap: 2, marginBottom: 2 }}
       >
         <Button variant="contained" className="py-3" onClick={handleAddLog}>
-          <AddIcon />
+          <AddIcon /> Create log book
         </Button>
       </Box>
     );
