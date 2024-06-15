@@ -135,6 +135,7 @@ const CreateMasterRoutine = ({
                       <>
                         <InputLabel error={!!error}>Section</InputLabel>
                         <Select
+                          label="Section"
                           onChange={onChange}
                           value={value || ""}
                           error={!!error}
@@ -166,6 +167,7 @@ const CreateMasterRoutine = ({
                       <>
                         <InputLabel error={!!error}>Subject</InputLabel>
                         <Select
+                          label="Subject"
                           onChange={onChange}
                           value={value || ""}
                           error={!!error}
@@ -197,6 +199,7 @@ const CreateMasterRoutine = ({
                       <>
                         <InputLabel error={!!error}>Teacher</InputLabel>
                         <Select
+                          label="Teacher"
                           onChange={onChange}
                           value={value || ""}
                           error={!!error}

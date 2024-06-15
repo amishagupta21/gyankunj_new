@@ -60,9 +60,9 @@ const TeacherRoutine = () => {
         sx={{ display: "flex", alignItems: "center", gap: 2, marginBottom: 2 }}
       >
         <FormControl fullWidth sx={{ width: "calc(100%/3)" }}>
-          <InputLabel id="day-filter-label">Day</InputLabel>
+          <InputLabel>Day</InputLabel>
           <Select
-            labelId="day-filter-label"
+            label="Day"
             value={dayFilter || ""}
             onChange={handleDayChange}
           >

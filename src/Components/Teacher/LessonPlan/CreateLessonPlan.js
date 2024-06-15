@@ -225,6 +225,7 @@ const CreateLessonPlan = ({ isOpen, handleClose, selectedLessonId = 0 }) => {
                       <>
                         <InputLabel error={!!error}>Grade</InputLabel>
                         <Select
+                          label="Grade"
                           onChange={(e) => {
                             onChange(e.target.value);
                             handleGradeChange(e);
@@ -256,6 +257,7 @@ const CreateLessonPlan = ({ isOpen, handleClose, selectedLessonId = 0 }) => {
                       <>
                         <InputLabel error={!!error}>Section</InputLabel>
                         <Select
+                          label="Section"
                           onChange={(e) => {
                             onChange(e.target.value);
                             handleSectionChange(e);
@@ -299,6 +301,7 @@ const CreateLessonPlan = ({ isOpen, handleClose, selectedLessonId = 0 }) => {
                       <>
                         <InputLabel error={!!error}>Subject</InputLabel>
                         <Select
+                          label="Subject"
                           onChange={onChange}
                           value={value || ""}
                           error={!!error}
@@ -413,6 +416,7 @@ const CreateLessonPlan = ({ isOpen, handleClose, selectedLessonId = 0 }) => {
                       <>
                         <InputLabel error={!!error}>Chapter Number</InputLabel>
                         <Select
+                          label="Chapter Number"
                           onChange={onChange}
                           value={value || ""}
                           error={!!error}

@@ -88,9 +88,9 @@ const LogBookCLassTeacher = () => {
         sx={{ display: "flex", alignItems: "center", gap: 2, marginBottom: 2 }}
       >
         <FormControl fullWidth sx={{ width: "calc(100%/3)" }}>
-          <InputLabel id="grade-filter-label">Grade</InputLabel>
+          <InputLabel>Grade</InputLabel>
           <Select
-            labelId="grade-filter-label"
+            label="Grade"
             value={gradeFilter || ""}
             onChange={handleGradeChange}
           >
@@ -102,9 +102,9 @@ const LogBookCLassTeacher = () => {
           </Select>
         </FormControl>
         <FormControl fullWidth sx={{ width: "calc(100%/3)" }}>
-          <InputLabel id="section-filter-label">Section</InputLabel>
+          <InputLabel>Section</InputLabel>
           <Select
-            labelId="section-filter-label"
+            label="Section"
             value={sectionFilter}
             onChange={handleSectionChange}
             disabled={!gradeFilter}

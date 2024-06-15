@@ -195,6 +195,7 @@ const CreateLogBook = ({ isOpen, handleClose, selectedLog = {} }) => {
                       <>
                         <InputLabel error={!!error}>Grade</InputLabel>
                         <Select
+                          label="Grade"
                           disabled={isEditMode}
                           onChange={(e) => {
                             onChange(e.target.value);
@@ -227,6 +228,7 @@ const CreateLogBook = ({ isOpen, handleClose, selectedLog = {} }) => {
                       <>
                         <InputLabel error={!!error}>Section</InputLabel>
                         <Select
+                          label="Section"
                           disabled={isEditMode}
                           onChange={onChange}
                           value={value || ""}
@@ -268,6 +270,7 @@ const CreateLogBook = ({ isOpen, handleClose, selectedLog = {} }) => {
                       <>
                         <InputLabel error={!!error}>Subject</InputLabel>
                         <Select
+                          label="Subject"
                           disabled={isEditMode}
                           onChange={onChange}
                           value={value || ""}
@@ -300,6 +303,7 @@ const CreateLogBook = ({ isOpen, handleClose, selectedLog = {} }) => {
                       <>
                         <InputLabel error={!!error}>Period</InputLabel>
                         <Select
+                          label="Period"
                           disabled={isEditMode}
                           onChange={onChange}
                           value={value || ""}

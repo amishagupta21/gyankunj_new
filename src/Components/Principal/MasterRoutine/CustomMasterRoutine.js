@@ -145,9 +145,9 @@ const CustomMasterRoutine = () => {
       }}
     >
       <FormControl fullWidth sx={{ width: "calc(100%/3)" }}>
-        <InputLabel id="day-filter-label">Day</InputLabel>
+        <InputLabel>Day</InputLabel>
         <Select
-          labelId="day-filter-label"
+          label="Day"
           value={dayFilter}
           onChange={(e) => setDayFilter(e.target.value)}
         >

@@ -75,9 +75,9 @@ const PLessonPlan = () => {
         sx={{ display: "flex", alignItems: "center", gap: 2, marginBottom: 2 }}
       >
         <FormControl fullWidth sx={{ width: "calc(100%/3)" }}>
-          <InputLabel id="teacher-filter-label">Teacher</InputLabel>
+          <InputLabel>Teacher</InputLabel>
           <Select
-            labelId="teacher-filter-label"
+            label="Teacher"
             value={teacherFilter || ""}
             onChange={handleTeacherChange}
           >

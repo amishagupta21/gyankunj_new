@@ -183,7 +183,7 @@ export default function RoutesContainer({ userData }) {
               element={<ProtectedWrapper Component={SResources} />}
             />
             <Route
-              path="/studentDashboard/notice"
+              path="/studentDashboard/announcements"
               element={<ProtectedWrapper Component={NoticeForStudents} />}
             />
             <Route
