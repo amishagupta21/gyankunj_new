@@ -104,9 +104,9 @@ const PDashboard = () => {
                 sx={{ width: "calc(100%/2)" }}
               >
                 <FormControl fullWidth sx={{ width: "calc(100%/2)" }}>
-                  <InputLabel id="grade-filter-label">Grade</InputLabel>
+                  <InputLabel>Grade</InputLabel>
                   <Select
-                    labelId="grade-filter-label"
+                    label="Grade"
                     value={gradeFilter || ""}
                     onChange={handleGradeChange}
                   >
@@ -118,9 +118,9 @@ const PDashboard = () => {
                   </Select>
                 </FormControl>
                 <FormControl fullWidth sx={{ width: "calc(100%/2)" }}>
-                  <InputLabel id="section-filter-label">Section</InputLabel>
+                  <InputLabel>Section</InputLabel>
                   <Select
-                    labelId="section-filter-label"
+                    label="Section"
                     value={sectionFilter}
                     onChange={handleSectionChange}
                     disabled={!gradeFilter}
@@ -253,9 +253,9 @@ const PDashboard = () => {
             <h4 className="mb-3">Teacher's Schedule</h4>
             <Box className="d-flex justify-content-between gap-2 w-100">
               <FormControl fullWidth sx={{ width: "calc(100%/2)" }}>
-                <InputLabel id="day-filter-label">Day</InputLabel>
+                <InputLabel>Day</InputLabel>
                 <Select
-                  labelId="day-filter-label"
+                  label="Day"
                   value={dayFilter || ""}
                   onChange={handleDayChange}
                 >
@@ -267,9 +267,9 @@ const PDashboard = () => {
                 </Select>
               </FormControl>
               <FormControl fullWidth sx={{ width: "calc(100%/2)" }}>
-                <InputLabel id="teacher-filter-label">Teacher</InputLabel>
+                <InputLabel>Teacher</InputLabel>
                 <Select
-                  labelId="teacher-filter-label"
+                  label="Teacher"
                   value={teacherFilter}
                   onChange={handleTeacherChange}
                 >

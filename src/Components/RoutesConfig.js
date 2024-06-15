@@ -4,8 +4,6 @@ import PlayLessonOutlinedIcon from '@mui/icons-material/PlayLessonOutlined';
 import BookOutlinedIcon from '@mui/icons-material/BookOutlined';
 import AssignmentIndOutlinedIcon from '@mui/icons-material/AssignmentIndOutlined';
 import SourceOutlinedIcon from '@mui/icons-material/SourceOutlined';
-import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
-import NotificationsOutlinedIcon from '@mui/icons-material/NotificationsOutlined';
 
 export const routesConfig = {
   ADMIN: [
@@ -45,18 +43,18 @@ export const routesConfig = {
       icon: <SourceOutlinedIcon />,
       route: "/principalDashboard/resources",
     },
-    {
-      code: "announcements",
-      title: "Notice",
-      icon: <ArticleOutlinedIcon />,
-      route: "/principalDashboard/announcements",
-    },
-    {
-      code: "notifications",
-      title: "Notifications",
-      icon: <NotificationsOutlinedIcon />,
-      route: "/principalDashboard/notifications",
-    },
+    // {
+    //   code: "announcements",
+    //   title: "Notice",
+    //   icon: <ArticleOutlinedIcon />,
+    //   route: "/principalDashboard/announcements",
+    // },
+    // {
+    //   code: "notifications",
+    //   title: "Notifications",
+    //   icon: <NotificationsOutlinedIcon />,
+    //   route: "/principalDashboard/notifications",
+    // },
   ],
   PRINCIPAL: [
     {
@@ -95,18 +93,18 @@ export const routesConfig = {
       icon: <SourceOutlinedIcon />,
       route: "/principalDashboard/resources",
     },
-    {
-      code: "announcements",
-      title: "Notice",
-      icon: <ArticleOutlinedIcon />,
-      route: "/principalDashboard/announcements",
-    },
-    {
-      code: "notifications",
-      title: "Notifications",
-      icon: <NotificationsOutlinedIcon />,
-      route: "/principalDashboard/notifications",
-    },
+    // {
+    //   code: "announcements",
+    //   title: "Notice",
+    //   icon: <ArticleOutlinedIcon />,
+    //   route: "/principalDashboard/announcements",
+    // },
+    // {
+    //   code: "notifications",
+    //   title: "Notifications",
+    //   icon: <NotificationsOutlinedIcon />,
+    //   route: "/principalDashboard/notifications",
+    // },
   ],
   TEACHER: [
     {
@@ -157,18 +155,18 @@ export const routesConfig = {
       icon: <AssignmentIndOutlinedIcon />,
       route: "/teacherDashboard/reports",
     },
-    {
-      code: "announcements",
-      title: "Notice",
-      icon: <ArticleOutlinedIcon />,
-      route: "/teacherDashboard/announcements",
-    },
-    {
-      code: "notifications",
-      title: "Notifications",
-      icon: <NotificationsOutlinedIcon />,
-      route: "/teacherDashboard/notifications",
-    },
+    // {
+    //   code: "announcements",
+    //   title: "Notice",
+    //   icon: <ArticleOutlinedIcon />,
+    //   route: "/teacherDashboard/announcements",
+    // },
+    // {
+    //   code: "notifications",
+    //   title: "Notifications",
+    //   icon: <NotificationsOutlinedIcon />,
+    //   route: "/teacherDashboard/notifications",
+    // },
   ],
   STUDENT: [
     {
@@ -195,17 +193,17 @@ export const routesConfig = {
       icon: <AssignmentIndOutlinedIcon />,
       route: "/studentDashboard/reports",
     },
-    {
-      code: "notice",
-      title: "Notice",
-      icon: <ArticleOutlinedIcon />,
-      route: "/studentDashboard/notice",
-    },
-    {
-      code: "notifications",
-      title: "Notifications",
-      icon: <NotificationsOutlinedIcon />,
-      route: "/studentDashboard/notifications",
-    },
+    // {
+    //   code: "announcements",
+    //   title: "Notice",
+    //   icon: <ArticleOutlinedIcon />,
+    //   route: "/studentDashboard/announcements",
+    // },
+    // {
+    //   code: "notifications",
+    //   title: "Notifications",
+    //   icon: <NotificationsOutlinedIcon />,
+    //   route: "/studentDashboard/notifications",
+    // },
   ],
 };

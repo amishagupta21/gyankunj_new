@@ -113,3 +113,30 @@ a {
 .username.show {
   max-width: 150px; /* Adjust this value according to the length of the username */
 }
+
+.cursor{
+  cursor: pointer;
+}
+
+/* Define the keyframes for the hover animation */
+@keyframes icon-hover {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Apply the animation on hover */
+.hover-animate:hover svg {
+  animation: icon-hover 0.5s ease-in-out;
+  color: #6870fa !important; /* Ensures the color changes on hover */
+}
+
+.hover-animate span {
+  transition: color 0.3s ease-in-out; /* Smooth color transition */
+}

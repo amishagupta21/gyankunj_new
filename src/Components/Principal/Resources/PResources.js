@@ -123,9 +123,9 @@ const PResources = () => {
           }}
         >
           <FormControl fullWidth sx={{ width: "calc(100%/3)" }}>
-            <InputLabel id="grade-filter-label">Grade</InputLabel>
+            <InputLabel>Grade</InputLabel>
             <Select
-              labelId="grade-filter-label"
+              label="Grade"
               value={gradeFilter || ""}
               onChange={handleGradeChange}
             >
@@ -138,9 +138,9 @@ const PResources = () => {
           </FormControl>
 
           <FormControl fullWidth sx={{ width: "calc(100%/3)" }}>
-            <InputLabel id="section-filter-label">Section</InputLabel>
+            <InputLabel>Section</InputLabel>
             <Select
-              labelId="section-filter-label"
+              label="Section"
               value={sectionFilter}
               onChange={handleSectionChange}
               disabled={!gradeFilter}
@@ -156,9 +156,9 @@ const PResources = () => {
           </FormControl>
 
           <FormControl fullWidth sx={{ width: "calc(100%/3)" }}>
-            <InputLabel id="subject-filter-label">Subject</InputLabel>
+            <InputLabel>Subject</InputLabel>
             <Select
-              labelId="subject-filter-label"
+              label="Subject"
               value={subjectFilter}
               onChange={handleSubjectChange}
             >
