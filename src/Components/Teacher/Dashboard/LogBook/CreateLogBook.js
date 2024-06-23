@@ -18,6 +18,7 @@ import {
   Grid,
 } from "@mui/material";
 import {
+  checkAttendanceAvailability,
   getAllPeriodsList,
   getGradeDetails,
   getSubjectsList,
@@ -46,12 +47,14 @@ const CreateLogBook = ({ isOpen, handleClose, selectedLog = {} }) => {
   const { handleSubmit, setValue, reset, control } = useForm();
   const userInfo = JSON.parse(localStorage.getItem("UserData"));
   const [selectedGradeId, setSelectedGradeId] = useState(0);
+  const [selectedSectionId, setSelectedSectionId] = useState(0);
   const [selectedLogBookData] = useState(selectedLog);
   const [isEditMode, setIsEditMode] = useState(false);
   const [gradeData, setGradeData] = useState([]);
   const [periodsList, setPeriodsList] = useState([]);
   const [subjectsList, setSubjectsList] = useState([]);
   const [showAlert, setShowAlert] = useState("");
+  const [showAttendanceAlert, setShowAttendanceAlert] = useState("");
 
   useEffect(() => {
     if (selectedLogBookData && Object.keys(selectedLogBookData).length > 0) {
@@ -71,6 +74,7 @@ const CreateLogBook = ({ isOpen, handleClose, selectedLog = {} }) => {
       setValue("content_taught", content_taught);
       setValue("home_work", home_work);
       setSelectedGradeId(grade_id);
+      setSelectedSectionId(section_id);
     }
   }, [selectedLogBookData, setValue]);
 
@@ -79,6 +83,25 @@ const CreateLogBook = ({ isOpen, handleClose, selectedLog = {} }) => {
     getAllSubjectsData();
     getAllPeriodsData();
   }, []);
+
+  useEffect(() => {
+    if (selectedGradeId && selectedSectionId) {
+      checkAttendanceAvailability(selectedGradeId, selectedSectionId, dayjs().format("YYYY-MM-DD")).then((res) => {
+        if (res?.data?.attendance_marked === false) {
+          setShowAttendanceAlert("error");
+        }
+        else{
+          setShowAttendanceAlert("");
+        }
+        // setTimeout(() => {
+        //   setTimeout(() => {
+        //     setShowAttendanceAlert("");
+        //   }, 5000);
+        // }, 1000);
+      })
+      .catch((err) => console.log(err));
+    }
+  }, [selectedGradeId, selectedSectionId]);
 
   const getAllPeriodsData = () => {
     getAllPeriodsList(userInfo.routine_id)
@@ -117,6 +140,12 @@ const CreateLogBook = ({ isOpen, handleClose, selectedLog = {} }) => {
     setSelectedGradeId(e.target.value);
     setValue("grade_id", e.target.value);
     setValue("section_id", "");
+    setSelectedSectionId(null);
+  };
+
+  const handleSectionChange = (e) => {
+    setValue("section_id", e.target.value);
+    setSelectedSectionId(e.target.value);
   };
 
   const onSubmit = (data) => {
@@ -230,7 +259,10 @@ const CreateLogBook = ({ isOpen, handleClose, selectedLog = {} }) => {
                         <Select
                           label="Section"
                           disabled={isEditMode}
-                          onChange={onChange}
+                          onChange={(e) => {
+                            onChange(e.target.value);
+                            handleSectionChange(e);
+                          }}
                           value={value || ""}
                           error={!!error}
                         >
@@ -388,7 +420,7 @@ const CreateLogBook = ({ isOpen, handleClose, selectedLog = {} }) => {
             >
               Reset
             </Button>
-            <Button variant="contained" color="primary" type="submit">
+            <Button variant="contained" color="primary" type="submit" disabled={showAttendanceAlert}>
               Submit
             </Button>
           </DialogActions>
@@ -403,6 +435,13 @@ const CreateLogBook = ({ isOpen, handleClose, selectedLog = {} }) => {
             showAlert === "success" ? "succeeded" : "failed"
           }.`,
         })}
+
+        {showAttendanceAlert &&
+        showAlertMessage({
+          open: true,
+          alertFor: showAttendanceAlert,
+          message: `Attendance is not marked for today, please mark attendance first.`,
+        })}    
     </React.Fragment>
   );
 };
