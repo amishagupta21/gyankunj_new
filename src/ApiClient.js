@@ -282,6 +282,10 @@ const getDaysData = () => {
   return apiInstance.get(`/fetch_all_days`);
 };
 
+const checkAttendanceAvailability = (grade_id, section_id, date) => {
+  return apiInstance.get(`/check_attendance_availability?grade_id=${grade_id}&section_id=${section_id}&date=${date}`)
+}
+
 export {
   //loginUser,
   evaluteAssignment,
@@ -336,5 +340,6 @@ export {
   getAllPeriodsList,
   getStudentRoutineData,
   getStudentSubjectData,
-  getDaysData
+  getDaysData,
+  checkAttendanceAvailability
 };
