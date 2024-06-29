@@ -41,6 +41,10 @@ function Header({ isTabScreen, userData }) {
       announcements: "/studentDashboard/announcements",
       notifications: "/studentDashboard/notifications",
     },
+    PARENT: {
+      announcements: "/parentDashboard/announcements",
+      notifications: "/parentDashboard/notifications",
+    },
   };
 
   const openLoginPage = () => {

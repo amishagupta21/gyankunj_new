@@ -32,6 +32,14 @@ import SResources from "./Student/Resources/SResources";
 import SDashboard from "./Student/SDashboard";
 import TeacherAttendance from "./Teacher/TeacherAttendance/TeacherAttendance";
 import AttendancesOverview from "./Principal/Attendance/AttendancesOverview";
+import PaAssignments from "./Parent/PaAssignments";
+import PaDashboard from "./Parent/PaDashboard";
+import PaRoutine from "./Parent/PaRoutine";
+import PaTransport from "./Parent/PaTransport";
+import PaFees from "./Parent/PaFees";
+import PaFeedback from "./Parent/PaFeedback";
+import PaAnnouncements from "./Parent/PaAnnouncements";
+import PaNotifications from "./Parent/PaNotifications";
 
 // Define routes for different user roles
 const roleRoutes = {
@@ -39,6 +47,7 @@ const roleRoutes = {
   PRINCIPAL: "/principalDashboard/dashboard",
   TEACHER: "/teacherDashboard/dashboard",
   STUDENT: "/studentDashboard/dashboard",
+  PARENT: "/parentDashboard/dashboard",
 };
 
 export default function RoutesContainer({ userData }) {
@@ -51,7 +60,7 @@ export default function RoutesContainer({ userData }) {
   // Redirect users based on their role
   if (!userData) {
     return <Navigate to="/" />;
-  } else if (hasPermission(["ADMIN", "PRINCIPAL", "TEACHER", "STUDENT"])) {
+  } else if (hasPermission(["ADMIN", "PRINCIPAL", "TEACHER", "STUDENT", "PARENT"])) {
     return (
       <Routes>
         <Route path="/" element={<Navigate to={roleRoutes[userData.role]} />} />
@@ -78,7 +87,7 @@ export default function RoutesContainer({ userData }) {
               path="/principalDashboard/reports"
               element={<ProtectedWrapper Component={ReportSection} />}
             />
-             <Route
+            <Route
               path="/principalDashboard/resources"
               element={<ProtectedWrapper Component={PResources} />}
             />
@@ -109,10 +118,10 @@ export default function RoutesContainer({ userData }) {
                 element={<ProtectedWrapper Component={LogBookCLassTeacher} />}
               />
             )} */}
-             <Route
-                path="/teacherDashboard/logBook"
-                element={<ProtectedWrapper Component={LogBookCLassTeacher} />}
-              />
+            <Route
+              path="/teacherDashboard/logBook"
+              element={<ProtectedWrapper Component={LogBookCLassTeacher} />}
+            />
             <Route
               path="/teacherDashboard/lessonPlan"
               element={<ProtectedWrapper Component={TLessonPlan} />}
@@ -189,6 +198,43 @@ export default function RoutesContainer({ userData }) {
             <Route
               path="/studentDashboard/notifications"
               element={<ProtectedWrapper Component={NotificationsForStudent} />}
+            />
+          </>
+        ) : null}
+        {/* Parent Routes */}
+        {userData.role === "PARENT" ? (
+          <>
+            <Route
+              path="/parentDashboard/dashboard"
+              element={<ProtectedWrapper Component={PaDashboard} />}
+            />
+            <Route
+              path="/parentDashboard/assignments"
+              element={<ProtectedWrapper Component={PaAssignments} />}
+            />
+            <Route
+              path="/parentDashboard/routine"
+              element={<ProtectedWrapper Component={PaRoutine} />}
+            />
+            <Route
+              path="/parentDashboard/transport"
+              element={<ProtectedWrapper Component={PaTransport} />}
+            />
+            <Route
+              path="/parentDashboard/fees"
+              element={<ProtectedWrapper Component={PaFees} />}
+            />
+            <Route
+              path="/parentDashboard/feedback"
+              element={<ProtectedWrapper Component={PaFeedback} />}
+            />
+            <Route
+              path="/parentDashboard/announcements"
+              element={<ProtectedWrapper Component={PaAnnouncements} />}
+            />
+            <Route
+              path="/parentDashboard/notifications"
+              element={<ProtectedWrapper Component={PaNotifications} />}
             />
           </>
         ) : null}
