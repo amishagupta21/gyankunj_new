@@ -68,14 +68,14 @@ function Header({ isTabScreen, userData }) {
   return (
     <>
       <Navbar className="shadow justify-content-between h-100 pe-2 ps-2">
-        {isTabScreen && userData?.token && (
+        {userData.role !== 'PARENT' && isTabScreen && userData?.token && (
           <MenuOutlinedIcon onClick={() => setShowDrawer(!showDrawer)} />
         )}
-        {(!isTabScreen || !userData?.token) && (
+        {(userData.role === 'PARENT' || !isTabScreen || !userData?.token) && (
           <img className="h-100" src={Gyankoonj_logo} alt="Logo" />
         )}
         {userData?.token ? (
-          <Nav className="ms-auto align-items-center d-flex gap-3">
+          <Nav className="ms-auto align-items-center d-flex">
              <Nav.Link
               as={Link}
               to={userRoutes[userData?.role].announcements}
@@ -96,7 +96,7 @@ function Header({ isTabScreen, userData }) {
               }}
             >
               {userRoutes.announcementIcon}
-              <Typography className="ms-1">Announcements</Typography>
+              <Typography className="ms-1"></Typography>
             </Nav.Link>
             <Nav.Link
               as={Link}
@@ -118,7 +118,7 @@ function Header({ isTabScreen, userData }) {
               }}
             >
               {userRoutes.notifications}
-              <Typography className="ms-1">Notifications</Typography>
+              <Typography className="ms-1"></Typography>
             </Nav.Link>
             <NavDropdown
               align="end"

@@ -40,6 +40,7 @@ import PaFees from "./Parent/PaFees";
 import PaFeedback from "./Parent/PaFeedback";
 import PaAnnouncements from "./Parent/PaAnnouncements";
 import PaNotifications from "./Parent/PaNotifications";
+import PaAssignmentDetails from "./Parent/PaAssignmentDetails";
 
 // Define routes for different user roles
 const roleRoutes = {
@@ -211,6 +212,10 @@ export default function RoutesContainer({ userData }) {
             <Route
               path="/parentDashboard/assignments"
               element={<ProtectedWrapper Component={PaAssignments} />}
+            />
+            <Route
+              path="/parentDashboard/assignment-details"
+              element={<ProtectedWrapper Component={PaAssignmentDetails} />}
             />
             <Route
               path="/parentDashboard/routine"
