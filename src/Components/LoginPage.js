@@ -42,6 +42,8 @@ const LoginPage = (props) => {
           navigate("/teacherDashboard/dashboard");
         } else if (data.role === "STUDENT") {
           navigate("/studentDashboard/dashboard");
+        } else if (data.role === "PARENT") {
+          navigate("/parentDashboard/dashboard");
         }
       } else {
         setErrorMessage(true);

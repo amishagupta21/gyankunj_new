@@ -1,9 +1,13 @@
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
-import SubjectOutlinedIcon from '@mui/icons-material/SubjectOutlined';
-import PlayLessonOutlinedIcon from '@mui/icons-material/PlayLessonOutlined';
-import BookOutlinedIcon from '@mui/icons-material/BookOutlined';
-import AssignmentIndOutlinedIcon from '@mui/icons-material/AssignmentIndOutlined';
-import SourceOutlinedIcon from '@mui/icons-material/SourceOutlined';
+import SubjectOutlinedIcon from "@mui/icons-material/SubjectOutlined";
+import PlayLessonOutlinedIcon from "@mui/icons-material/PlayLessonOutlined";
+import BookOutlinedIcon from "@mui/icons-material/BookOutlined";
+import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined";
+import SourceOutlinedIcon from "@mui/icons-material/SourceOutlined";
+import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
+import AirportShuttleOutlinedIcon from "@mui/icons-material/AirportShuttleOutlined";
+import ReceiptOutlinedIcon from '@mui/icons-material/ReceiptOutlined';
+import FeedbackOutlinedIcon from '@mui/icons-material/FeedbackOutlined';
 
 export const routesConfig = {
   ADMIN: [
@@ -16,7 +20,7 @@ export const routesConfig = {
     {
       code: "masterRoutine",
       title: "Master Routine",
-      icon: <AssignmentIndOutlinedIcon />,
+      icon: <CalendarMonthOutlinedIcon />,
       route: "/principalDashboard/masterRoutine",
     },
     {
@@ -34,7 +38,7 @@ export const routesConfig = {
     {
       code: "reports",
       title: "Report",
-      icon: <AssignmentIndOutlinedIcon />,
+      icon: <AssignmentOutlinedIcon />,
       route: "/principalDashboard/reports",
     },
     {
@@ -43,18 +47,6 @@ export const routesConfig = {
       icon: <SourceOutlinedIcon />,
       route: "/principalDashboard/resources",
     },
-    // {
-    //   code: "announcements",
-    //   title: "Notice",
-    //   icon: <ArticleOutlinedIcon />,
-    //   route: "/principalDashboard/announcements",
-    // },
-    // {
-    //   code: "notifications",
-    //   title: "Notifications",
-    //   icon: <NotificationsOutlinedIcon />,
-    //   route: "/principalDashboard/notifications",
-    // },
   ],
   PRINCIPAL: [
     {
@@ -66,7 +58,7 @@ export const routesConfig = {
     {
       code: "masterRoutine",
       title: "Master Routine",
-      icon: <AssignmentIndOutlinedIcon />,
+      icon: <CalendarMonthOutlinedIcon />,
       route: "/principalDashboard/masterRoutine",
     },
     {
@@ -78,13 +70,13 @@ export const routesConfig = {
     {
       code: "attendanceOverview",
       title: "Attendance",
-      icon: <AssignmentIndOutlinedIcon />,
+      icon: <AssignmentOutlinedIcon />,
       route: "/principalDashboard/attendanceOverview",
     },
     {
       code: "reports",
       title: "Report",
-      icon: <AssignmentIndOutlinedIcon />,
+      icon: <AssignmentOutlinedIcon />,
       route: "/principalDashboard/reports",
     },
     {
@@ -93,18 +85,6 @@ export const routesConfig = {
       icon: <SourceOutlinedIcon />,
       route: "/principalDashboard/resources",
     },
-    // {
-    //   code: "announcements",
-    //   title: "Notice",
-    //   icon: <ArticleOutlinedIcon />,
-    //   route: "/principalDashboard/announcements",
-    // },
-    // {
-    //   code: "notifications",
-    //   title: "Notifications",
-    //   icon: <NotificationsOutlinedIcon />,
-    //   route: "/principalDashboard/notifications",
-    // },
   ],
   TEACHER: [
     {
@@ -128,19 +108,19 @@ export const routesConfig = {
     {
       code: "logBook",
       title: "Log Book",
-      icon: <AssignmentIndOutlinedIcon />,
+      icon: <AssignmentOutlinedIcon />,
       route: "/teacherDashboard/logBook",
     },
     {
       code: "attendance",
       title: "Attendance",
-      icon: <AssignmentIndOutlinedIcon />,
+      icon: <AssignmentOutlinedIcon />,
       route: "/teacherDashboard/attendance",
     },
     {
       code: "assignments",
       title: "Assignments",
-      icon: <AssignmentIndOutlinedIcon />,
+      icon: <AssignmentOutlinedIcon />,
       route: "/teacherDashboard/assignments",
     },
     {
@@ -152,21 +132,9 @@ export const routesConfig = {
     {
       code: "reports",
       title: "Report",
-      icon: <AssignmentIndOutlinedIcon />,
+      icon: <AssignmentOutlinedIcon />,
       route: "/teacherDashboard/reports",
     },
-    // {
-    //   code: "announcements",
-    //   title: "Notice",
-    //   icon: <ArticleOutlinedIcon />,
-    //   route: "/teacherDashboard/announcements",
-    // },
-    // {
-    //   code: "notifications",
-    //   title: "Notifications",
-    //   icon: <NotificationsOutlinedIcon />,
-    //   route: "/teacherDashboard/notifications",
-    // },
   ],
   STUDENT: [
     {
@@ -178,7 +146,7 @@ export const routesConfig = {
     {
       code: "assignments",
       title: "Assignments",
-      icon: <AssignmentIndOutlinedIcon />,
+      icon: <AssignmentOutlinedIcon />,
       route: "/studentDashboard/assignments",
     },
     {
@@ -190,20 +158,46 @@ export const routesConfig = {
     {
       code: "reports",
       title: "Report",
-      icon: <AssignmentIndOutlinedIcon />,
+      icon: <AssignmentOutlinedIcon />,
       route: "/studentDashboard/reports",
     },
-    // {
-    //   code: "announcements",
-    //   title: "Notice",
-    //   icon: <ArticleOutlinedIcon />,
-    //   route: "/studentDashboard/announcements",
-    // },
-    // {
-    //   code: "notifications",
-    //   title: "Notifications",
-    //   icon: <NotificationsOutlinedIcon />,
-    //   route: "/studentDashboard/notifications",
-    // },
+  ],
+  PARENT: [
+    {
+      code: "dashboard",
+      title: "Dashboard",
+      icon: <HomeOutlinedIcon />,
+      route: "/parentDashboard/dashboard",
+    },
+    {
+      code: "assignments",
+      title: "Assignments",
+      icon: <AssignmentOutlinedIcon />,
+      route: "/parentDashboard/assignments",
+    },
+    {
+      code: "routine",
+      title: "Routine",
+      icon: <CalendarMonthOutlinedIcon />,
+      route: "/parentDashboard/routine",
+    },
+    {
+      code: "transport",
+      title: "Transport",
+      icon: <AirportShuttleOutlinedIcon />,
+      route: "/parentDashboard/transport",
+    },
+    {
+      code: "fees",
+      title: "Fees",
+      icon: <ReceiptOutlinedIcon />,
+      route: "/parentDashboard/fees",
+    },
+    {
+      code: "feedback",
+      title: "Feedback",
+      icon: <FeedbackOutlinedIcon />,
+      route: "/parentDashboard/feedback",
+    },
   ],
 };
