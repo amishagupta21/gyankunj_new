@@ -17,6 +17,8 @@ import routineIcon from "../../Images/routine-icon.jpg";
 import transportIcon from "../../Images/transport-icon.jpg";
 import feesIcon from "../../Images/fees-icon.jpg";
 import feedbackIcon from "../../Images/feedback-icon.jpg";
+import reportIcon from "../../Images/report-icon.jpg";
+
 import { useNavigate } from 'react-router-dom';
 
 const cardContent = [
@@ -50,6 +52,12 @@ const cardContent = [
     description: "Provide feedback on your child's school experience.",
     route: "/parentDashboard/feedback",
   },
+  {
+    image: reportIcon,
+    title: "Report",
+    description: "Access detailed reports on your child's academic performance and progress.",
+    route: "/parentDashboard/report",
+  }
 ];
 
 const ResponsiveCard = ({ image, title, description, route }) => {

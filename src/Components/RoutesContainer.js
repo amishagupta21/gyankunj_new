@@ -41,6 +41,7 @@ import PaFeedback from "./Parent/PaFeedback";
 import PaAnnouncements from "./Parent/PaAnnouncements";
 import PaNotifications from "./Parent/PaNotifications";
 import PaAssignmentDetails from "./Parent/PaAssignmentDetails";
+import PaReport from "./Parent/PaReport";
 
 // Define routes for different user roles
 const roleRoutes = {
@@ -61,7 +62,9 @@ export default function RoutesContainer({ userData }) {
   // Redirect users based on their role
   if (!userData) {
     return <Navigate to="/" />;
-  } else if (hasPermission(["ADMIN", "PRINCIPAL", "TEACHER", "STUDENT", "PARENT"])) {
+  } else if (
+    hasPermission(["ADMIN", "PRINCIPAL", "TEACHER", "STUDENT", "PARENT"])
+  ) {
     return (
       <Routes>
         <Route path="/" element={<Navigate to={roleRoutes[userData.role]} />} />
@@ -232,6 +235,10 @@ export default function RoutesContainer({ userData }) {
             <Route
               path="/parentDashboard/feedback"
               element={<ProtectedWrapper Component={PaFeedback} />}
+            />
+            <Route
+              path="/parentDashboard/report"
+              element={<ProtectedWrapper Component={PaReport} />}
             />
             <Route
               path="/parentDashboard/announcements"
