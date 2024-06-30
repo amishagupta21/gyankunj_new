@@ -294,6 +294,14 @@ const viewStudentRoutine = (grade_id, section_id) => {
   return apiInstance.get(`/view_class_routine?grade_id=${grade_id}&section_id=${section_id}`);
 };
 
+const getStudentPerformanceReport = (user_id) => {
+  return apiInstance.get(`/view_student_performance_report?user_id=${user_id}`);
+};
+
+const getStudentAttendanceReport = (user_id, month, year) => {
+  return apiInstance.get(`/get_attendance_report_for_parents?month=${month}&year=${year}&user_id=${user_id}`);
+};
+
 
 export {
   //loginUser,
@@ -352,5 +360,7 @@ export {
   getDaysData,
   checkAttendanceAvailability,
   getStudentEvaluatedAssignment,
-  viewStudentRoutine
+  viewStudentRoutine,
+  getStudentPerformanceReport,
+  getStudentAttendanceReport
 };

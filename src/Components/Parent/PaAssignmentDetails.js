@@ -71,7 +71,7 @@ const PaAssignmentDetails = () => {
               question.selected_answer
             );
             return (
-              <Card key={index} className={`mb-4 shadow border roundewd ${question.type !== "subjective" && (correct ? 'bg-success-subtle':'bg-danger-subtle')}`}>
+              <Card key={index} className={`mb-4 shadow border rounded ${question.type !== "subjective" && (correct ? 'bg-success-subtle':'bg-danger-subtle')}`}>
                 <CardContent>
                   <Typography
                     variant="h6"
