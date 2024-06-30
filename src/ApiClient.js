@@ -290,6 +290,11 @@ const getStudentEvaluatedAssignment = (assignment_id, student_id) => {
   return apiInstance.get(`/select_student_evaluated_assignment?assignment_id=${assignment_id}&student_id=${student_id}`)
 }
 
+const viewStudentRoutine = (grade_id, section_id) => {
+  return apiInstance.get(`/view_class_routine?grade_id=${grade_id}&section_id=${section_id}`);
+};
+
+
 export {
   //loginUser,
   evaluteAssignment,
@@ -346,5 +351,6 @@ export {
   getStudentSubjectData,
   getDaysData,
   checkAttendanceAvailability,
-  getStudentEvaluatedAssignment
+  getStudentEvaluatedAssignment,
+  viewStudentRoutine
 };
