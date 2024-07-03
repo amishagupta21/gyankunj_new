@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Bar } from "react-chartjs-2";
+import { Bar, Doughnut } from "react-chartjs-2";
 import {
   Chart,
   CategoryScale,
@@ -8,6 +8,8 @@ import {
   Title,
   Tooltip,
   Legend,
+  DoughnutController,
+  ArcElement,
 } from "chart.js";
 import {
   Card,
@@ -22,29 +24,43 @@ import {
   Container,
   CircularProgress,
 } from "@mui/material";
+
 import {
+  getStudentAssignmentReport,
   getStudentAttendanceReport,
   getStudentPerformanceReport,
 } from "../../ApiClient";
 import dayjs from "dayjs";
+import BackButton from "../../SharedComponents/BackButton";
 
 // Register Chart.js components
-Chart.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+Chart.register(ArcElement, DoughnutController, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-const PerformanceReportChart = ({ performanceReport = [] }) => {
-  const { total_marks, total_marks_received } = performanceReport[0] || {};
+const AssignmentReportChart = ({ assignmentReport = [] }) => {
+  // Process the data to get the number of passed and failed assignments
+  const passFailData = assignmentReport.reduce(
+    (acc, assignment) => {
+      if (assignment.assignment_passed) {
+        acc.passed += 1;
+      } else {
+        acc.failed += 1;
+      }
+      return acc;
+    },
+    { passed: 0, failed: 0 }
+  );
 
   const data = {
-    labels: ["Total Marks", "Marks Received"],
+    labels: ["Passed", "Failed"],
     datasets: [
       {
-        label: "Marks",
-        data: [total_marks, total_marks_received],
+        label: "Assignments",
+        data: [passFailData.passed, passFailData.failed],
         backgroundColor: [
           "rgba(75, 192, 192, 0.2)",
-          "rgba(153, 102, 255, 0.2)",
+          "rgba(255, 99, 132, 0.2)",
         ],
-        borderColor: ["rgba(75, 192, 192, 1)", "rgba(153, 102, 255, 1)"],
+        borderColor: ["rgba(75, 192, 192, 1)", "rgba(255, 99, 132, 1)"],
         borderWidth: 1,
       },
     ],
@@ -62,7 +78,7 @@ const PerformanceReportChart = ({ performanceReport = [] }) => {
     <Card className="mb-4 shadow border rounded">
       <CardContent>
         <Typography variant="h5" component="div">
-          Performance Report
+          Assignment Report
         </Typography>
         <Bar data={data} options={options} />
       </CardContent>
@@ -104,21 +120,13 @@ const AttendanceReportChart = ({ attendanceReport = [] }) => {
     ],
   };
 
-  const options = {
-    scales: {
-      y: {
-        beginAtZero: true,
-      },
-    },
-  };
-
   return (
     <Card className="mb-4 shadow border rounded">
       <CardContent>
         <Typography variant="h5" component="div">
           Attendance Report
         </Typography>
-        <Bar data={data} options={options} />
+        <Doughnut data={data} />
       </CardContent>
     </Card>
   );
@@ -126,7 +134,7 @@ const AttendanceReportChart = ({ attendanceReport = [] }) => {
 
 const PaReport = () => {
   const userInfo = JSON.parse(localStorage.getItem("UserData"));
-  const [performanceReport, setPerformanceReport] = useState([]);
+  const [assignmentReport, setAssignmentReport] = useState([]);
   const [attendanceReport, setAttendanceReport] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [studentFilter, setStudentFilter] = useState("");
@@ -143,19 +151,20 @@ const PaReport = () => {
       const month = date.month() + 1;
       const year = date.year();
       setIsLoading(true);
-      getStudentPerformanceReport(studentFilter)
+      getStudentAssignmentReport(studentFilter, 1)
         .then((res) => {
-          setPerformanceReport([]);
+          setAssignmentReport([]);
           if (
             res?.data?.student_report &&
             res?.data?.student_report.length > 0
           ) {
-            setPerformanceReport(res?.data?.student_report);
+            setAssignmentReport(res?.data?.student_report);
           }
         })
         .catch((err) => {
           console.log(err);
         });
+
       getStudentAttendanceReport(studentFilter, month, year)
         .then((res) => {
           setAttendanceReport([]);
@@ -188,9 +197,10 @@ const PaReport = () => {
           alignItems: "center",
           gap: 2,
           marginBottom: 2,
-          justifyContent: "end",
+          justifyContent: "space-between",
         }}
       >
+        <BackButton />
         <FormControl fullWidth sx={{ width: "calc(100%/3)" }}>
           <InputLabel>Student</InputLabel>
           <Select
@@ -221,7 +231,7 @@ const PaReport = () => {
       ) : (
         <Grid container spacing={2}>
           <Grid item xs={12} md={6}>
-            <PerformanceReportChart performanceReport={performanceReport} />
+            <AssignmentReportChart assignmentReport={assignmentReport} />
           </Grid>
           <Grid item xs={12} md={6}>
             <AttendanceReportChart attendanceReport={attendanceReport} />

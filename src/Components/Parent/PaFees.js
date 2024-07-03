@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
+import BackButton from "../../SharedComponents/BackButton";
 
 const PaFees = () => {
 
   useEffect(() => {}, []);
 
   return (
-    <div>Parent fees</div>
+    <>
+      <BackButton />
+      <div>Parent fees</div>
+    </>
   );
 };
 

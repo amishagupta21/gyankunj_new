@@ -10,6 +10,7 @@
     Select,
   } from "@mui/material";
   import { useNavigate } from "react-router-dom";
+import BackButton from "../../SharedComponents/BackButton";
 
   const PaAssignments = () => {
     const navigate = useNavigate();
@@ -91,9 +92,10 @@
             alignItems: "center",
             gap: 2,
             marginBottom: 2,
-            justifyContent: "end",
+            justifyContent: "space-between",
           }}
         >
+          <BackButton />
           <FormControl fullWidth sx={{ width: "calc(100%/3)" }}>
             <InputLabel>Student</InputLabel>
             <Select

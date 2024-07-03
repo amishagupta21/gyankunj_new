@@ -1,5 +1,5 @@
 import React from "react";
-import "bootstrap/dist/css/bootstrap.min.css"; 
+import "bootstrap/dist/css/bootstrap.min.css";
 import {
   Container,
   Grid,
@@ -9,6 +9,7 @@ import {
   CardMedia,
   Button,
   Typography,
+  Box,
 } from "@mui/material";
 
 // Import all images
@@ -19,7 +20,16 @@ import feesIcon from "../../Images/fees-icon.jpg";
 import feedbackIcon from "../../Images/feedback-icon.jpg";
 import reportIcon from "../../Images/report-icon.jpg";
 
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
+import dayjs from "dayjs";
+import duration from "dayjs/plugin/duration";
+
+dayjs.extend(duration);
+
+const formatTime = (seconds) => {
+  const duration = dayjs.duration(seconds, "seconds");
+  return `${duration.days()}d : ${duration.hours()}h : ${duration.minutes()}m : ${duration.seconds()}s`;
+};
 
 const cardContent = [
   {
@@ -37,7 +47,8 @@ const cardContent = [
   {
     image: transportIcon,
     title: "Transport",
-    description: "View transport schedules and routes for your child's commute.",
+    description:
+      "View transport schedules and routes for your child's commute.",
     route: "/parentDashboard/transport",
   },
   {
@@ -55,16 +66,19 @@ const cardContent = [
   {
     image: reportIcon,
     title: "Report",
-    description: "Access detailed reports on your child's academic performance and progress.",
+    description:
+      "Access detailed reports on your child's academic performance and progress.",
     route: "/parentDashboard/report",
-  }
+  },
 ];
 
-const ResponsiveCard = ({ image, title, description, route }) => {
+const ResponsiveCard = ({ image, title, description, route, report }) => {
   const navigate = useNavigate();
+
   return (
-    <Card style={{ height: '100%' }}>
-      <CardMedia className="object-fit-cover"
+    <Card style={{ height: "100%" }}>
+      <CardMedia
+        className="object-fit-cover"
         component="img"
         alt={title}
         height="140"
@@ -78,16 +92,46 @@ const ResponsiveCard = ({ image, title, description, route }) => {
         <Typography variant="body2" color="text.secondary">
           {description}
         </Typography>
+        {title === "Report" && report && (
+          <Box>
+            <hr /> 
+            <Typography variant="body2" color="text.secondary">
+              <strong>Total Assignments:</strong> {report.total_assignments}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              <strong>Total Marks:</strong> {report.total_marks}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              <strong>Marks Received:</strong> {report.total_marks_received}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              <strong>Time Taken:</strong> {formatTime(report.total_time_taken)}
+            </Typography>
+          </Box>
+        )}
       </CardContent>
       <CardActions>
-        <Button variant="contained" size="small" onClick={() => navigate(route)}>More</Button>
+        <Button
+          variant="contained"
+          size="small"
+          onClick={() => navigate(route)}
+        >
+          More
+        </Button>
       </CardActions>
     </Card>
   );
 };
 
-
 const PaDashboard = () => {
+  const studentReport = {
+    subject_id: 1,
+    total_assignments: 8,
+    total_marks: 111.0,
+    total_marks_received: 100.0,
+    total_time_taken: 300130.444,
+  };
+  
   return (
     <Container>
       <Grid container spacing={4}>
@@ -98,6 +142,7 @@ const PaDashboard = () => {
               title={content.title}
               description={content.description}
               route={content.route}
+              // report={content.title === "Report" ? studentReport : null}
             />
           </Grid>
         ))}
