@@ -302,6 +302,10 @@ const getStudentAttendanceReport = (user_id, month, year) => {
   return apiInstance.get(`/get_attendance_report_for_parents?month=${month}&year=${year}&user_id=${user_id}`);
 };
 
+const getStudentAssignmentReport = (student_id, subject_id) => {
+  return apiInstance.get(`/view_assignment_performance_report?student_id=${student_id}&subject_id=${subject_id}`);
+};
+
 
 export {
   //loginUser,
@@ -362,5 +366,6 @@ export {
   getStudentEvaluatedAssignment,
   viewStudentRoutine,
   getStudentPerformanceReport,
-  getStudentAttendanceReport
+  getStudentAttendanceReport,
+  getStudentAssignmentReport
 };

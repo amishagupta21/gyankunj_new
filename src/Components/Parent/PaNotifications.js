@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
+import BackButton from "../../SharedComponents/BackButton";
 
 const PaNotifications = () => {
 
   useEffect(() => {}, []);
 
   return (
-    <div>Parent notifications</div>
+    <>
+      <BackButton />
+      <div>Parent notifications</div>
+    </>
   );
 };
 

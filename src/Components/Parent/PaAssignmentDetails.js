@@ -14,6 +14,7 @@ import { useLocation } from "react-router-dom";
 import { getStudentEvaluatedAssignment } from "../../ApiClient";
 import TaskAltOutlinedIcon from "@mui/icons-material/TaskAltOutlined";
 import UnpublishedOutlinedIcon from "@mui/icons-material/UnpublishedOutlined";
+import BackButton from "../../SharedComponents/BackButton";
 
 const useQuery = () => {
   return new URLSearchParams(useLocation().search);
@@ -58,12 +59,13 @@ const PaAssignmentDetails = () => {
 
   return (
     <Container maxWidth="md">
+      <BackButton />
       {isLoading ? (
         <Box className="d-flex justify-content-center align-items-center vh-100">
           <CircularProgress />
         </Box>
       ) : Object.keys(assignmentDetails).length > 0 ? (
-        <div>
+        <div className="mt-2">
           {Object.keys(assignmentDetails).map((key, index) => {
             const question = assignmentDetails[key];
             const correct = isAnswerCorrect(

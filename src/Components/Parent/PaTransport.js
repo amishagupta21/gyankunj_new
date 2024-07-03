@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
+import BackButton from "../../SharedComponents/BackButton";
 
 const PaTransport = () => {
 
   useEffect(() => {}, []);
 
   return (
-    <div>Parent transport</div>
+    <>
+      <BackButton />
+      <div>Parent transport</div>
+    </>
   );
 };
 
