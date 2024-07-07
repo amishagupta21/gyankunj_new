@@ -125,7 +125,7 @@ const PaFeedback = () => {
         <div className={`fw-bold ${getStatusClass(row.status)}`}>
           {row.status}
         </div>
-        {row.status === 'pending' && (
+        {row.status !== 'withdrawn' && (
           <Button
             variant="outlined"
             color="error"
