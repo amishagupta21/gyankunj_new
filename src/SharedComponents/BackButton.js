@@ -11,7 +11,7 @@ const BackButton = () => {
   };
 
   return (
-    <Button className='d-flex gap-1 px-2' onClick={goBack} variant='contained'>
+    <Button className='d-flex gap-1 px-2' onClick={goBack} >
       <ArrowBackIcon />Back
     </Button>
   );

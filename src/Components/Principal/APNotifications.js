@@ -7,8 +7,8 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import AccordionActions from "@mui/material/AccordionActions";
 import Button from "@mui/material/Button";
 import { styled } from "@mui/material/styles";
-import { viewNotification } from "../../ApiClient";
 import { CircularProgress } from "@mui/material";
+import { viewNotification } from "../../ApiClient";
 
 const StyledAccordion = styled(Accordion)(({ theme }) => ({
   marginBottom: theme.spacing(1),
@@ -23,7 +23,7 @@ const StyledAccordionDetails = styled(AccordionDetails)(({ theme }) => ({
   backgroundColor: theme.palette.background.default,
 }));
 
-const PaNotifications = () => {
+const APNotifications = () => {
   const userDetails = JSON.parse(localStorage.getItem("UserData"));
   const [notificationsList, setNotificationsList] = useState();
   const [expanded, setExpanded] = useState(false);
@@ -126,4 +126,4 @@ const PaNotifications = () => {
   );
 };
 
-export default PaNotifications;
+export default APNotifications;

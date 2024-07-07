@@ -6,16 +6,13 @@ import PageNotFound from "./PageNotFound";
 import PDashboard from "./Principal/PDashboard";
 import ReportSection from "./Principal/Reports";
 import Announcements from "./Principal/Announcement/Announcement";
-import Notifications from "./Principal/Notifications";
 import MySubjects from "./Teacher/MySubject/MySubjects";
 import TeacherReport from "./Teacher/TeacherReport/TeacherReport";
 import TeacherAssignment from "./Teacher/Assignment/TeacherAssignment";
 import NoticeForTeacher from "./Teacher/NoticeForTeacher/NoticeForTeacher";
-import NotificationsForTeacher from "./Teacher/NotificationsForTeacher/NotificationsForTeacher";
 import StudentAssigments from "./Student/Assignments/Assignments";
 import StudentReportSection from "./Student/Report/Reports";
 import NoticeForStudents from "./Student/NoticeForStudents/NoticeForStudents";
-import NotificationsForStudent from "./Student/Notification/StudentNotification";
 import CreateAssignment from "./Teacher/Assignment/CreateAssignment";
 import Addquestions from "./Teacher/Assignment/Addquestions";
 import SubmissionsPage from "./Teacher/Assignment/SubmissionsComponent";
@@ -42,6 +39,9 @@ import PaAnnouncements from "./Parent/PaAnnouncements";
 import PaNotifications from "./Parent/PaNotifications";
 import PaAssignmentDetails from "./Parent/PaAssignmentDetails";
 import PaReport from "./Parent/PaReport";
+import TNotifications from "./Teacher/TNotifications";
+import SNotifications from "./Student/SNotifications";
+import APNotifications from "./Principal/APNotifications";
 
 // Define routes for different user roles
 const roleRoutes = {
@@ -101,7 +101,7 @@ export default function RoutesContainer({ userData }) {
             />
             <Route
               path="/principalDashboard/notifications"
-              element={<ProtectedWrapper Component={Notifications} />}
+              element={<ProtectedWrapper Component={APNotifications} />}
             />
           </>
         ) : null}
@@ -152,7 +152,7 @@ export default function RoutesContainer({ userData }) {
             />
             <Route
               path="/teacherDashboard/notifications"
-              element={<ProtectedWrapper Component={NotificationsForTeacher} />}
+              element={<ProtectedWrapper Component={TNotifications} />}
             />
             <Route
               path="/teacherDashboard/createAssignment"
@@ -201,7 +201,7 @@ export default function RoutesContainer({ userData }) {
             />
             <Route
               path="/studentDashboard/notifications"
-              element={<ProtectedWrapper Component={NotificationsForStudent} />}
+              element={<ProtectedWrapper Component={SNotifications} />}
             />
           </>
         ) : null}

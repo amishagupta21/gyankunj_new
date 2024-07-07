@@ -306,6 +306,30 @@ const getStudentAssignmentReport = (student_id, subject_id) => {
   return apiInstance.get(`/view_assignment_performance_report?student_id=${student_id}&subject_id=${subject_id}`);
 };
 
+const getLeaveApplicationDetails = (leave_id) => {
+  return apiInstance.get(`/get_leave_application_data?leave_id=${leave_id}`);
+};
+
+const getParentLeaveApplicationsList = (parent_id) => {
+  return apiInstance.get(`/get_leave_application_data?parent_id=${parent_id}`);
+};
+
+const geAllLeaveTypes = () => {
+  return apiInstance.get(`/fetch_all_leave_types`);
+};
+
+const submitLeaveApplication = (payload) => {
+  return apiInstance.post(`/submit_leave_application`, payload);
+};
+
+const evaluateLeaveApplication = (payload) => {
+  return apiInstance.post(`/evaluate_leave_application`, payload);
+};
+
+const withdrawLeaveApplication = (payload) => {
+  return apiInstance.post(`/withdraw_leave_application`, payload);
+};
+
 
 export {
   //loginUser,
@@ -367,5 +391,11 @@ export {
   viewStudentRoutine,
   getStudentPerformanceReport,
   getStudentAttendanceReport,
-  getStudentAssignmentReport
+  getStudentAssignmentReport,
+  getParentLeaveApplicationsList,
+  geAllLeaveTypes,
+  submitLeaveApplication,
+  getLeaveApplicationDetails,
+  evaluateLeaveApplication,
+  withdrawLeaveApplication
 };
