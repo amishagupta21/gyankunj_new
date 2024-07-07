@@ -35,14 +35,14 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     width: "75%", // Default width
     overflow: "hidden",
     // Responsive styles
-    [theme.breakpoints.down('sm')]: {
+    [theme.breakpoints.down("sm")]: {
       width: "95%", // Slightly smaller than full width
       height: "100%",
     },
-    [theme.breakpoints.up('md')]: {
+    [theme.breakpoints.up("md")]: {
       width: "80%", // Adjusted width on medium screens
     },
-    [theme.breakpoints.up('lg')]: {
+    [theme.breakpoints.up("lg")]: {
       width: "50%", // Adjusted width on large screens
     },
   },
@@ -51,10 +51,9 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 const PaApplyLeaveForm = ({
   isOpen,
   handleClose,
-  studentId,
   selectedLeaveDetails = {},
 }) => {
-  const { handleSubmit, getValues, setValue, reset, control } = useForm();
+  const { handleSubmit, setValue, reset, control } = useForm();
   const userInfo = JSON.parse(localStorage.getItem("UserData"));
   const [showAlert, setShowAlert] = useState("");
   const [leaveTypesList, setLeaveTypesList] = useState([]);
@@ -84,8 +83,9 @@ const PaApplyLeaveForm = ({
   const onSubmit = (data) => {
     const formattedStartDate = dayjs(data.start_date).format("YYYY-MM-DD");
     const formattedEndDate = dayjs(data.end_date).format("YYYY-MM-DD");
-    const noOfDays = dayjs(formattedEndDate).diff(formattedStartDate, "day") + 1;
-    
+    const noOfDays =
+      dayjs(formattedEndDate).diff(formattedStartDate, "day") + 1;
+
     let payload = {
       ...data,
       start_date: formattedStartDate,
@@ -93,7 +93,6 @@ const PaApplyLeaveForm = ({
       no_of_days: noOfDays,
     };
     payload["parent_id"] = userInfo.user_id;
-    payload["student_id"] = studentId;
     submitLeaveApplication(payload)
       .then((res) => {
         if (res?.data?.status === "success") {
@@ -149,6 +148,33 @@ const PaApplyLeaveForm = ({
           style={{ height: "calc(100% - 64px)" }}
         >
           <DialogContent dividers>
+            <FormControl className="mb-4" fullWidth>
+              <Controller
+                name="student_id"
+                control={control}
+                rules={{ required: true }}
+                render={({
+                  field: { onChange, value },
+                  fieldState: { error },
+                }) => (
+                  <>
+                    <InputLabel error={!!error}>Student</InputLabel>
+                    <Select
+                      label="Student"
+                      onChange={onChange}
+                      value={value || ""}
+                      error={!!error}
+                    >
+                      {userInfo.student_info.map((item, index) => (
+                        <MenuItem key={index} value={item.student_id}>
+                          {item.student_name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </>
+                )}
+              />
+            </FormControl>
             <Grid container spacing={2} className="mb-4">
               <Grid item xs={12} md={6}>
                 <FormControl fullWidth>

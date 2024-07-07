@@ -2,10 +2,6 @@ import React, { useState, useMemo, useEffect } from "react";
 import Box from "@mui/material/Box";
 import {
   Button,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
   Dialog,
   DialogActions,
   DialogContent,
@@ -26,16 +22,9 @@ const PaFeedback = () => {
   const [isAddLeaveModalVisible, setIsAddLeaveModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [refreshTable, setRefreshTable] = useState(false);
-  const [studentFilter, setStudentFilter] = useState("");
   const [isWithdrawDialogOpen, setIsWithdrawDialogOpen] = useState(false);
   const [leaveToWithdraw, setLeaveToWithdraw] = useState(null);
   const [showAlert, setShowAlert] = React.useState("");
-
-  useEffect(() => {
-    if (userInfo.student_info && userInfo.student_info.length > 0) {
-      setStudentFilter(userInfo.student_info[0].student_id);
-    }
-  }, [userInfo]);
 
   useEffect(() => {
     setIsLoading(true);
@@ -64,10 +53,6 @@ const PaFeedback = () => {
         setRefreshTable(!refreshTable);
       }, 500);
     }
-  };
-
-  const handleStudentChange = (e) => {
-    setStudentFilter(e.target.value);
   };
 
   const handleWithdrawClick = (leave) => {
@@ -153,22 +138,8 @@ const PaFeedback = () => {
       >
         <BackButton />
         <Box className="w-75 d-flex justify-content-end gap-2">
-          <FormControl fullWidth sx={{ width: "calc(100%/3)" }}>
-            <InputLabel>Student</InputLabel>
-            <Select
-              label="Student"
-              value={studentFilter || ""}
-              onChange={handleStudentChange}
-            >
-              {userInfo.student_info.map((item, index) => (
-                <MenuItem key={index} value={item.student_id}>
-                  {item.student_name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
           <Button className="py-3" onClick={handleAddLeave} variant="contained">
-            <AddIcon /> Leave Apply
+            <AddIcon /> Apply Leave
           </Button>
         </Box>
       </Box>
@@ -178,10 +149,6 @@ const PaFeedback = () => {
   // Columns definition
   const columns = useMemo(
     () => [
-      {
-        accessorKey: "student_id",
-        header: "Student ID",
-      },
       {
         accessorKey: "start_date",
         header: "Start date",
@@ -226,7 +193,6 @@ const PaFeedback = () => {
         <PaApplyLeaveForm
           isOpen={isAddLeaveModalVisible}
           handleClose={handleClose}
-          studentId={studentFilter}
           selectedLeaveDetails={selectedLeave}
         />
       )}
