@@ -21,14 +21,12 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  Container,
   CircularProgress,
 } from "@mui/material";
 
 import {
   getStudentAssignmentReport,
   getStudentAttendanceReport,
-  getStudentPerformanceReport,
 } from "../../ApiClient";
 import dayjs from "dayjs";
 import BackButton from "../../SharedComponents/BackButton";
