@@ -13,13 +13,13 @@ const LandingDashboard = () => {
   return (
     <>
       <div
-        className="d-flex flex-row justify-content-between align-items-center px-3"
+        className="d-flex flex-column flex-lg-row justify-content-between align-items-center px-3"
         style={{
           background:
             "linear-gradient(95deg, #236eb4 2.39%, #6171bc 32.45%, #e878cf 97.66%)",
         }}
       >
-        <div className="text-white" style={{ flex: 1 }}>
+        <div className="text-container text-white" style={{ flex: 1 }}>
           <p className="display-5">
             Upgrade your schools for better Performance
           </p>
@@ -49,17 +49,18 @@ const LandingDashboard = () => {
             </Button>
           </div>
         </div>
-        <div>
+        <div className="img-container mt-3 mt-lg-0">
           <img alt="img" className="w-100" style={{ height: 500 }} src={home} />
         </div>
       </div>
+
       <div
-        className="d-flex flex-row justify-content-between align-items-center px-3"
+        className="d-flex flex-column-reverse flex-lg-row justify-content-between align-items-center px-3"
         style={{
           background: "#f4f4f4",
         }}
       >
-        <div>
+        <div className="img-container mt-3 mt-lg-0">
           <img
             alt="img"
             className="w-100"
@@ -67,7 +68,7 @@ const LandingDashboard = () => {
             src={about}
           />
         </div>
-        <div style={{ flex: 1 }}>
+        <div className="text-container" style={{ flex: 1 }}>
           <p className="display-5">Learn new concepts for each question</p>
           <p className="lead">
             If you are looking for a Tailor-Fit Cloud ERP Software for your
@@ -77,8 +78,9 @@ const LandingDashboard = () => {
           <p className="lead">A Single Tool to Manage Entire Institute</p>
         </div>
       </div>
-      <div className="d-flex flex-row justify-content-between align-items-center px-3">
-        <div style={{ flex: 1 }}>
+
+      <div className="d-flex flex-column flex-lg-row justify-content-between align-items-center px-3">
+        <div className="text-container" style={{ flex: 1 }}>
           <p className="display-5">Tools For Teachers And Learners</p>
           <p className="lead">
             Class has a dynamic set of teaching tools built to be deployed and
@@ -89,7 +91,7 @@ const LandingDashboard = () => {
             based on student logins or participation in class activities.
           </p>
         </div>
-        <div>
+        <div className="img-container mt-3 mt-lg-0">
           <img
             alt="img"
             className="w-100"
@@ -98,6 +100,7 @@ const LandingDashboard = () => {
           />
         </div>
       </div>
+
       <div
         className="p-3 text-center"
         id="check-section"
@@ -115,79 +118,29 @@ const LandingDashboard = () => {
           practice materials.
         </p>
         <div className="row justify-content-center">
-          <div className="d-flex flex-sm-wrap justify-content-around w-75">
-            <div
-              className="card m-4 p-3 shadow-sm text-left"
-              style={{ width: 300, height: 300 }}
-            >
-              <span className="h4 font-weight-bold mb-2 text-primary-emphasis">
-                Tracking & Reporting
-              </span>
-              <span>
-                Simple and secure control of your organization’s financial and
-                legal transactions. Send customized invoices and contracts.
-              </span>
-            </div>
-            <div
-              className="card m-4 p-3 shadow-sm text-left"
-              style={{ width: 300, height: 300 }}
-            >
-              <span className="h4 font-weight-bold mb-2 text-primary-emphasis">
-                Any Academy or System
-              </span>
-              <span>
-                Schedule and reserve classrooms at one campus or multiple
-                campuses. Keep detailed records of student attendance.
-              </span>
-            </div>
-            <div
-              className="card m-4 p-3 shadow-sm text-left"
-              style={{ width: 300, height: 300 }}
-            >
-              <span className="h4 font-weight-bold mb-2 text-primary-emphasis">
-                Student Tracking
-              </span>
-              <span>
-                Automate and track emails to individuals or groups. Skilline’s
-                built-in system helps organize your organization.
-              </span>
-            </div>
-            <div
-              className="card m-4 p-3 shadow-sm text-left"
-              style={{ width: 300, height: 300 }}
-            >
-              <span className="h4 font-weight-bold mb-2 text-primary-emphasis">
-                End to End solution
-              </span>
-              <span>
-                Simple and secure control of your organization’s financial and
-                legal transactions. Send customized invoices and contracts.
-              </span>
-            </div>
-            <div
-              className="card m-4 p-3 shadow-sm text-left"
-              style={{ width: 300, height: 300 }}
-            >
-              <span className="h4 font-weight-bold mb-2 text-primary-emphasis">
-                Secure & Relatable
-              </span>
-              <span>
-                Simple and secure control of your organization’s financial and
-                legal transactions. Send customized invoices and contracts.
-              </span>
-            </div>
-            <div
-              className="card m-4 p-3 shadow-sm text-left"
-              style={{ width: 300, height: 300 }}
-            >
-              <span className="h4 font-weight-bold mb-2 text-primary-emphasis">
-                Well informed
-              </span>
-              <span>
-                Simple and secure control of your organization’s financial and
-                legal transactions. Send customized invoices and contracts.
-              </span>
-            </div>
+          <div className="d-flex flex-wrap justify-content-around w-75">
+            {[
+              "Tracking & Reporting",
+              "Any Academy or System",
+              "Student Tracking",
+              "End to End solution",
+              "Secure & Relatable",
+              "Well informed",
+            ].map((title, index) => (
+              <div
+                key={index}
+                className="card m-4 p-3 shadow-sm text-left"
+                style={{ width: 300, height: 300 }}
+              >
+                <span className="h4 font-weight-bold mb-2 text-primary-emphasis">
+                  {title}
+                </span>
+                <span>
+                  Simple and secure control of your organization’s financial and
+                  legal transactions. Send customized invoices and contracts.
+                </span>
+              </div>
+            ))}
           </div>
         </div>
       </div>
@@ -278,7 +231,10 @@ const LandingDashboard = () => {
         </div>
       </div>
 
-      <div className="text-white text-center p-4" style={{background: '#252641'}}>
+      <div
+        className="text-white text-center p-4"
+        style={{ background: "#252641" }}
+      >
         <div className="mb-3">
           <img
             src={Gyankoonj_logo}
@@ -301,9 +257,7 @@ const LandingDashboard = () => {
               placeholder="Your Email"
               style={{ width: "auto" }}
             />
-             <Button
-              variant="contained"
-              className="bg-gradient" >
+            <Button variant="contained" className="bg-gradient">
               Subscribe
             </Button>
           </div>
@@ -326,6 +280,8 @@ const LandingDashboard = () => {
           }
           .images {
             display: flex;
+            flex-direction: column;
+            align-items: center;
             justify-content: center;
             gap: 20px;
           }
@@ -355,6 +311,39 @@ const LandingDashboard = () => {
 
           .image-container:hover .hover-content {
             display: block;
+          }
+
+          @media (min-width: 768px) {
+            .d-flex.flex-column.flex-lg-row,
+            .d-flex.flex-column-reverse.flex-lg-row {
+              flex-direction: row !important;
+            }
+            .images {
+              flex-direction: row;
+            }
+          }
+          @media only screen and (max-width: 768px) {
+            .img-container img {
+              height: 250px !important;
+            }
+              .image-container {
+              margin-bottom: 0 !important;
+            }
+               .image-container img {
+              height: auto !important;
+            }
+            .text-container {
+              padding-top: 16px;
+            }
+            .display-5 {
+              font-size: 20px;
+            }
+            .lead {
+              font-size: 16px;
+            }
+              .w-75{
+                  width: 100% !important;
+              }
           }
         `}
       </style>
