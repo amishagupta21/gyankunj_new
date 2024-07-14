@@ -3,24 +3,25 @@ import { Navbar, Nav, NavDropdown } from "react-bootstrap";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import profilePic from "../Images/profilePic.jpg";
 import Gyankoonj_logo from "../Images/Gyankoonj_logo.png";
-import LoginPage from "./LoginPage";
 import { FaAngleDown } from "react-icons/fa";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import { Offcanvas } from "react-bootstrap";
 import SidebarContainer from "./SidebarContainer";
 import { MdOutlineNotificationsActive } from "react-icons/md";
 import { TbSpeakerphone } from "react-icons/tb";
-import { Typography, useTheme } from "@mui/material";
+import { Typography, useMediaQuery, useTheme } from "@mui/material";
 import { tokens } from "../theme";
+import SignInSide from "./SignInSide";
 
 function Header({ isTabScreen, userData }) {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const navigate = useNavigate();
   const [showLogin, setShowLogin] = useState(false);
   const [showDrawer, setShowDrawer] = useState(false);
   const [isHoveredOnUser, setIsHoveredOnUser] = useState(false);
   const [isHoveredOnMenu, setIsHoveredOnMenu] = useState("");
   const location = useLocation();
-  const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const userRoutes = {
     announcementIcon: <TbSpeakerphone size={24} />,
@@ -58,7 +59,9 @@ function Header({ isTabScreen, userData }) {
   };
 
   const handleMouseEnter = () => {
-    setIsHoveredOnUser(true);
+    if(!isMobile){
+      setIsHoveredOnUser(true);
+    }
   };
 
   const handleMouseLeave = () => {
@@ -154,7 +157,7 @@ function Header({ isTabScreen, userData }) {
           </button>
         )}
       </Navbar>
-      <LoginPage show={showLogin} onHide={() => setShowLogin(false)} />
+      <SignInSide show={showLogin} onHide={() => setShowLogin(false)} />
       <Offcanvas
         style={{ width: 270 }}
         show={showDrawer}
