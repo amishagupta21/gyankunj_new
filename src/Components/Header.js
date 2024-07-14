@@ -3,7 +3,6 @@ import { Navbar, Nav, NavDropdown } from "react-bootstrap";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import profilePic from "../Images/profilePic.jpg";
 import Gyankoonj_logo from "../Images/Gyankoonj_logo.png";
-import LoginPage from "./LoginPage";
 import { FaAngleDown } from "react-icons/fa";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import { Offcanvas } from "react-bootstrap";
@@ -159,7 +158,6 @@ function Header({ isTabScreen, userData }) {
         )}
       </Navbar>
       <SignInSide show={showLogin} onHide={() => setShowLogin(false)} />
-      {/* <LoginPage show={showLogin} onHide={() => setShowLogin(false)} /> */}
       <Offcanvas
         style={{ width: 270 }}
         show={showDrawer}
