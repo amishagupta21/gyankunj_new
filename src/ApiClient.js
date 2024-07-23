@@ -330,6 +330,15 @@ const withdrawLeaveApplication = (payload) => {
   return apiInstance.post(`/withdraw_leave_application`, payload);
 };
 
+const updateMasterRoutineType = (payload) => {
+  return apiInstance.post(`/activate_routine`, payload);
+};
+
+
+const upsertMasterSchedule = (payload) => {
+  return apiInstance.post(`/create_routine`, payload);
+};
+
 
 export {
   //loginUser,
@@ -397,5 +406,7 @@ export {
   submitLeaveApplication,
   getLeaveApplicationDetails,
   evaluateLeaveApplication,
-  withdrawLeaveApplication
+  withdrawLeaveApplication,
+  updateMasterRoutineType,
+  upsertMasterSchedule
 };

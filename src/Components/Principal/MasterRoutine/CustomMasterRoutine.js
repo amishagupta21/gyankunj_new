@@ -5,6 +5,7 @@ import {
   getSubjectsList,
   getTeachersData,
   getViewMasterRoutineData,
+  updateMasterRoutineType,
 } from "../../../ApiClient";
 import {
   Box,
@@ -13,9 +14,14 @@ import {
   MenuItem,
   Select,
   CircularProgress,
+  FormControlLabel,
+  Switch,
+  Button,
 } from "@mui/material";
 import dayjs from "dayjs";
 import CreateMasterRoutine from "./CreateMasterRoutine";
+import { showAlertMessage } from "../../AlertMessage";
+import CreateMasterSchedule from "./CreateMasterSchedule";
 
 const CustomMasterRoutine = () => {
   const userInfo = JSON.parse(localStorage.getItem("UserData"));
@@ -24,19 +30,22 @@ const CustomMasterRoutine = () => {
   const [masterRoutineData, setMasterRoutineData] = useState({});
   const [selectedRoutineData, setSelectedRoutineData] = useState(null);
   const [selectedSectionData, setSelectedSectionData] = useState([]);
-  const [isAddRoutineModalVisible, setIsAddRoutineModalVisible] =
-    useState(false);
+  const [isAddRoutineModalVisible, setIsAddRoutineModalVisible] = useState(false);
+  const [isAddScheduleModalVisible, setIsAddScheduleModalVisible] = useState(false);
   const [periodData, setPeriodData] = useState([]);
   const [teacherData, setTeacherData] = useState([]);
   const [subjectsList, setSubjectsList] = useState([]);
   const [daysData, setDaysData] = useState([]);
   const [dayFilter, setDayFilter] = useState("");
+  const [routineTypeFilter, setRoutineTypeFilter] = useState();
+  const [showAlert, setShowAlert] = useState("");
 
   useEffect(() => {
     getMasterRoutineMetadata();
     getAllSubjectsData();
     getAllTeachersData();
     getGradesList();
+    setRoutineTypeFilter(userInfo.routine_id??1);
   }, []);
 
   useEffect(() => {
@@ -132,7 +141,38 @@ const CustomMasterRoutine = () => {
   const handleClose = (isSubmit) => {
     if (isSubmit) getMasterRoutineData();
     setIsAddRoutineModalVisible(false);
+    setIsAddScheduleModalVisible(false);
   };
+
+  const handleRoutineTypeChange = (e) => {
+    setRoutineTypeFilter(e.target.checked?2: 1);
+    const payload = {
+      "routine_id": e.target.checked?2: 1
+  }
+    updateMasterRoutineType(payload)
+      .then((res) => {
+        if (res?.data?.status === "success") {
+          setShowAlert("success");
+        } else {
+          setShowAlert("error");
+        }
+        setTimeout(() => {
+          setShowAlert("");
+          userInfo.routine_id = payload.routine_id;
+          userInfo.routine_type = payload.routine_id === 1 ? 'summer': 'winter';
+          localStorage.setItem("UserData", JSON.stringify(userInfo));
+          setIsAddScheduleModalVisible(true);
+        }, 1000);
+      })
+      .catch((err) => {
+        setShowAlert("error");
+        setTimeout(() => {
+          setShowAlert("");
+        }, 3000);
+      });
+
+  };
+
 
   const FiltersView = () => (
     <Box
@@ -157,6 +197,21 @@ const CustomMasterRoutine = () => {
             </MenuItem>
           ))}
         </Select>
+      </FormControl>
+      <FormControl>
+        <FormControlLabel
+          className="justify-content-end m-0"
+          control={
+            <>
+              <label className={`${routineTypeFilter === 1 ? 'fw-bold text-primary-emphasis':''}`}>Summer</label>
+              <Switch
+                checked={routineTypeFilter === 2?true:false}
+                onChange={handleRoutineTypeChange}
+              />
+              <label className={`${routineTypeFilter === 2 ? 'fw-bold text-primary-emphasis':''}`}>Winter</label>
+            </>
+          }
+        />
       </FormControl>
     </Box>
   );
@@ -265,6 +320,20 @@ const CustomMasterRoutine = () => {
           subjectsList={subjectsList}
         />
       )}
+      {isAddScheduleModalVisible && (
+        <CreateMasterSchedule
+          isOpen={isAddScheduleModalVisible}
+          handleClose={handleClose}
+        />
+      )}
+      {showAlert &&
+        showAlertMessage({
+          open: true,
+          alertFor: showAlert,
+          message: `The routine type updation ${
+            showAlert === "success" ? "succeeded" : "failed"
+          }.`,
+        })}
     </>
   );
 };
