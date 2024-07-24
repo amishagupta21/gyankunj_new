@@ -57,12 +57,12 @@ const CustomMasterRoutine = () => {
       .then((res) => {
         if (res?.data) {
           const currentDayName = dayjs().format("dddd").toLowerCase();
-          const currentDayObject = res.data.days.find(
+          const currentDayObject = res.data.days?.find(
             (day) => day.day_name.toLowerCase() === currentDayName
           );
           if (currentDayObject) setDayFilter(currentDayObject.day_id);
 
-          const updatedPeriodData = res.data.periods.reduce(
+          const updatedPeriodData = res.data.periods?.reduce(
             (acc, period, index) => {
               acc.push(period);
               if (index === 3) {
@@ -141,7 +141,12 @@ const CustomMasterRoutine = () => {
   const handleClose = (isSubmit) => {
     if (isSubmit) getMasterRoutineData();
     setIsAddRoutineModalVisible(false);
+  };
+  
+  const handleCloseForRoutine = (isSubmit) => {
     setIsAddScheduleModalVisible(false);
+    getMasterRoutineMetadata();
+    getMasterRoutineData();
   };
 
   const handleRoutineTypeChange = (e) => {
@@ -323,7 +328,7 @@ const CustomMasterRoutine = () => {
       {isAddScheduleModalVisible && (
         <CreateMasterSchedule
           isOpen={isAddScheduleModalVisible}
-          handleClose={handleClose}
+          handleClose={handleCloseForRoutine}
         />
       )}
       {showAlert &&
