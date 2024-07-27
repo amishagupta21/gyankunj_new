@@ -34,7 +34,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 }));
 
 const CreateMasterSchedule = ({ isOpen, handleClose, selectedRoutineType }) => {
-  const { handleSubmit, reset, control, setValue, watch } = useForm();
+  const { handleSubmit, reset, control, setValue, getValues } = useForm();
   const userInfo = JSON.parse(localStorage.getItem("UserData"));
   const [isEditMode, setIsEditMode] = useState(false);
   const [showAlert, setShowAlert] = useState("");
@@ -130,36 +130,37 @@ const CreateMasterSchedule = ({ isOpen, handleClose, selectedRoutineType }) => {
   };
 
   const renderTimePicker = (name, label, dependentField) => (
-    <Controller
-      name={name}
-      control={control}
-      rules={{
-        required: true,
-      }}
-      render={({ field: { onChange, value }, fieldState: { error } }) => (
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <TimePicker
-            label={label}
-            ampm={false}
-            value={value || null}
-            format="HH:mm"
-            onChange={(val) => {
-              onChange(val ? dayjs(val) : null);
-              if (name.includes("start") && dependentField) {
-                setValue(dependentField, null);
-              }
-            }}
-            slotProps={{
-              textField: {
-                variant: "outlined",
-                error: !!error,
-              },
-            }}
-          />
-        </LocalizationProvider>
-      )}
-    />
-  );
+      <Controller
+        name={name}
+        control={control}
+        rules={{
+          required: true,
+        }}
+        render={({ field: { onChange, value }, fieldState: { error } }) => (
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <TimePicker
+              label={label}
+              ampm={false}
+              value={value || null}
+              minTime={name.includes("end") && dependentField ? getValues()[dependentField] : null}
+              format="HH:mm"
+              onChange={(val) => {
+                onChange(val ? dayjs(val) : null);
+                if (name.includes("start") && dependentField) {
+                  setValue(dependentField, null);
+                }
+              }}
+              slotProps={{
+                textField: {
+                  variant: "outlined",
+                  error: !!error,
+                },
+              }}
+            />
+          </LocalizationProvider>
+        )}
+      />
+    );
 
   return (
     <BootstrapDialog
@@ -216,7 +217,7 @@ const CreateMasterSchedule = ({ isOpen, handleClose, selectedRoutineType }) => {
               {renderTimePicker("start_time", "Start Time", "end_time")}
             </Grid>
             <Grid item xs={6}>
-              {renderTimePicker("end_time", "End Time", null)}
+              {renderTimePicker("end_time", "End Time", "start_time")}
             </Grid>
             <Grid item xs={12}>
               <FormControl fullWidth>
@@ -249,7 +250,7 @@ const CreateMasterSchedule = ({ isOpen, handleClose, selectedRoutineType }) => {
               )}
             </Grid>
             <Grid item xs={6}>
-              {renderTimePicker("break_end_time", "Break End Time", null)}
+              {renderTimePicker("break_end_time", "Break End Time", "break_start_time")}
             </Grid>
             <Grid item xs={6}>
               {renderTimePicker(
@@ -259,7 +260,7 @@ const CreateMasterSchedule = ({ isOpen, handleClose, selectedRoutineType }) => {
               )}
             </Grid>
             <Grid item xs={6}>
-              {renderTimePicker("assembly_end_time", "Assembly End Time", null)}
+              {renderTimePicker("assembly_end_time", "Assembly End Time", "assembly_start_time")}
             </Grid>
           </Grid>
         </DialogContent>
