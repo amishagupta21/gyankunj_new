@@ -334,9 +334,13 @@ const updateMasterRoutineType = (payload) => {
   return apiInstance.post(`/activate_routine`, payload);
 };
 
-
-const upsertMasterSchedule = (payload) => {
-  return apiInstance.post(`/create_routine`, payload);
+const upsertMasterSchedule = (payload, isEditMode) => {
+  if(isEditMode){
+    return apiInstance.post(`/edit_routine`, payload);
+  }
+  else{
+    return apiInstance.post(`/create_routine`, payload);
+  }
 };
 
 

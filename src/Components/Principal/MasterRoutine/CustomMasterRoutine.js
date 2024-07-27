@@ -61,8 +61,7 @@ const CustomMasterRoutine = () => {
             (day) => day.day_name.toLowerCase() === currentDayName
           );
           if (currentDayObject) setDayFilter(currentDayObject.day_id);
-
-          const updatedPeriodData = res.data.periods?.reduce(
+          const updatedPeriodData = res.data?.periods?.length > 0 ? res.data.periods.reduce(
             (acc, period, index) => {
               acc.push(period);
               if (index === 3) {
@@ -76,7 +75,7 @@ const CustomMasterRoutine = () => {
               return acc;
             },
             []
-          );
+          ): [];
 
           setPeriodData(updatedPeriodData);
           setDaysData(res.data.days);

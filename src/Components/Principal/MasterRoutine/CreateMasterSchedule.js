@@ -9,7 +9,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
-import { Box, Button, FormControl, Grid, TextField } from "@mui/material";
+import { Box, Button, FormControl, Grid, InputLabel, MenuItem, Select, TextField } from "@mui/material";
 import { showAlertMessage } from "../../AlertMessage";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
@@ -39,14 +39,14 @@ const CreateMasterSchedule = ({ isOpen, handleClose, selectedRoutineType }) => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [showAlert, setShowAlert] = useState("");
 
+  const periodDurationsList = [15, 30, 45, 60];
+
   useEffect(() => {
     if (userInfo.routine_id) {
       getMasterRoutineMetadataInfo(userInfo.routine_id)
         .then((res) => {
           if (res?.data?.routine_details?.length > 0) {
             const savedData = res.data.routine_details[0];
-            console.log("Loaded data:", savedData); // Debug log
-
             setValue("routine_type", savedData.routine_type);
             setValue(
               "start_time",
@@ -59,6 +59,7 @@ const CreateMasterSchedule = ({ isOpen, handleClose, selectedRoutineType }) => {
               savedData.end_time ? dayjs(savedData.end_time, "HH:mm:ss") : null
             );
             setValue("period_count", savedData.period_count);
+            setValue("period_duration", savedData.period_duration);
             setValue(
               "break_start_time",
               savedData.break_start_time
@@ -100,6 +101,7 @@ const CreateMasterSchedule = ({ isOpen, handleClose, selectedRoutineType }) => {
       start_time: formatTime(data.start_time),
       end_time: formatTime(data.end_time),
       period_count: data.period_count,
+      period_duration: data.period_duration,
       break_start_time: formatTime(data.break_start_time),
       break_end_time: formatTime(data.break_end_time),
       assembly_start_time: formatTime(data.assembly_start_time),
@@ -107,7 +109,7 @@ const CreateMasterSchedule = ({ isOpen, handleClose, selectedRoutineType }) => {
     };
 
     // Send payload to server
-    upsertMasterSchedule(payload)
+    upsertMasterSchedule(payload, isEditMode)
       .then((res) => {
         if (res?.data?.status === "success") {
           setShowAlert("success");
@@ -208,6 +210,9 @@ const CreateMasterSchedule = ({ isOpen, handleClose, selectedRoutineType }) => {
                       fullWidth
                       label="Routine Type"
                       variant="outlined"
+                      InputProps={{
+                        readOnly: true,
+                      }}  
                     />
                   )}
                 />
@@ -219,7 +224,7 @@ const CreateMasterSchedule = ({ isOpen, handleClose, selectedRoutineType }) => {
             <Grid item xs={6}>
               {renderTimePicker("end_time", "End Time", "start_time")}
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={6}>
               <FormControl fullWidth>
                 <Controller
                   name="period_count"
@@ -238,6 +243,35 @@ const CreateMasterSchedule = ({ isOpen, handleClose, selectedRoutineType }) => {
                       type="number"
                       variant="outlined"
                     />
+                  )}
+                />
+              </FormControl>
+            </Grid>
+            <Grid item xs={6}>
+              <FormControl fullWidth>
+                <Controller
+                  name="period_duration"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({
+                    field: { onChange, value },
+                    fieldState: { error },
+                  }) => (
+                    <>
+                    <InputLabel error={!!error}>Period Duration</InputLabel>
+                    <Select
+                      label="Period Duration"
+                      onChange={onChange}
+                      value={value || ""}
+                      error={!!error}
+                    >
+                      {periodDurationsList.map((item, index) => (
+                        <MenuItem key={index} value={item}>
+                          {item}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                    </>
                   )}
                 />
               </FormControl>
