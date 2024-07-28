@@ -212,7 +212,7 @@ const PRoutineMetadataDetails = () => {
         </Typography>
         <Button variant="contained" onClick={() => setIsAddScheduleModalVisible(true)}>Configure routine</Button>
       </Box>
-      <Card sx={{ maxWidth: "100%", margin: "0 auto", mt: 2 }}>
+      <Card className="bg-info-subtle" sx={{ maxWidth: "100%", margin: "0 auto", mt: 2 }}>
         <CardContent>
           {routineDetails ? (
             <Grid container spacing={2}>
