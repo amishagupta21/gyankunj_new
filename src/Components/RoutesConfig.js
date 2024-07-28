@@ -47,6 +47,12 @@ export const routesConfig = {
       icon: <SourceOutlinedIcon />,
       route: "/principalDashboard/resources",
     },
+    {
+      code: "schoolDiary",
+      title: "School Diary",
+      icon: <SourceOutlinedIcon />,
+      route: "/principalDashboard/schoolDiary",
+    }
   ],
   PRINCIPAL: [
     {
@@ -85,6 +91,12 @@ export const routesConfig = {
       icon: <SourceOutlinedIcon />,
       route: "/principalDashboard/resources",
     },
+    {
+      code: "schoolDiary",
+      title: "School Diary",
+      icon: <SourceOutlinedIcon />,
+      route: "/principalDashboard/schoolDiary",
+    }
   ],
   TEACHER: [
     {

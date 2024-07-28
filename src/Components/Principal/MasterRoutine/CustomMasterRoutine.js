@@ -254,36 +254,40 @@ const CustomMasterRoutine = () => {
                   </td>
                   {periodData.map((item) => {
                     const routines = masterRoutineData[item.period] || [];
-                    const routine = routines.find(
+                    const filteredRoutines = routines.filter(
                       (r) =>
                         r.grade_id === gradeItem.grade_id &&
                         r.day_id === dayFilter
                     );
-                    if (routine) {
+
+                    if (filteredRoutines.length > 0) {
                       return (
                         <td className="p-0" key={item.period}>
-                          <div
-                            className="p-1 rounded text-center text-white cell selected-cell"
-                            onClick={() =>
-                              handleClickOpen(
-                                routine,
-                                gradeItem.section_list,
-                                item.period
-                              )
-                            }
-                          >
-                            <p className="mb-0">
-                              <small>
-                                {routine.start_time} - {routine.end_time}
-                              </small>
-                            </p>
-                            <p className="mb-0">
-                              <small>{routine.subject_name}</small>
-                            </p>
-                            <p className="mb-0">
-                              <small>{routine.teacher_name}</small>
-                            </p>
-                          </div>
+                          {filteredRoutines.map((routine, index) => (
+                            <div
+                              className="p-1 border rounded text-center text-white cell selected-cell"
+                              key={index}
+                              onClick={() =>
+                                handleClickOpen(
+                                  routine,
+                                  gradeItem.section_list,
+                                  item.period
+                                )
+                              }
+                            >
+                              <p className="mb-0">
+                                <small>
+                                  {routine.start_time} - {routine.end_time}
+                                </small>
+                              </p>
+                              <p className="mb-0">
+                                <small>{routine.subject_name}</small>
+                              </p>
+                              <p className="mb-0">
+                                <small>{routine.teacher_name}</small>
+                              </p>
+                            </div>
+                          ))}
                         </td>
                       );
                     } else {

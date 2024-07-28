@@ -42,6 +42,7 @@ import PaReport from "./Parent/PaReport";
 import TNotifications from "./Teacher/TNotifications";
 import SNotifications from "./Student/SNotifications";
 import APNotifications from "./Principal/APNotifications";
+import PSchoolDiary from "./Principal/PSchoolDiary";
 
 // Define routes for different user roles
 const roleRoutes = {
@@ -94,6 +95,10 @@ export default function RoutesContainer({ userData }) {
             <Route
               path="/principalDashboard/resources"
               element={<ProtectedWrapper Component={PResources} />}
+            />
+            <Route
+              path="/principalDashboard/schoolDiary"
+              element={<ProtectedWrapper Component={PSchoolDiary} />}
             />
             <Route
               path="/principalDashboard/announcements"
