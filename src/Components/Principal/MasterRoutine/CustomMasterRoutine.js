@@ -30,6 +30,7 @@ const CustomMasterRoutine = () => {
   const [masterRoutineData, setMasterRoutineData] = useState({});
   const [selectedRoutineData, setSelectedRoutineData] = useState(null);
   const [selectedSectionData, setSelectedSectionData] = useState([]);
+  const [selectedSectionByGrade, setSelectedSectionByGrade] = useState({});
   const [isAddRoutineModalVisible, setIsAddRoutineModalVisible] = useState(false);
   const [isAddScheduleModalVisible, setIsAddScheduleModalVisible] = useState(false);
   const [periodData, setPeriodData] = useState([]);
@@ -177,6 +178,12 @@ const CustomMasterRoutine = () => {
 
   };
 
+  const handleSectionChange = (gradeId, sectionId) => {
+    setSelectedSectionByGrade((prevData) => ({
+      ...prevData,
+      [gradeId]: sectionId,
+    }));
+  };
 
   const FiltersView = () => (
     <Box
@@ -231,7 +238,7 @@ const CustomMasterRoutine = () => {
         <table>
           <thead>
             <tr>
-              <th className="fs-6 bg-secondary text-white">Grade</th>
+              <th className="fs-6 bg-secondary text-white text-center">Grade</th>
               {periodData.map((item) => (
                 <th
                   className={`fs-6 text-center text-white ${
@@ -249,16 +256,49 @@ const CustomMasterRoutine = () => {
               gradeData.length > 0 &&
               gradeData.map((gradeItem) => (
                 <tr key={gradeItem.grade_id}>
-                  <td className="fw-bold" style={{ fontSize: 14 }}>
-                    {gradeItem.grade}
+                  <td className="fw-bold text-center" style={{ fontSize: 14 }}>
+                  <div>
+                      {gradeItem.grade}
+                      {gradeItem.grade_id}
+                      {gradeItem.section_list?.length > 1 && (
+                        <FormControl fullWidth sx={{ marginTop: 1 }}>
+                          <InputLabel>Section</InputLabel>
+                          <Select
+                            label="Section"
+                            value={
+                              selectedSectionByGrade[gradeItem.grade_id] ||
+                              gradeItem.section_list[0]?.section_id
+                            }
+                            onChange={(e) =>
+                              handleSectionChange(
+                                gradeItem.grade_id,
+                                e.target.value
+                              )
+                            }
+                          >
+                            {gradeItem.section_list.map((section) => (
+                              <MenuItem
+                                key={section.section_id}
+                                value={section.section_id}
+                              >
+                                {section.section_name}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+                      )}
+                    </div>
                   </td>
                   {periodData.map((item) => {
-                    const routines = masterRoutineData[item.period] || [];
-                    const routine = routines.find(
-                      (r) =>
-                        r.grade_id === gradeItem.grade_id &&
-                        r.day_id === dayFilter
-                    );
+                   const routines = masterRoutineData[item.period] || [];
+                   const selectedSectionId = selectedSectionByGrade[gradeItem.grade_id] || gradeItem.section_list[0]?.section_id;
+                   const routine = routines.find(
+                     (r) =>
+                       r.grade_id === gradeItem.grade_id &&
+                       r.day_id === dayFilter &&
+                       r.section_id === parseInt(selectedSectionId)
+                   );                
+                    console.log(gradeItem.grade_id, selectedSectionId)
                     if (routine) {
                       return (
                         <td className="p-0" key={item.period}>

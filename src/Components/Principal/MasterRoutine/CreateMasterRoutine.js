@@ -46,6 +46,7 @@ const CreateMasterRoutine = ({
   const [isEditMode, setIsEditMode] = useState(false);
   const [selectedRoutineData, setSelectedRoutineData] = useState();
   const [showAlert, setShowAlert] = useState("");
+  const [showErrorMessage, setShowErrorMessage] = useState("");
 
   useEffect(() => {
     if (selectedData && selectedData.subject_id) {
@@ -76,7 +77,10 @@ const CreateMasterRoutine = ({
       .then((res) => {
         if (res?.data?.status === "success") {
           setShowAlert("success");
+          let successMsg = `The routine ${isEditMode ? "updation" : "creation"} succeeded .`;
+          setShowErrorMessage(successMsg);
         } else {
+          setShowErrorMessage(res?.data?.message);
           setShowAlert("error");
         }
         setTimeout(() => {
@@ -240,9 +244,7 @@ const CreateMasterRoutine = ({
         showAlertMessage({
           open: true,
           alertFor: showAlert,
-          message: `The routine ${isEditMode ? "updation" : "creation"} ${
-            showAlert === "success" ? "succeeded" : "failed"
-          }.`,
+          message: showErrorMessage,
         })}
     </React.Fragment>
   );
