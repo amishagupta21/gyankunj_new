@@ -71,24 +71,24 @@ const PLessonPlan = () => {
   // Custom JSX element for the top toolbar
   const RenderTopToolbarCustomActions = () => {
     return (
-      <Box
-        sx={{ display: "flex", alignItems: "center", gap: 2, marginBottom: 2 }}
-      >
-        <FormControl fullWidth sx={{ width: "calc(100%/3)" }}>
-          <InputLabel>Teacher</InputLabel>
-          <Select
-            label="Teacher"
-            value={teacherFilter || ""}
-            onChange={handleTeacherChange}
-          >
-            {teachersList.map((item) => (
-              <MenuItem key={item.teacher_id} value={item.teacher_id}>
-                {item.teacher_name}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-      </Box>
+      <Grid container className="mb-3">
+        <Grid item xs={12} md={3}>
+          <FormControl fullWidth>
+            <InputLabel>Teacher</InputLabel>
+            <Select
+              label="Teacher"
+              value={teacherFilter || ""}
+              onChange={handleTeacherChange}
+            >
+              {teachersList.map((item) => (
+                <MenuItem key={item.teacher_id} value={item.teacher_id}>
+                  {item.teacher_name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Grid>
+      </Grid>
     );
   };
 

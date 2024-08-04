@@ -9,7 +9,17 @@ import {
   getDaysData,
 } from "../../ApiClient";
 import PLogBook from "./PLogBook";
-import { Box, Card, CardContent, FormControl, InputLabel, MenuItem, Select, Typography } from "@mui/material";
+import {
+  Box,
+  Card,
+  CardContent,
+  FormControl,
+  Grid,
+  InputLabel,
+  MenuItem,
+  Select,
+  Typography,
+} from "@mui/material";
 
 const PDashboard = () => {
   const [overallAttendance, setOverallAttendance] = useState({});
@@ -33,7 +43,7 @@ const PDashboard = () => {
       getTeacherRoutine(teacherFilter, dayFilter)
         .then((res) => {
           setTeacherRoutineData([]);
-          if(res?.data?.time_table && res?.data?.time_table.length > 0){
+          if (res?.data?.time_table && res?.data?.time_table.length > 0) {
             setTeacherRoutineData(res.data.time_table);
           }
         })
@@ -94,53 +104,58 @@ const PDashboard = () => {
 
   return (
     <>
-      <Row>
-        <Col md={9}>
+      <Grid container spacing={3}>
+        <Grid item xs={12} md={9}>
           <div className="border p-3 rounded mb-5 shadow-sm">
             <Box className="border-bottom d-flex align-items-center justify-content-between pb-3 mb-3">
-              <h4 sx={{ width: "calc(100%/2)" }}>Attendance Overview</h4>
-              <Box
-                className="d-flex justify-content-between gap-2"
-                sx={{ width: "calc(100%/2)" }}
-              >
-                <FormControl fullWidth sx={{ width: "calc(100%/2)" }}>
-                  <InputLabel>Grade</InputLabel>
-                  <Select
-                    label="Grade"
-                    value={gradeFilter || ""}
-                    onChange={handleGradeChange}
-                  >
-                    {gradeData.map((item) => (
-                      <MenuItem key={item.grade_id} value={item.grade_id}>
-                        {item.grade}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-                <FormControl fullWidth sx={{ width: "calc(100%/2)" }}>
-                  <InputLabel>Section</InputLabel>
-                  <Select
-                    label="Section"
-                    value={sectionFilter}
-                    onChange={handleSectionChange}
-                    disabled={!gradeFilter}
-                  >
-                    {gradeData
-                      .find((grade) => grade.grade_id === gradeFilter)
-                      ?.section_list.map((section) => (
-                        <MenuItem
-                          key={section.section_id}
-                          value={section.section_id}
-                        >
-                          {section.section_name}
-                        </MenuItem>
-                      ))}
-                  </Select>
-                </FormControl>
-              </Box>
+              <Grid container className="d-flex align-items-center">
+                <Grid item xs={12} md={6}>
+                  <Typography variant="h4" className="mb-2">
+                    Attendance Overview
+                  </Typography>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <Box className="d-flex justify-content-between gap-2">
+                    <FormControl fullWidth sx={{ width: "calc(100%/2)" }}>
+                      <InputLabel>Grade</InputLabel>
+                      <Select
+                        label="Grade"
+                        value={gradeFilter || ""}
+                        onChange={handleGradeChange}
+                      >
+                        {gradeData.map((item) => (
+                          <MenuItem key={item.grade_id} value={item.grade_id}>
+                            {item.grade}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                    <FormControl fullWidth sx={{ width: "calc(100%/2)" }}>
+                      <InputLabel>Section</InputLabel>
+                      <Select
+                        label="Section"
+                        value={sectionFilter}
+                        onChange={handleSectionChange}
+                        disabled={!gradeFilter}
+                      >
+                        {gradeData
+                          .find((grade) => grade.grade_id === gradeFilter)
+                          ?.section_list.map((section) => (
+                            <MenuItem
+                              key={section.section_id}
+                              value={section.section_id}
+                            >
+                              {section.section_name}
+                            </MenuItem>
+                          ))}
+                      </Select>
+                    </FormControl>
+                  </Box>
+                </Grid>
+              </Grid>
             </Box>
-            <Row>
-              <Col md={3} className="attendanceOverviewInner border-end">
+            <Grid container className="attendanceOverviewInner">
+              <Grid item xs={12} md={6}>
                 <h6
                   style={{
                     paddingTop: "5px",
@@ -153,102 +168,81 @@ const PDashboard = () => {
                 >
                   Teacher
                 </h6>
-                <Row>
-                  <Col md={6}>
-                    <span>Present</span>
-                  </Col>
-                  <Col md={6}>
+                <Grid container>
+                  <Grid item xs={6}>
+                    Present
+                  </Grid>
+                  <Grid item xs={6}>
                     <p>
                       {overallAttendance?.attendance_overview?.teacher
                         ?.present ?? "-"}
                     </p>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col md={6}>
-                    <span>Absent</span>
-                  </Col>
-                  <Col md={6}>
+                  </Grid>
+                </Grid>
+                <Grid container>
+                  <Grid item xs={6}>
+                    Absent
+                  </Grid>
+                  <Grid item xs={6}>
                     <p>
                       {overallAttendance?.attendance_overview?.teacher
                         ?.absent ?? "-"}
                     </p>
-                  </Col>
-                </Row>
-              </Col>
-              <Col md={9} className="attendanceOverviewInner">
-                <Row>
-                  <Col md={6}>
-                    <h6
-                      style={{
-                        background: "#DEFABD 0% 0% no-repeat padding-box",
-                        marginLeft: "12px",
-                        paddingTop: "5px",
-                        textAlign: "center",
-                        font: "normal normal medium 14px/15px Roboto",
-                        letterSpacing: "0px",
-                        color: "#608E29",
-                        opacity: "1",
-                      }}
-                    >
-                      Student
-                    </h6>
-                  </Col>
-                </Row>
-
-                <Row style={{ width: "70%" }}>
-                  <Col md={4}>
-                    <span style={{ marginRight: "20px" }}>Overview</span>
-                    <span
-                      style={{
-                        textAlign: "center",
-                        font: "normal normal bold 27px/35px Roboto",
-                        letterSpacing: "0px",
-                        color: "#608E29",
-                        opacity: "1",
-                      }}
-                    >
+                  </Grid>
+                </Grid>
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <h6
+                  style={{
+                    paddingTop: "5px",
+                    textAlign: "center",
+                    font: "normal normal medium 14px/15px Roboto",
+                    letterSpacing: "0px",
+                    color: "#821CE8",
+                    opacity: "1",
+                  }}
+                >
+                  Student
+                </h6>
+                <Grid container>
+                  <Grid item xs={6}>
+                    Overview
+                  </Grid>
+                  <Grid item xs={6}>
+                    <p>
                       {overallAttendance?.attendance_overview?.student?.total ??
                         "-"}
-                    </span>
-                  </Col>
-                  <Col>
-                    <span style={{ marginRight: "20px" }}>Present</span>
-                    <span
-                      style={{
-                        textAlign: "center",
-                        font: "normal normal bold 27px/35px Roboto",
-                        letterSpacing: "0px",
-                        color: "#608E29",
-                        opacity: "1",
-                      }}
-                    >
+                    </p>
+                  </Grid>
+                </Grid>
+                <Grid container>
+                  <Grid item xs={6}>
+                    Present
+                  </Grid>
+                  <Grid item xs={6}>
+                    <p>
                       {overallAttendance?.attendance_overview?.student
                         ?.present ?? "-"}
-                    </span>
-                  </Col>
-                  <Col>
-                    <span style={{ marginRight: "20px" }}>Absent</span>
-                    <span
-                      style={{
-                        textAlign: "center",
-                        font: "normal normal bold 27px/35px Roboto",
-                        letterSpacing: "0px",
-                        color: "#608E29",
-                        opacity: "1",
-                      }}
-                    >
+                    </p>
+                  </Grid>
+                </Grid>
+                <Grid container>
+                  <Grid item xs={6}>
+                    Absent
+                  </Grid>
+                  <Grid item xs={6}>
+                    <p>
                       {overallAttendance?.attendance_overview?.student
                         ?.absent ?? "-"}
-                    </span>
-                  </Col>
-                </Row>
-              </Col>
-            </Row>
+                    </p>
+                  </Grid>
+                </Grid>
+              </Grid>
+            </Grid>
           </div>
           <PLogBook />
-        </Col>
-        <Col md={3}>
+        </Grid>
+        <Grid item xs={12} md={3}>
           <Box className="border-bottom text-center pb-3 mb-3">
             <h4 className="mb-3">Teacher's Schedule</h4>
             <Box className="d-flex justify-content-between gap-2 w-100">
@@ -286,9 +280,7 @@ const PDashboard = () => {
             {teacherRoutineData && teacherRoutineData.length > 0 ? (
               teacherRoutineData?.map((routine, index) => {
                 return (
-                  <Card className="mb-1 bg-info"
-                  key={index}
-                >
+                  <Card className="mb-1 bg-info" key={index}>
                     <CardContent className="text-center text-white">
                       <Typography className="border-bottom pb-1 mb-1">{`${routine.start_time} to ${routine.end_time}`}</Typography>
                       <Typography>{`${routine.subject_name} - ${routine.grade} ${routine.section_name}`}</Typography>
@@ -297,11 +289,13 @@ const PDashboard = () => {
                 );
               })
             ) : (
-              <Typography className="text-center text-danger">No Schedule Available</Typography>
+              <Typography className="text-center text-danger">
+                No Schedule Available
+              </Typography>
             )}
           </Box>
-        </Col>
-      </Row>
+        </Grid>
+      </Grid>
     </>
   );
 };
