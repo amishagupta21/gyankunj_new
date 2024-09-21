@@ -10,8 +10,9 @@ import { Controller, useForm, useFieldArray } from "react-hook-form";
 import { Button, TextField, Grid, Box } from "@mui/material";
 import { AddCircle, RemoveOutlined } from "@mui/icons-material";
 import AddCircleOutlinedIcon from "@mui/icons-material/AddCircleOutlined";
-import RemoveCircleOutlinedIcon from "@mui/icons-material/RemoveCircleOutlined";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { updateTransportRoutes } from "../../../../ApiClient";
+import AddBoxIcon from "@mui/icons-material/AddBox";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -61,7 +62,7 @@ const CreateRoutes = ({ isOpen, handleClose, initialData = [] }) => {
 
   useEffect(() => {
     if (initialData) {
-      //reset(initialData); // Populate form with existing data
+      reset(initialData); // Populate form with existing data
     }
   }, [initialData, reset]);
 
@@ -207,9 +208,17 @@ const CreateRoutes = ({ isOpen, handleClose, initialData = [] }) => {
                           )}
                         />
                       </Grid>
-                      <Grid item xs={1}>
+                      <Grid
+                        item
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          cursor: "pointer",
+                        }}
+                        xs={1}
+                      >
                         {route.stop_points.length !== 1 && (
-                          <RemoveCircleOutlinedIcon
+                          <DeleteIcon
                             color="error"
                             fontSize="large"
                             onClick={() =>
@@ -218,7 +227,7 @@ const CreateRoutes = ({ isOpen, handleClose, initialData = [] }) => {
                           />
                         )}
                         {route.stop_points.length === stopIndex + 1 && (
-                          <AddCircleOutlinedIcon
+                          <AddBoxIcon
                             color="success"
                             fontSize="large"
                             onClick={() => handleAddStop(routeIndex)}
@@ -229,25 +238,21 @@ const CreateRoutes = ({ isOpen, handleClose, initialData = [] }) => {
                   ))}
 
                   <Grid
-                    sx={{ display: "flex", alignItems: "center", gap: 2 }}
+                    sx={{ display: "flex", alignItems: "center", cursor:"pointer" }}
                     item
                     xs={12}
                   >
                     {routeFields.length !== 1 && (
-                      <Button
-                        variant="contained"
+                      <DeleteIcon
                         color="error"
-                        startIcon={<RemoveOutlined />}
+                        fontSize="large"
                         onClick={() => removeRoute(routeIndex)}
-                      >
-                        Remove Route
-                      </Button>
+                      />
                     )}
                     {routeFields.length === routeIndex + 1 && (
-                      <Button
-                        variant="contained"
+                      <AddBoxIcon
                         color="success"
-                        startIcon={<AddCircle />}
+                        fontSize="large"
                         onClick={() =>
                           appendRoute({
                             route_name: "",
@@ -256,9 +261,7 @@ const CreateRoutes = ({ isOpen, handleClose, initialData = [] }) => {
                             ],
                           })
                         }
-                      >
-                        Add Route
-                      </Button>
+                      />
                     )}
                   </Grid>
                 </Grid>
