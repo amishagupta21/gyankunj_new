@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import "./PrincipalDashboard.css";
-import { Row, Col } from "react-bootstrap";
 import {
   attendanceOverview,
   getGradeDetails,

@@ -343,6 +343,14 @@ const upsertMasterSchedule = (payload, isEditMode) => {
   }
 };
 
+const getAllRoutesList = () => {
+  return apiInstance.get(`/fetch_all_routes_data`);
+};
+
+const updateTransportRoutes = (payload) => {
+  return apiInstance.post(`/create_route`, payload);
+};
+
 
 export {
   //loginUser,
@@ -412,5 +420,7 @@ export {
   evaluateLeaveApplication,
   withdrawLeaveApplication,
   updateMasterRoutineType,
-  upsertMasterSchedule
+  upsertMasterSchedule,
+  getAllRoutesList,
+  updateTransportRoutes
 };

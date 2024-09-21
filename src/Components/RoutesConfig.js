@@ -8,6 +8,8 @@ import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined
 import AirportShuttleOutlinedIcon from "@mui/icons-material/AirportShuttleOutlined";
 import ReceiptOutlinedIcon from '@mui/icons-material/ReceiptOutlined';
 import FeedbackOutlinedIcon from '@mui/icons-material/FeedbackOutlined';
+import LibraryBooksOutlinedIcon from '@mui/icons-material/LibraryBooksOutlined';
+import DirectionsBusFilledOutlinedIcon from '@mui/icons-material/DirectionsBusFilledOutlined';
 
 export const routesConfig = {
   ADMIN: [
@@ -50,8 +52,14 @@ export const routesConfig = {
     {
       code: "schoolDiary",
       title: "School Diary",
-      icon: <SourceOutlinedIcon />,
+      icon: <LibraryBooksOutlinedIcon />,
       route: "/principalDashboard/schoolDiary",
+    },
+    {
+      code: "transportRoutes",
+      title: "Transport Routes",
+      icon: <DirectionsBusFilledOutlinedIcon />,
+      route: "/principalDashboard/transportRoutes",
     }
   ],
   PRINCIPAL: [
