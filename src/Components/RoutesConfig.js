@@ -56,10 +56,10 @@ export const routesConfig = {
       route: "/principalDashboard/schoolDiary",
     },
     {
-      code: "transportRoutes",
-      title: "Transport Routes",
+      code: "transportView",
+      title: "Transport",
       icon: <DirectionsBusFilledOutlinedIcon />,
-      route: "/principalDashboard/transportRoutes",
+      route: "/principalDashboard/transportView",
     }
   ],
   PRINCIPAL: [

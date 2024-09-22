@@ -283,15 +283,21 @@ const getDaysData = () => {
 };
 
 const checkAttendanceAvailability = (grade_id, section_id, date) => {
-  return apiInstance.get(`/check_attendance_availability?grade_id=${grade_id}&section_id=${section_id}&date=${date}`)
-}
+  return apiInstance.get(
+    `/check_attendance_availability?grade_id=${grade_id}&section_id=${section_id}&date=${date}`
+  );
+};
 
 const getStudentEvaluatedAssignment = (assignment_id, student_id) => {
-  return apiInstance.get(`/select_student_evaluated_assignment?assignment_id=${assignment_id}&student_id=${student_id}`)
-}
+  return apiInstance.get(
+    `/select_student_evaluated_assignment?assignment_id=${assignment_id}&student_id=${student_id}`
+  );
+};
 
 const viewStudentRoutine = (grade_id, section_id) => {
-  return apiInstance.get(`/view_class_routine?grade_id=${grade_id}&section_id=${section_id}`);
+  return apiInstance.get(
+    `/view_class_routine?grade_id=${grade_id}&section_id=${section_id}`
+  );
 };
 
 const getStudentPerformanceReport = (user_id) => {
@@ -299,11 +305,15 @@ const getStudentPerformanceReport = (user_id) => {
 };
 
 const getStudentAttendanceReport = (user_id, month, year) => {
-  return apiInstance.get(`/get_attendance_report_for_parents?month=${month}&year=${year}&user_id=${user_id}`);
+  return apiInstance.get(
+    `/get_attendance_report_for_parents?month=${month}&year=${year}&user_id=${user_id}`
+  );
 };
 
 const getStudentAssignmentReport = (student_id, subject_id) => {
-  return apiInstance.get(`/view_assignment_performance_report?student_id=${student_id}&subject_id=${subject_id}`);
+  return apiInstance.get(
+    `/view_assignment_performance_report?student_id=${student_id}&subject_id=${subject_id}`
+  );
 };
 
 const getLeaveApplicationDetails = (leave_id) => {
@@ -335,10 +345,9 @@ const updateMasterRoutineType = (payload) => {
 };
 
 const upsertMasterSchedule = (payload, isEditMode) => {
-  if(isEditMode){
+  if (isEditMode) {
     return apiInstance.post(`/edit_routine`, payload);
-  }
-  else{
+  } else {
     return apiInstance.post(`/create_routine`, payload);
   }
 };
@@ -351,6 +360,17 @@ const updateTransportRoutes = (payload) => {
   return apiInstance.post(`/create_route`, payload);
 };
 
+const getAllVehicleTypes = () => {
+  return apiInstance.get(`/fetch_vehicle_types`);
+};
+
+const updateVehicles = (payload) => {
+  return apiInstance.post(`/create_vehicles`, payload);
+};
+
+const updateFleetStaff = (payload) => {
+  return apiInstance.post(`/create_fleet_staff`, payload);
+};
 
 export {
   //loginUser,
@@ -422,5 +442,8 @@ export {
   updateMasterRoutineType,
   upsertMasterSchedule,
   getAllRoutesList,
-  updateTransportRoutes
+  updateTransportRoutes,
+  getAllVehicleTypes,
+  updateVehicles,
+  updateFleetStaff
 };

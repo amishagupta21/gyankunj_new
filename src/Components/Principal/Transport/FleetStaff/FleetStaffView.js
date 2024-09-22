@@ -1,10 +1,10 @@
 import React, { useState, useMemo, useEffect } from "react";
+import { Box, Button } from "@mui/material";
 import { getAllRoutesList } from "../../../../ApiClient";
 import CommonMatTable from "../../../../SharedComponents/CommonMatTable";
-import { Box, Button } from "@mui/material";
-import CreateRoutes from "./CreateRoutes";
+import CreateFleetStaff from "./CreateFleetStaff";
 
-const RoutesView = () => {
+const FleetStaffView = () => {
   const [routesList, setRoutesList] = useState([]);
   const [transformedData, setTransformedData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -91,7 +91,7 @@ const RoutesView = () => {
           variant="contained"
           onClick={() => setIsAddRoutesModalVisible(true)}
         >
-          Configure routes
+          Create Fleet Staff
         </Button>
       </Box>
     );
@@ -106,11 +106,11 @@ const RoutesView = () => {
         isLoading={isLoading}
         data={routesList || []}
         renderTopToolbar={() => (
-          <h1 style={{ fontSize: 18, marginTop: 10 }}>Routes</h1>
+          <h1 style={{ fontSize: 18, marginTop: 10 }}>Fleet Staff</h1>
         )}
       />
       {isAddRoutesModalVisible && (
-        <CreateRoutes
+        <CreateFleetStaff
           isOpen={isAddRoutesModalVisible}
           handleClose={handleClose}
           initialData={transformedData}
@@ -120,4 +120,4 @@ const RoutesView = () => {
   );
 };
 
-export default RoutesView;
+export default FleetStaffView;

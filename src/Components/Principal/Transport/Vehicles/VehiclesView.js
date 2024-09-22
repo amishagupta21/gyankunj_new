@@ -1,15 +1,16 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { getAllRoutesList } from "../../../../ApiClient";
-import CommonMatTable from "../../../../SharedComponents/CommonMatTable";
 import { Box, Button } from "@mui/material";
-import CreateRoutes from "./CreateRoutes";
+import { getAllRoutesList, getAllVehicleTypes } from "../../../../ApiClient";
+import CommonMatTable from "../../../../SharedComponents/CommonMatTable";
+import CreateVehicle from "./CreateVehicle";
 
-const RoutesView = () => {
+const VehiclesView = () => {
   const [routesList, setRoutesList] = useState([]);
   const [transformedData, setTransformedData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isAddRoutesModalVisible, setIsAddRoutesModalVisible] = useState(false);
   const [refreshTable, setRefreshTable] = useState(false);
+  const [vehicleTypes, setVehicleTypes] = useState();
 
   useEffect(() => {
     setIsLoading(true);
@@ -30,6 +31,19 @@ const RoutesView = () => {
         console.log(err);
       });
   }, [refreshTable]);
+
+  useEffect(() => {
+    getAllVehicleTypes()
+      .then((res) => {
+        setVehicleTypes([]);
+        if (res?.data?.vehicle_types_data?.length > 0) {
+          setVehicleTypes(res.data.vehicle_types_data);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
 
   // Transformation logic
   const transformData = (data) => {
@@ -91,7 +105,7 @@ const RoutesView = () => {
           variant="contained"
           onClick={() => setIsAddRoutesModalVisible(true)}
         >
-          Configure routes
+          Create Vehicle
         </Button>
       </Box>
     );
@@ -106,13 +120,14 @@ const RoutesView = () => {
         isLoading={isLoading}
         data={routesList || []}
         renderTopToolbar={() => (
-          <h1 style={{ fontSize: 18, marginTop: 10 }}>Routes</h1>
+          <h1 style={{ fontSize: 18, marginTop: 10 }}>Vehicles</h1>
         )}
       />
       {isAddRoutesModalVisible && (
-        <CreateRoutes
+        <CreateVehicle
           isOpen={isAddRoutesModalVisible}
           handleClose={handleClose}
+          vehicleTypes={vehicleTypes}
           initialData={transformedData}
         />
       )}
@@ -120,4 +135,4 @@ const RoutesView = () => {
   );
 };
 
-export default RoutesView;
+export default VehiclesView;
