@@ -238,7 +238,11 @@ const CreateRoutes = ({ isOpen, handleClose, initialData = [] }) => {
                   ))}
 
                   <Grid
-                    sx={{ display: "flex", alignItems: "center", cursor:"pointer" }}
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      cursor: "pointer",
+                    }}
                     item
                     xs={12}
                   >

@@ -106,7 +106,7 @@ const RoutesView = () => {
         isLoading={isLoading}
         data={routesList || []}
         renderTopToolbar={() => (
-          <h1 style={{ fontSize: 18, marginTop: 10 }}>Transport Routes</h1>
+          <h1 style={{ fontSize: 18, marginTop: 10 }}>Routes</h1>
         )}
       />
       {isAddRoutesModalVisible && (

@@ -43,7 +43,7 @@ import TNotifications from "./Teacher/TNotifications";
 import SNotifications from "./Student/SNotifications";
 import APNotifications from "./Principal/APNotifications";
 import PSchoolDiary from "./Principal/PSchoolDiary";
-import RoutesView from "./Principal/Transport/Routes/RoutesView";
+import TransportView from "./Principal/Transport/TransportView";
 
 // Define routes for different user roles
 const roleRoutes = {
@@ -111,8 +111,8 @@ export default function RoutesContainer({ userData }) {
             />
             {userData.role === "ADMIN" && (
               <Route
-                path="/principalDashboard/transportRoutes"
-                element={<ProtectedWrapper Component={RoutesView} />}
+                path="/principalDashboard/transportView"
+                element={<ProtectedWrapper Component={TransportView} />}
               />
             )}
           </>
