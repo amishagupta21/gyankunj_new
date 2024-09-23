@@ -1,25 +1,23 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { Box, Button } from "@mui/material";
-import { getAllRoutesList } from "../../../../ApiClient";
+import { getAllFleetStaffsList } from "../../../../ApiClient";
 import CommonMatTable from "../../../../SharedComponents/CommonMatTable";
 import CreateFleetStaff from "./CreateFleetStaff";
 
 const FleetStaffView = () => {
-  const [routesList, setRoutesList] = useState([]);
-  const [transformedData, setTransformedData] = useState([]);
+  const [fleetStaffsList, setFleetStaffsList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [isAddRoutesModalVisible, setIsAddRoutesModalVisible] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectedFleetStaff, setSelectedFleetStaff] = useState();
   const [refreshTable, setRefreshTable] = useState(false);
 
   useEffect(() => {
     setIsLoading(true);
-    getAllRoutesList()
+    getAllFleetStaffsList()
       .then((res) => {
-        setRoutesList([]);
-        if (res?.data?.routes_data?.length > 0) {
-          setRoutesList(res.data.routes_data);
-          const transformed = transformData(res.data.routes_data);
-          setTransformedData(transformed);
+        setFleetStaffsList([]);
+        if (res?.data?.staff_data?.length > 0) {
+          setFleetStaffsList(res.data.staff_data);
         }
         setTimeout(() => {
           setIsLoading(false);
@@ -31,31 +29,8 @@ const FleetStaffView = () => {
       });
   }, [refreshTable]);
 
-  // Transformation logic
-  const transformData = (data) => {
-    const groupedRoutes = data.reduce((acc, item) => {
-      const { route_name, stop_point_name, route_charge } = item;
-
-      if (!acc[route_name]) {
-        acc[route_name] = {
-          route_name,
-          stop_points: [],
-        };
-      }
-
-      acc[route_name].stop_points.push({ stop_point_name, route_charge });
-
-      return acc;
-    }, {});
-
-    return {
-      start_point_name: data[0]?.start_point_name || "Unknown",
-      route_stop_info: Object.values(groupedRoutes),
-    };
-  };
-
   const handleClose = (isSubmit) => {
-    setIsAddRoutesModalVisible(false);
+    setIsModalVisible(false);
     if (isSubmit) {
       setTimeout(() => {
         setRefreshTable(!refreshTable);
@@ -66,11 +41,14 @@ const FleetStaffView = () => {
   // Columns definition
   const columns = useMemo(
     () => [
-      { accessorKey: "route_name", header: "Route name" },
-      { accessorKey: "start_point_name", header: "Start point name" },
-      { accessorKey: "stop_point_name", header: "Stop point name" },
-      { accessorKey: "stop_order", header: "Stop order" },
-      { accessorKey: "route_charge", header: "Route charge" },
+      { accessorKey: "staff_name", header: "Staff name" },
+      { accessorKey: "employee_id", header: "Employee id" },
+      { accessorKey: "staff_role", header: "Staff role" },
+      { accessorKey: "gender", header: "Gender" },
+      { accessorKey: "date_of_birth", header: "Date of birth" },
+      { accessorKey: "phone_number", header: "Phone number" },
+      { accessorKey: "license_number", header: "License number" },
+      { accessorKey: "license_expiry_date", header: "License expiry date" },
     ],
     []
   );
@@ -87,10 +65,7 @@ const FleetStaffView = () => {
           justifyContent: "end",
         }}
       >
-        <Button
-          variant="contained"
-          onClick={() => setIsAddRoutesModalVisible(true)}
-        >
+        <Button variant="contained" onClick={() => setIsModalVisible(true)}>
           Create Fleet Staff
         </Button>
       </Box>
@@ -104,16 +79,16 @@ const FleetStaffView = () => {
       <CommonMatTable
         columns={columns}
         isLoading={isLoading}
-        data={routesList || []}
+        data={fleetStaffsList || []}
         renderTopToolbar={() => (
           <h1 style={{ fontSize: 18, marginTop: 10 }}>Fleet Staff</h1>
         )}
       />
-      {isAddRoutesModalVisible && (
+      {isModalVisible && (
         <CreateFleetStaff
-          isOpen={isAddRoutesModalVisible}
+          isOpen={isModalVisible}
           handleClose={handleClose}
-          initialData={transformedData}
+          initialData={selectedFleetStaff}
         />
       )}
     </>

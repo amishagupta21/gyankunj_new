@@ -1,26 +1,24 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { Box, Button } from "@mui/material";
-import { getAllRoutesList, getAllVehicleTypes } from "../../../../ApiClient";
+import { getAllVehiclesList, getAllVehicleTypes } from "../../../../ApiClient";
 import CommonMatTable from "../../../../SharedComponents/CommonMatTable";
 import CreateVehicle from "./CreateVehicle";
 
 const VehiclesView = () => {
-  const [routesList, setRoutesList] = useState([]);
-  const [transformedData, setTransformedData] = useState([]);
+  const [vehiclesList, setVehiclesList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [isAddRoutesModalVisible, setIsAddRoutesModalVisible] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const [refreshTable, setRefreshTable] = useState(false);
   const [vehicleTypes, setVehicleTypes] = useState();
+  const [selectedVehicle, setSelectedVehicle] = useState();
 
   useEffect(() => {
     setIsLoading(true);
-    getAllRoutesList()
+    getAllVehiclesList()
       .then((res) => {
-        setRoutesList([]);
-        if (res?.data?.routes_data?.length > 0) {
-          setRoutesList(res.data.routes_data);
-          const transformed = transformData(res.data.routes_data);
-          setTransformedData(transformed);
+        setVehiclesList([]);
+        if (res?.data?.vehicles_data?.length > 0) {
+          setVehiclesList(res.data.vehicles_data);
         }
         setTimeout(() => {
           setIsLoading(false);
@@ -45,31 +43,8 @@ const VehiclesView = () => {
       });
   }, []);
 
-  // Transformation logic
-  const transformData = (data) => {
-    const groupedRoutes = data.reduce((acc, item) => {
-      const { route_name, stop_point_name, route_charge } = item;
-
-      if (!acc[route_name]) {
-        acc[route_name] = {
-          route_name,
-          stop_points: [],
-        };
-      }
-
-      acc[route_name].stop_points.push({ stop_point_name, route_charge });
-
-      return acc;
-    }, {});
-
-    return {
-      start_point_name: data[0]?.start_point_name || "Unknown",
-      route_stop_info: Object.values(groupedRoutes),
-    };
-  };
-
   const handleClose = (isSubmit) => {
-    setIsAddRoutesModalVisible(false);
+    setIsModalVisible(false);
     if (isSubmit) {
       setTimeout(() => {
         setRefreshTable(!refreshTable);
@@ -80,11 +55,12 @@ const VehiclesView = () => {
   // Columns definition
   const columns = useMemo(
     () => [
-      { accessorKey: "route_name", header: "Route name" },
-      { accessorKey: "start_point_name", header: "Start point name" },
-      { accessorKey: "stop_point_name", header: "Stop point name" },
-      { accessorKey: "stop_order", header: "Stop order" },
-      { accessorKey: "route_charge", header: "Route charge" },
+      { accessorKey: "vehicle_owner", header: "Vehicle owner" },
+      { accessorKey: "vehicle_type", header: "Vehicle type" },
+      { accessorKey: "vehicle_registration_number", header: "Registration number" },
+      { accessorKey: "manufacturing_date", header: "Manufacturing date" },
+      { accessorKey: "insurance_expiry_date", header: "Insurance expiry date" },
+      { accessorKey: "pollution_expiry_date", header: "Pollution expiry date" },
     ],
     []
   );
@@ -103,7 +79,7 @@ const VehiclesView = () => {
       >
         <Button
           variant="contained"
-          onClick={() => setIsAddRoutesModalVisible(true)}
+          onClick={() => setIsModalVisible(true)}
         >
           Create Vehicle
         </Button>
@@ -118,17 +94,17 @@ const VehiclesView = () => {
       <CommonMatTable
         columns={columns}
         isLoading={isLoading}
-        data={routesList || []}
+        data={vehiclesList || []}
         renderTopToolbar={() => (
           <h1 style={{ fontSize: 18, marginTop: 10 }}>Vehicles</h1>
         )}
       />
-      {isAddRoutesModalVisible && (
+      {isModalVisible && (
         <CreateVehicle
-          isOpen={isAddRoutesModalVisible}
+          isOpen={isModalVisible}
           handleClose={handleClose}
           vehicleTypes={vehicleTypes}
-          initialData={transformedData}
+          initialData={selectedVehicle}
         />
       )}
     </>

@@ -368,9 +368,18 @@ const updateVehicles = (payload) => {
   return apiInstance.post(`/create_vehicles`, payload);
 };
 
+const getAllVehiclesList = () => {
+  return apiInstance.get(`/fetch_all_vehicles`);
+};
+
 const updateFleetStaff = (payload) => {
   return apiInstance.post(`/create_fleet_staff`, payload);
 };
+
+const getAllFleetStaffsList = () => {
+  return apiInstance.get(`/fetch_all_fleet_staffs`);
+};
+
 
 export {
   //loginUser,
@@ -445,5 +454,7 @@ export {
   updateTransportRoutes,
   getAllVehicleTypes,
   updateVehicles,
-  updateFleetStaff
+  updateFleetStaff,
+  getAllVehiclesList,
+  getAllFleetStaffsList
 };
