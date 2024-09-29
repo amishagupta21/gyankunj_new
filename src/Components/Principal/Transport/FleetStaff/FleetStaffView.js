@@ -1,14 +1,17 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { Box, Button } from "@mui/material";
+import { Box, Button, IconButton, Menu, MenuItem } from "@mui/material";
 import { getAllFleetStaffsList } from "../../../../ApiClient";
 import CommonMatTable from "../../../../SharedComponents/CommonMatTable";
 import CreateFleetStaff from "./CreateFleetStaff";
+import { Delete, Edit, MoreVert } from "@mui/icons-material";
 
 const FleetStaffView = () => {
   const [fleetStaffsList, setFleetStaffsList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedFleetStaff, setSelectedFleetStaff] = useState();
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [menuRowId, setMenuRowId] = useState(null);
   const [refreshTable, setRefreshTable] = useState(false);
 
   useEffect(() => {
@@ -29,8 +32,30 @@ const FleetStaffView = () => {
       });
   }, [refreshTable]);
 
+  const handleEdit = (rowData) => {
+    setSelectedFleetStaff(rowData);
+    setIsModalVisible(true);
+    handleMenuClose();
+  };
+
+  const handleDelete = (rowData) => {
+    setSelectedFleetStaff(rowData);
+    handleMenuClose();
+  };
+
+  const handleMenuOpen = (event, rowId) => {
+    setAnchorEl(event.currentTarget);
+    setMenuRowId(rowId);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+    setMenuRowId(null);
+  };
+
   const handleClose = (isSubmit) => {
     setIsModalVisible(false);
+    setSelectedFleetStaff(null);
     if (isSubmit) {
       setTimeout(() => {
         setRefreshTable(!refreshTable);
@@ -41,7 +66,36 @@ const FleetStaffView = () => {
   // Columns definition
   const columns = useMemo(
     () => [
-      { accessorKey: "staff_name", header: "Staff name" },
+      {
+        accessorKey: "staff_name",
+        header: "Staff name",
+        Cell: ({ row }) => (
+          <div className="align-items-center d-flex justify-content-between">
+            <div className="text-truncate">{row.original.staff_name}</div>
+            <IconButton
+              onClick={(event) => handleMenuOpen(event, row.original.staff_id)}
+            >
+              <MoreVert />
+            </IconButton>
+            <Menu
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl) && menuRowId === row.original.staff_id}
+              onClose={handleMenuClose}
+            >
+              <MenuItem onClick={() => handleEdit(row.original)}>
+                <Edit fontSize="small" sx={{ marginRight: 1 }} /> Edit
+              </MenuItem>
+              <MenuItem
+                className="disabled"
+                onClick={() => handleDelete(row.original)}
+              >
+                <Delete fontSize="small" sx={{ marginRight: 1 }} /> Delete
+              </MenuItem>
+            </Menu>
+          </div>
+        ),
+        size: 50,
+      },
       { accessorKey: "employee_id", header: "Employee id" },
       { accessorKey: "staff_role", header: "Staff role" },
       { accessorKey: "gender", header: "Gender" },
@@ -50,7 +104,7 @@ const FleetStaffView = () => {
       { accessorKey: "license_number", header: "License number" },
       { accessorKey: "license_expiry_date", header: "License expiry date" },
     ],
-    []
+    [anchorEl, menuRowId]
   );
 
   // Custom JSX element for the top toolbar

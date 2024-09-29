@@ -16,7 +16,7 @@ import {
   FormControl,
   InputLabel,
 } from "@mui/material";
-import { updateTransportRoutes, updateVehicles } from "../../../../ApiClient";
+import { updateVehicles } from "../../../../ApiClient";
 import dayjs from "dayjs";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -56,7 +56,7 @@ const CreateVehicle = ({ isOpen, handleClose, vehicleTypes = [], initialData = n
 
   useEffect(() => {
     if (initialData) {
-      //reset(initialData); // Populate form with existing data
+      reset(initialData);
     }
   }, [initialData, reset]);
 
@@ -93,7 +93,7 @@ const CreateVehicle = ({ isOpen, handleClose, vehicleTypes = [], initialData = n
         scroll="paper"
       >
         <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
-          Create Vehicle
+          {initialData?.vehicle_id?'Edit': 'Create'} Vehicle
         </DialogTitle>
         <IconButton
           aria-label="close"

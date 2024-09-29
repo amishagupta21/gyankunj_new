@@ -70,7 +70,7 @@ const CreateFleetStaff = ({ isOpen, handleClose, initialData = null }) => {
 
   useEffect(() => {
     if (initialData) {
-      //reset(initialData); // Populate form with existing data
+      reset(initialData);
     }
   }, [initialData, reset]);
 
@@ -107,7 +107,7 @@ const CreateFleetStaff = ({ isOpen, handleClose, initialData = null }) => {
         scroll="paper"
       >
         <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
-          Create Fleet Staff
+        {initialData?.staff_id?'Edit': 'Create'} Fleet Staff
         </DialogTitle>
         <IconButton
           aria-label="close"
