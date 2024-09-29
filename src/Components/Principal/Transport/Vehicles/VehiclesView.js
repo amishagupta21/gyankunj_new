@@ -1,8 +1,9 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { Box, Button } from "@mui/material";
+import { Box, Button, IconButton, Menu, MenuItem } from "@mui/material";
 import { getAllVehiclesList, getAllVehicleTypes } from "../../../../ApiClient";
 import CommonMatTable from "../../../../SharedComponents/CommonMatTable";
 import CreateVehicle from "./CreateVehicle";
+import { Delete, Edit, MoreVert } from "@mui/icons-material";
 
 const VehiclesView = () => {
   const [vehiclesList, setVehiclesList] = useState([]);
@@ -11,6 +12,8 @@ const VehiclesView = () => {
   const [refreshTable, setRefreshTable] = useState(false);
   const [vehicleTypes, setVehicleTypes] = useState();
   const [selectedVehicle, setSelectedVehicle] = useState();
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [menuRowId, setMenuRowId] = useState(null);
 
   useEffect(() => {
     setIsLoading(true);
@@ -43,8 +46,30 @@ const VehiclesView = () => {
       });
   }, []);
 
+  const handleEdit = (rowData) => {
+    setSelectedVehicle(rowData);
+    setIsModalVisible(true);
+    handleMenuClose();
+  };
+
+  const handleDelete = (rowData) => {
+    setSelectedVehicle(rowData);
+    handleMenuClose();
+  };
+
+  const handleMenuOpen = (event, rowId) => {
+    setAnchorEl(event.currentTarget);
+    setMenuRowId(rowId);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+    setMenuRowId(null);
+  };
+
   const handleClose = (isSubmit) => {
     setIsModalVisible(false);
+    setSelectedVehicle(null);
     if (isSubmit) {
       setTimeout(() => {
         setRefreshTable(!refreshTable);
@@ -55,14 +80,48 @@ const VehiclesView = () => {
   // Columns definition
   const columns = useMemo(
     () => [
-      { accessorKey: "vehicle_owner", header: "Vehicle owner" },
+      {
+        accessorKey: "vehicle_owner",
+        header: "Vehicle owner",
+        Cell: ({ row }) => (
+          <div className="align-items-center d-flex justify-content-between">
+            <div className="text-truncate">{row.original.vehicle_owner}</div>
+            <IconButton
+              onClick={(event) =>
+                handleMenuOpen(event, row.original.vehicle_id)
+              }
+            >
+              <MoreVert />
+            </IconButton>
+            <Menu
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl) && menuRowId === row.original.vehicle_id}
+              onClose={handleMenuClose}
+            >
+              <MenuItem onClick={() => handleEdit(row.original)}>
+                <Edit fontSize="small" sx={{ marginRight: 1 }} /> Edit
+              </MenuItem>
+              <MenuItem
+                className="disabled"
+                onClick={() => handleDelete(row.original)}
+              >
+                <Delete fontSize="small" sx={{ marginRight: 1 }} /> Delete
+              </MenuItem>
+            </Menu>
+          </div>
+        ),
+        size: 50,
+      },
       { accessorKey: "vehicle_type", header: "Vehicle type" },
-      { accessorKey: "vehicle_registration_number", header: "Registration number" },
+      {
+        accessorKey: "vehicle_registration_number",
+        header: "Registration number",
+      },
       { accessorKey: "manufacturing_date", header: "Manufacturing date" },
       { accessorKey: "insurance_expiry_date", header: "Insurance expiry date" },
       { accessorKey: "pollution_expiry_date", header: "Pollution expiry date" },
     ],
-    []
+    [anchorEl, menuRowId]
   );
 
   // Custom JSX element for the top toolbar
@@ -77,10 +136,7 @@ const VehiclesView = () => {
           justifyContent: "end",
         }}
       >
-        <Button
-          variant="contained"
-          onClick={() => setIsModalVisible(true)}
-        >
+        <Button variant="contained" onClick={() => setIsModalVisible(true)}>
           Create Vehicle
         </Button>
       </Box>
