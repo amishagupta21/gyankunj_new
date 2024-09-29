@@ -380,6 +380,18 @@ const getAllFleetStaffsList = () => {
   return apiInstance.get(`/fetch_all_fleet_staffs`);
 };
 
+const updateMapping = (payload) => {
+  return apiInstance.post(`/create_vehicle_route_staff_mapping`, payload);
+};
+
+const getAllMappingsList = () => {
+  return apiInstance.get(`/fetch_vehicle_route_staff_mappings`);
+};
+
+const getAllMappingsMetadata = () => {
+  return apiInstance.get(`/fetch_vehicle_route_staff_metadata`);
+};
+
 
 export {
   //loginUser,
@@ -456,5 +468,8 @@ export {
   updateVehicles,
   updateFleetStaff,
   getAllVehiclesList,
-  getAllFleetStaffsList
+  getAllFleetStaffsList,
+  updateMapping,
+  getAllMappingsList,
+  getAllMappingsMetadata
 };
