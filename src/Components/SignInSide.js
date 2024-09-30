@@ -57,7 +57,7 @@ export default function SignInSide(props) {
     }
 
     const base64 = require("base-64");
-    const url = "http://13.200.112.20:5005/login";
+    const url = "http://3.6.167.80:5005/login";
     const headers = new Headers();
     headers.set(
       "Authorization",
