@@ -251,7 +251,7 @@ const AssignmentSheet = (props) => {
     const accessToken =
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdWJsaWNfaWQiOiI0ODJjOTgxNS1iOWQ0LTRlNGYtOGJiNi0zOTRjODUyZDM1NWUiLCJleHAiOjI2NTMxMzc2MDV9.JPYYukYqWOulGx_JBHehSzKMpFalemeBxJsL6jDkWjA"; // Replace 'your-access-token' with the actual access token
 
-    fetch("http://13.200.112.20:5005/submit_assignment", {
+    fetch("http://3.6.167.80:5005/submit_assignment", {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
