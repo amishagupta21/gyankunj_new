@@ -259,7 +259,6 @@ const CustomMasterRoutine = () => {
                   <td className="fw-bold text-center" style={{ fontSize: 14 }}>
                   <div>
                       {gradeItem.grade}
-                      {gradeItem.grade_id}
                       {gradeItem.section_list?.length > 1 && (
                         <FormControl fullWidth sx={{ marginTop: 1 }}>
                           <InputLabel>Section</InputLabel>
@@ -290,7 +289,7 @@ const CustomMasterRoutine = () => {
                     </div>
                   </td>
                   {periodData.map((item) => {
-                   const routines = masterRoutineData[item.period] || [];
+                   const routines = masterRoutineData[item.period_id] || [];
                    const selectedSectionId = selectedSectionByGrade[gradeItem.grade_id] || gradeItem.section_list[0]?.section_id;
                    const routine = routines.find(
                      (r) =>
@@ -301,14 +300,14 @@ const CustomMasterRoutine = () => {
                     console.log(gradeItem.grade_id, selectedSectionId)
                     if (routine) {
                       return (
-                        <td className="p-0" key={item.period}>
+                        <td className="p-0" key={item.period_id}>
                           <div
                             className="p-1 rounded text-center text-white cell selected-cell"
                             onClick={() =>
                               handleClickOpen(
                                 routine,
                                 gradeItem.section_list,
-                                item.period
+                                item.period_id
                               )
                             }
                           >
@@ -328,10 +327,10 @@ const CustomMasterRoutine = () => {
                       );
                     } else {
                       return (
-                        <td className="p-0" key={item.period}>
+                        <td className="p-0" key={item.period_id}>
                           <div
                             className={`text-center cell ${
-                              item.period !== "Break" ? "empty-cell" : ""
+                              item.period_id !== "Break" ? "empty-cell" : ""
                             }`}
                             onClick={() =>
                               handleClickOpen(
@@ -341,7 +340,7 @@ const CustomMasterRoutine = () => {
                                   day_id: dayFilter,
                                 },
                                 gradeItem.section_list,
-                                item.period
+                                item.period_id
                               )
                             }
                           ></div>

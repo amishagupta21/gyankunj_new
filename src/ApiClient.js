@@ -392,6 +392,11 @@ const getAllMappingsMetadata = () => {
   return apiInstance.get(`/fetch_vehicle_route_staff_metadata`);
 };
 
+const getAllHrmsDashboardData = () => {
+  return apiInstance.get(`/fetch_hrms_data`);
+};
+
+
 
 export {
   //loginUser,
@@ -471,5 +476,6 @@ export {
   getAllFleetStaffsList,
   updateMapping,
   getAllMappingsList,
-  getAllMappingsMetadata
+  getAllMappingsMetadata,
+  getAllHrmsDashboardData
 };
