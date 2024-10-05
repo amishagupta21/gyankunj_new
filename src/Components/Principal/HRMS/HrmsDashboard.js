@@ -71,6 +71,14 @@ const HrmsDashboard = () => {
       { month: "january", on_time: 180, late_arrival: 10, absent: 10 },
       { month: "february", on_time: 170, late_arrival: 10, absent: 20 },
       { month: "march", on_time: 160, late_arrival: 10, absent: 30 },
+      { month: "april", on_time: 150, late_arrival: 30, absent: 50 },
+      { month: "may", on_time: 120, late_arrival: 60, absent: 20 },
+      { month: "june", on_time: 160, late_arrival: 10, absent: 30 },
+      { month: "july", on_time: 160, late_arrival: 10, absent: 30 },
+      { month: "august", on_time: 160, late_arrival: 10, absent: 30 },
+      { month: "october", on_time: 160, late_arrival: 10, absent: 30 },
+      { month: "november", on_time: 160, late_arrival: 10, absent: 30 },
+      { month: "december", on_time: 160, late_arrival: 10, absent: 30 },
     ],
     news_and_events: [
       { date: "2012-01-01", title: "News 1", description: "This is a news 1" },
@@ -123,12 +131,10 @@ const HrmsDashboard = () => {
       {/* Header */}
       <Grid container justifyContent="space-between" alignItems="center">
         <Box>
-          <Typography variant="h6" className="text-secondary">
-            Hello {userInfo?.name || "User"}.
+          <Typography variant="h6">
+            <span className="text-secondary">Hello</span> <span className="fw-bold">{getGreeting()}</span>
           </Typography>
-          <Typography variant="h5" className="fw-bold">
-            {getGreeting()}
-          </Typography>
+     
         </Box>
         <Button className="rounded-pill" variant="contained" color="warning">
           + Add Employee
