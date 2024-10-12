@@ -396,6 +396,10 @@ const getAllHrmsDashboardData = () => {
   return apiInstance.get(`/fetch_hrms_data`);
 };
 
+const getAllEmployeesList = () => {
+  return apiInstance.get(`/fetch_employee_data`);
+};
+
 
 
 export {
@@ -477,5 +481,6 @@ export {
   updateMapping,
   getAllMappingsList,
   getAllMappingsMetadata,
-  getAllHrmsDashboardData
+  getAllHrmsDashboardData,
+  getAllEmployeesList
 };

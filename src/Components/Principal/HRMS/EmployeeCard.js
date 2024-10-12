@@ -64,16 +64,17 @@ const EmployeeCard = ({ employee, onAction }) => {
             </Box>
             <Box className="text-center">
               <Typography variant="h6" style={{ fontWeight: "bold" }}>
-                {employee.name}
+                {employee.first_name}{" "}{employee.middle_name}{" "}
+                {employee.last_name}
               </Typography>
               <Typography variant="subtitle2" color="textSecondary">
                 {employee.designation}
               </Typography>
               <Chip
                 className="mt-2 text-white"
-                label={employee.isActive ? "ACTIVE" : "INACTIVE"}
+                label={employee.is_active ? "ACTIVE" : "INACTIVE"}
                 style={{
-                  backgroundColor: employee.isActive ? green[400] : orange[400],
+                  backgroundColor: employee.is_active ? green[400] : orange[400],
                 }}
               />
             </Box>
@@ -88,13 +89,13 @@ const EmployeeCard = ({ employee, onAction }) => {
                 {new Date(employee.doj).toLocaleDateString()}
               </Typography>
               <Typography variant="body2" className="mb-1 fw-bold">
-                <EmailOutlinedIcon className="me-1" /> {employee.email}
+                <EmailOutlinedIcon className="me-1" /> {employee.email??'N/A'}
               </Typography>
               <Typography variant="body2" className="fw-bold">
-                <LocalPhoneOutlinedIcon className="me-1" /> {employee.phone}
+                <LocalPhoneOutlinedIcon className="me-1" /> {employee.phone??'N/A'}
               </Typography>
               <Typography variant="body2" className="fw-bold">
-                <LocationOnOutlinedIcon className="me-1" /> {employee.address}
+                <LocationOnOutlinedIcon className="me-1" /> {employee.address??'N/A'}
               </Typography>
             </Box>
           </CardContent>
