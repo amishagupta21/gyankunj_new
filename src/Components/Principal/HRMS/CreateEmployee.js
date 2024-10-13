@@ -19,7 +19,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
-import { saveLogBook } from "../../../ApiClient";
+import { getAllEmployeesList, saveLogBook } from "../../../ApiClient";
 import { showAlertMessage } from "../../AlertMessage";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -48,15 +48,37 @@ const CreateEmployee = ({ isOpen, handleClose, selectedData = {} }) => {
       setIsEditMode(true);
       const tempSelectedData = {
         ...selectedData,
-        dob: selectedData.dob ? dayjs(selectedData.dob) : null,
-        doj: selectedData.doj ? dayjs(selectedData.doj) : null,
+        dob: selectedData.dob
+          ? dayjs(selectedData.dob)
+          : null,
+        doj: selectedData.doj
+          ? dayjs(selectedData.doj)
+          : null,
       };
       reset(tempSelectedData);
     }
   }, [selectedData, reset]);
 
   const onSubmit = (data) => {
-    saveLogBook(data)
+    debugger;
+    const payload = {
+      employee_data: [
+        {
+          id: data.id || 0,
+          first_name: data.first_name,
+          middle_name: data.middle_name,
+          last_name: data.last_name,
+          dob: dayjs(data.dob).format("YYYY-MM-DD"),
+          phone: data.phone,
+          email: data.email,
+          doj: dayjs(data.doj).format("YYYY-MM-DD"),
+          designation: data.designation,
+          is_active: data.isActive,
+          address: data.address,
+        },
+      ],
+    };
+    getAllEmployeesList(payload)
       .then((res) => {
         setShowAlert(res?.data?.status === "success" ? "success" : "error");
         setTimeout(() => {
@@ -82,23 +104,69 @@ const CreateEmployee = ({ isOpen, handleClose, selectedData = {} }) => {
           <CloseIcon />
         </IconButton>
       </DialogTitle>
-      <form onSubmit={handleSubmit(onSubmit)} style={{ height: "calc(100% - 64px)" }}>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        style={{ height: "calc(100% - 64px)" }}
+      >
         <DialogContent dividers>
           <Grid container spacing={2}>
-            <Grid item xs={12}>
+            <Grid item xs={4}>
               <FormControl fullWidth>
                 <Controller
-                  name="name"
+                  name="first_name"
                   control={control}
-                  rules={{ required: "Name is required" }}
-                  render={({ field, fieldState }) => (
+                  rules={{ required: true }}
+                  render={({
+                    field: { onChange, value },
+                    fieldState: { error },
+                  }) => (
                     <TextField
-                      {...field}
-                      label="Name"
-                      variant="outlined"
-                      error={!!fieldState.error}
-                      helperText={fieldState.error?.message}
+                      error={!!error}
+                      onChange={onChange}
+                      value={value || ""}
                       fullWidth
+                      label="Fisrt Name"
+                      variant="outlined"
+                    />
+                  )}
+                />
+              </FormControl>
+            </Grid>
+            <Grid item xs={4}>
+              <FormControl fullWidth>
+                <Controller
+                  name="middle_name"
+                  control={control}
+                  render={({
+                    field: { onChange, value },
+                    fieldState: { error },
+                  }) => (
+                    <TextField
+                      onChange={onChange}
+                      value={value || ""}
+                      fullWidth
+                      label="Middle Name"
+                      variant="outlined"
+                    />
+                  )}
+                />
+              </FormControl>
+            </Grid>
+            <Grid item xs={4}>
+              <FormControl fullWidth>
+                <Controller
+                  name="last_name"
+                  control={control}
+                  render={({
+                    field: { onChange, value },
+                    fieldState: { error },
+                  }) => (
+                    <TextField
+                      onChange={onChange}
+                      value={value || ""}
+                      fullWidth
+                      label="Last Name"
+                      variant="outlined"
                     />
                   )}
                 />
@@ -109,15 +177,41 @@ const CreateEmployee = ({ isOpen, handleClose, selectedData = {} }) => {
                 <Controller
                   name="dob"
                   control={control}
-                  rules={{ required: "Date of Birth is required" }}
-                  render={({ field, fieldState }) => (
+                  rules={{
+                    required: true,
+                    validate: (value) => {
+                      const selectedDate = dayjs(value);
+                      const today = dayjs();
+                      const age = today.diff(selectedDate, "year");
+                      if (!selectedDate.isValid()) {
+                        return "Invalid date";
+                      }
+                      if (age < 18) {
+                        return "Employee must be at least 18 years old";
+                      }
+                      if (selectedDate.isAfter(today)) {
+                        return "Date of Birth cannot be in the future";
+                      }
+                      return true;
+                    },
+                  }}
+                  render={({
+                    field: { onChange, value },
+                    fieldState: { error },
+                  }) => (
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                       <DatePicker
-                        {...field}
-                        label="Date of Birth"
-                        format="DD-MM-YYYY"
-                        error={!!fieldState.error}
-                        helperText={fieldState.error?.message}
+                        format="YYYY-MM-DD"
+                        label="Date of birth"
+                        value={value || null}
+                        onChange={onChange}
+                        slotProps={{
+                          textField: {
+                            variant: "outlined",
+                            error: !!error,
+                            helperText: error?.message,
+                          },
+                        }}
                       />
                     </LocalizationProvider>
                   )}
@@ -129,21 +223,44 @@ const CreateEmployee = ({ isOpen, handleClose, selectedData = {} }) => {
                 <Controller
                   name="doj"
                   control={control}
-                  rules={{ required: "Date of Joining is required" }}
-                  render={({ field, fieldState }) => (
+                  rules={{
+                    required: true,
+                    validate: (value) => {
+                      const selectedDate = dayjs(value);
+                      const today = dayjs();
+                      if (!selectedDate.isValid()) {
+                        return "Invalid date";
+                      }
+                      if (selectedDate.isAfter(today)) {
+                        return "Date of Joining cannot be in the future";
+                      }
+                      return true;
+                    },
+                  }}
+                  render={({
+                    field: { onChange, value },
+                    fieldState: { error },
+                  }) => (
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                       <DatePicker
-                        {...field}
-                        label="Date of Joining"
-                        format="DD-MM-YYYY"
-                        error={!!fieldState.error}
-                        helperText={fieldState.error?.message}
+                        format="YYYY-MM-DD"
+                        label="Date of joining"
+                        value={value || null}
+                        onChange={onChange}
+                        slotProps={{
+                          textField: {
+                            variant: "outlined",
+                            error: !!error,
+                            helperText: error?.message,
+                          },
+                        }}
                       />
                     </LocalizationProvider>
                   )}
                 />
               </FormControl>
             </Grid>
+
             {/* Phone with Number Validation */}
             <Grid item xs={6}>
               <FormControl fullWidth>
@@ -151,7 +268,7 @@ const CreateEmployee = ({ isOpen, handleClose, selectedData = {} }) => {
                   name="phone"
                   control={control}
                   rules={{
-                    required: "Phone number is required",
+                    required: true,
                     pattern: {
                       value: /^[0-9]{10}$/,
                       message: "Phone number must be 10 digits",
@@ -178,7 +295,7 @@ const CreateEmployee = ({ isOpen, handleClose, selectedData = {} }) => {
                   name="email"
                   control={control}
                   rules={{
-                    required: "Email is required",
+                    required: true,
                     pattern: {
                       value:
                         /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
@@ -204,23 +321,43 @@ const CreateEmployee = ({ isOpen, handleClose, selectedData = {} }) => {
                 <Controller
                   name="designation"
                   control={control}
-                  render={({ field }) => (
-                    <TextField {...field} label="Designation" variant="outlined" fullWidth />
+                  render={({
+                    field: { onChange, value },
+                    fieldState: { error },
+                  }) => (
+                    <TextField
+                      onChange={onChange}
+                      value={value || ""}
+                      fullWidth
+                      label="Designation"
+                      variant="outlined"
+                    />
                   )}
                 />
               </FormControl>
             </Grid>
             <Grid item xs={6}>
-              <FormControlLabel
-                control={
-                  <Controller
-                    name="isActive"
-                    control={control}
-                    render={({ field }) => <Checkbox {...field} checked={field.value} />}
-                  />
-                }
-                label="Active"
-              />
+              <FormControl fullWidth>
+                <FormControlLabel
+                  control={
+                    <Controller
+                      name="isActive"
+                      control={control}
+                      render={({
+                        field: { onChange, value },
+                        fieldState: { error },
+                      }) => (
+                        <Checkbox
+                          onChange={onChange}
+                          checked={!!value}
+                          color="primary"
+                        />
+                      )}
+                    />
+                  }
+                  label="Active"
+                />
+              </FormControl>
             </Grid>
             <Grid item xs={12}>
               <FormControl fullWidth>
@@ -228,7 +365,14 @@ const CreateEmployee = ({ isOpen, handleClose, selectedData = {} }) => {
                   name="address"
                   control={control}
                   render={({ field }) => (
-                    <TextField {...field} label="Address" variant="outlined" multiline rows={4} />
+                    <TextField
+                      {...field}
+                      label="Address"
+                      variant="outlined"
+                      multiline
+                      rows={4}
+                      fullWidth
+                    />
                   )}
                 />
               </FormControl>

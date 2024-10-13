@@ -133,7 +133,7 @@ const HrmsDashboard = () => {
 
   // Handlers for each card click event
   const handleTotalEmployeesClick = () => {
-    navigate("/principalDashboard/hrmsPortal/employeeView");
+    navigate('/principalDashboard/hrmsPortal/employeeView?activeView=all');
   };  
 
   const handleOnLeaveClick = () => {
@@ -141,7 +141,7 @@ const HrmsDashboard = () => {
   };
 
   const handleNewJoineeClick = () => {
-    alert("You clicked New Joinee Card!"); // Perform an action for "New Joinee"
+    navigate('/principalDashboard/hrmsPortal/employeeView?activeView=new');
   };
 
   const handleHappinessRateClick = () => {

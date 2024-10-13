@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useMemo, useCallback } from "react";
 import EmployeeCard from "./EmployeeCard";
-import { Button, Grid, ToggleButton, ToggleButtonGroup } from "@mui/material";
+import { Box, Button, CircularProgress, Grid, ToggleButton, ToggleButtonGroup } from "@mui/material";
 import BackButton from "../../../SharedComponents/BackButton";
 import CreateEmployee from "./CreateEmployee";
 import { getAllEmployeesList } from "../../../ApiClient";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const EmployeeList = () => {
   const [isAddEmployeeModalVisible, setIsAddEmployeeModalVisible] = useState(false);
@@ -11,142 +12,36 @@ const EmployeeList = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedEmployeeDetails, setSelectedEmployeeDetails] = useState(null);
   const [selectedFilter, setSelectedFilter] = useState("all");
-  const [employees, setEmployees] = useState([
-    {
-        "id": "Teacher_06",
-        "first_name": "Devanshu",
-        "middle_name": "kumar",
-        "last_name": "Shekhar",
-        "dob": "1990-04-01",
-        "phone": null,
-        "email": null,
-        "doj": "2024-10-01",
-        "designation": "Teacher",
-        "is_active": true,
-        "address": null
-    },
-    {
-        "id": "Teacher_01",
-        "first_name": "Sourabh",
-        "middle_name": "",
-        "last_name": "sen",
-        "dob": "1990-04-01",
-        "phone": null,
-        "email": null,
-        "doj": "2024-04-01",
-        "designation": "Teacher",
-        "is_active": true,
-        "address": null
-    },
-    {
-        "id": "Teacher_02",
-        "first_name": "Anup",
-        "middle_name": "",
-        "last_name": "Srivastav",
-        "dob": "1990-04-01",
-        "phone": null,
-        "email": null,
-        "doj": "2024-04-01",
-        "designation": "Teacher",
-        "is_active": true,
-        "address": null
-    },
-    {
-        "id": "Teacher_03",
-        "first_name": "Aakash",
-        "middle_name": "",
-        "last_name": "shrama",
-        "dob": "1990-04-01",
-        "phone": null,
-        "email": null,
-        "doj": "2024-04-01",
-        "designation": "Teacher",
-        "is_active": true,
-        "address": null
-    },
-    {
-        "id": "Teacher_04",
-        "first_name": "Pragya",
-        "middle_name": "",
-        "last_name": "bharti",
-        "dob": "1990-04-01",
-        "phone": null,
-        "email": null,
-        "doj": "2024-04-01",
-        "designation": "Teacher",
-        "is_active": true,
-        "address": null
-    },
-    {
-        "id": "Teacher_05",
-        "first_name": "Puja",
-        "middle_name": "",
-        "last_name": "kumari",
-        "dob": "1990-04-01",
-        "phone": null,
-        "email": null,
-        "doj": "2024-04-01",
-        "designation": "Teacher",
-        "is_active": true,
-        "address": null
-    },
-    {
-        "id": "Teacher_07",
-        "first_name": "Chanchal",
-        "middle_name": "",
-        "last_name": "sen",
-        "dob": "1990-04-01",
-        "phone": null,
-        "email": null,
-        "doj": "2024-04-01",
-        "designation": "Teacher",
-        "is_active": true,
-        "address": null
-    },
-    {
-        "id": "Teacher_08",
-        "first_name": "Miraya",
-        "middle_name": "",
-        "last_name": "shahay",
-        "dob": "1990-04-01",
-        "phone": null,
-        "email": null,
-        "doj": "2024-04-01",
-        "designation": "Teacher",
-        "is_active": false,
-        "address": null
-    },
-    {
-        "id": "Teacher_09",
-        "first_name": "Vaishnavi",
-        "middle_name": "",
-        "last_name": "mishra",
-        "dob": "1990-04-01",
-        "phone": null,
-        "email": null,
-        "doj": "2024-04-01",
-        "designation": "Teacher",
-        "is_active": true,
-        "address": null
-    }
-]);
+  const [employees, setEmployees] = useState([]);
+
+  const navigate = useNavigate();
+  const location = useLocation();
 
   // Fetching employees list with async/await for better readability
-  // useEffect(() => {
-  //   const fetchEmployees = async () => {
-  //     setIsLoading(true);
-  //     try {
-  //       const res = await getAllEmployeesList();
-  //       const employeeData = res?.data?.employee_data || [];
-  //       setEmployees(employeeData);
-  //     } catch (err) {
-  //       console.error(err);
-  //     } finally {
-  //       setIsLoading(false);
-  //     }
-  //   };
-  //   fetchEmployees();
-  // }, [refreshView]);
+  useEffect(() => {
+    const fetchEmployees = async () => {
+      setIsLoading(true);
+      try {
+        const res = await getAllEmployeesList({
+          employee_ids: []
+        });
+        const employeeData = res?.data?.employee_data || [];
+        setEmployees(employeeData);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchEmployees();
+  }, [refreshView]);
+
+  // Update selected filter based on URL query params
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const activeView = queryParams.get("activeView") || "all";
+    setSelectedFilter(activeView);
+  }, [location.search]);
 
   // Handling action with useCallback to prevent unnecessary re-renders
   const handleAction = useCallback((data, action) => {
@@ -163,6 +58,13 @@ const EmployeeList = () => {
       // Debounce the refresh to avoid excessive rerenders
       setTimeout(() => setRefreshView((prev) => !prev), 500);
     }
+  };
+
+  // Handle filter change and update URL
+  const handleFilterChange = (event, status) => {
+    const filter = status || "all";
+    setSelectedFilter(filter);
+    navigate(`?activeView=${filter}`, { replace: true });
   };
 
   // Filtering employees based on selected filter using useMemo
@@ -193,7 +95,7 @@ const EmployeeList = () => {
           color="primary"
           value={selectedFilter}
           exclusive
-          onChange={(event, status) => setSelectedFilter(status || "all")}
+          onChange={handleFilterChange}
           aria-label="Employee Filter"
         >
           <ToggleButton value="all">All</ToggleButton>
@@ -212,15 +114,19 @@ const EmployeeList = () => {
       </Grid>
       <Grid container spacing={3} mt={1}>
         {isLoading ? (
-          <p>Loading...</p>
+          <Box className="d-flex justify-content-center align-items-center w-100 mt-5">
+            <CircularProgress />
+          </Box>
         ) : (
-          filteredEmployees.map((employee) => (
-            <EmployeeCard
-              key={employee.id}
-              employee={employee}
-              onAction={handleAction}
-            />
-          ))
+          filteredEmployees && filteredEmployees.length > 0 ?
+            filteredEmployees.map((employee) => (
+              <EmployeeCard
+                key={employee.id}
+                employee={employee}
+                onAction={handleAction}
+              />
+            ))
+          : <Box className="d-flex w-100 justify-content-around mt-5 text-center text-danger">No data available</Box>
         )}
       </Grid>
       {isAddEmployeeModalVisible && (
