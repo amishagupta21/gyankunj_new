@@ -13,8 +13,7 @@ import GroupAddOutlinedIcon from "@mui/icons-material/GroupAddOutlined";
 import ArticleOutlinedIcon from "@mui/icons-material/ArticleOutlined";
 import GroupOutlinedIcon from "@mui/icons-material/GroupOutlined";
 import { getAllHrmsDashboardData } from "../../../ApiClient";
-import EmployeeList from "./EmployeeList";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 // Reusable card component for stats
 const StatCard = ({ title, value, icon, bgColor, onClick }) => (
@@ -49,16 +48,20 @@ const StatCard = ({ title, value, icon, bgColor, onClick }) => (
 
 const HrmsDashboard = () => {
   const navigate = useNavigate();
-  const userInfo = JSON.parse(localStorage.getItem("UserData"));
-  const [hrmsMetadata, setHrmsMetadata] = useState();
-  const [isEmployeeView, setIsEmployeeView] = useState(false);
+  const [hrmsMetadata, setHrmsMetadata] = useState({
+    total_count: 0,
+    present: 0,
+    on_leave: [],
+    new_joinee: [],
+    attendance_overview: [],
+    news_and_events: [],
+  });
 
   useEffect(() => {
     getAllHrmsDashboardData()
       .then((res) => {
-        setHrmsMetadata([]);
-        if (res?.data?.hrms_data?.length > 0) {
-          setHrmsMetadata(res.data.staffs_data);
+        if (res?.data && Object.keys(res.data).length > 0) {
+          setHrmsMetadata(res.data);
         }
       })
       .catch((err) => {
@@ -66,44 +69,19 @@ const HrmsDashboard = () => {
       });
   }, []);
 
-  // Sample JSON data for props
-  const data = {
-    total_count: 200,
-    present: 188,
-    on_leave: ["EMP_1", "EMP_2"],
-    new_joinee: ["EMP_4", "EMP_5"],
-    attendance_overview: [
-      { month: "january", on_time: 180, late_arrival: 10, absent: 10 },
-      { month: "february", on_time: 170, late_arrival: 10, absent: 20 },
-      { month: "march", on_time: 160, late_arrival: 10, absent: 30 },
-      { month: "april", on_time: 150, late_arrival: 30, absent: 50 },
-      { month: "may", on_time: 120, late_arrival: 60, absent: 20 },
-      { month: "june", on_time: 160, late_arrival: 10, absent: 30 },
-      { month: "july", on_time: 160, late_arrival: 10, absent: 30 },
-      { month: "august", on_time: 160, late_arrival: 10, absent: 30 },
-      { month: "october", on_time: 160, late_arrival: 10, absent: 30 },
-      { month: "november", on_time: 160, late_arrival: 10, absent: 30 },
-      { month: "december", on_time: 160, late_arrival: 10, absent: 30 },
-    ],
-    news_and_events: [
-      { date: "2012-01-01", title: "News 1", description: "This is a news 1" },
-      { date: "2024-02-05", title: "News 2", description: "This is a news 2" },
-      { date: "2023-05-10", title: "News 3", description: "This is a news 3" },
-    ],
-  };
-
   const {
     total_count,
     present,
-    on_leave,
-    new_joinee,
-    attendance_overview,
-    news_and_events,
-  } = data;
-  const happiness_rate = ((present / total_count) * 100).toFixed(0);
+    on_leave = [],
+    new_joinee = [],
+    attendance_overview = [],
+    news_and_events = [],
+  } = hrmsMetadata;
+
+  const happiness_rate = total_count > 0 ? ((present / total_count) * 100).toFixed(0) : 0;
 
   // Attendance chart data
-  const attendanceData = {
+  const attendanceData = attendance_overview.length > 0 ? {
     labels: attendance_overview.map((item) => item.month),
     datasets: [
       {
@@ -122,7 +100,7 @@ const HrmsDashboard = () => {
         backgroundColor: "red",
       },
     ],
-  };
+  } : null;
 
   const getGreeting = () => {
     const currentHour = new Date().getHours();
@@ -134,7 +112,7 @@ const HrmsDashboard = () => {
   // Handlers for each card click event
   const handleTotalEmployeesClick = () => {
     navigate('/principalDashboard/hrmsPortal/employeeView?activeView=all');
-  };  
+  };
 
   const handleOnLeaveClick = () => {
     alert("You clicked On Leave Card!"); // Perform an action for "On Leave"
@@ -149,75 +127,75 @@ const HrmsDashboard = () => {
   };
 
   return (
-    <>
-      <Box>
-        {/* Header */}
-        <Grid container justifyContent="space-between" alignItems="center">
-          <Box>
-            <Typography variant="h6">
-              <span className="text-secondary">Hello</span>{" "}
-              <span className="fw-bold">{getGreeting()}</span>
+    <Box>
+      {/* Header */}
+      <Grid container justifyContent="space-between" alignItems="center">
+        <Box>
+          <Typography variant="h6">
+            <span className="text-secondary">Hello</span>{" "}
+            <span className="fw-bold">{getGreeting()}</span>
+          </Typography>
+        </Box>
+        {/* <Button className="rounded-pill" variant="contained" color="warning">
+          + Add Employee
+        </Button> */}
+      </Grid>
+
+      {/* Stat Cards */}
+      <Grid container spacing={3} mt={3}>
+        <StatCard
+          title="Total Employees"
+          value={total_count || 0}
+          icon={<GroupOutlinedIcon />}
+          bgColor="#bfa7fb"
+          onClick={handleTotalEmployeesClick}
+        />
+        <StatCard
+          title="On Leave"
+          value={`${on_leave.length}/${total_count}`}
+          icon={<ArticleOutlinedIcon />}
+          bgColor="#f2bdab"
+          onClick={handleOnLeaveClick}
+        />
+        <StatCard
+          title="New Joinee"
+          value={`${new_joinee.length}/${total_count}`}
+          icon={<GroupAddOutlinedIcon />}
+          bgColor="#70938e"
+          onClick={handleNewJoineeClick}
+        />
+        <StatCard
+          title="Happiness Rate"
+          value={`${happiness_rate}%`}
+          icon={<SentimentSatisfiedAltOutlinedIcon />}
+          bgColor="#c39857"
+          onClick={handleHappinessRateClick}
+        />
+      </Grid>
+
+      {/* Attendance Overview and News & Events */}
+      <Grid container spacing={3} mt={5}>
+        {/* Attendance Overview */}
+        <Grid item xs={12} md={6}>
+          <Card className="rounded-4 shaped p-3">
+            <Typography variant="h6" mb={2} className="fw-bold">
+              Attendance Overview
             </Typography>
-          </Box>
-          <Button className="rounded-pill" variant="contained" color="warning">
-            + Add Employee
-          </Button>
+            <CardContent>
+              {attendanceData ? <Bar data={attendanceData} /> : <Typography>No attendance data available</Typography>}
+            </CardContent>
+          </Card>
         </Grid>
 
-        {/* Stat Cards */}
-        <Grid container spacing={3} mt={3}>
-          <StatCard
-            title="Total Employees"
-            value={total_count}
-            icon={<GroupOutlinedIcon />}
-            bgColor="#bfa7fb"
-            onClick={handleTotalEmployeesClick}
-          />
-          <StatCard
-            title="On Leave"
-            value={`${on_leave.length}/${total_count}`}
-            icon={<ArticleOutlinedIcon />}
-            bgColor="#f2bdab"
-            onClick={handleOnLeaveClick}
-          />
-          <StatCard
-            title="New Joinee"
-            value={`${new_joinee.length}/${total_count}`}
-            icon={<GroupAddOutlinedIcon />}
-            bgColor="#70938e"
-            onClick={handleNewJoineeClick}
-          />
-          <StatCard
-            title="Happiness Rate"
-            value={`${happiness_rate}%`}
-            icon={<SentimentSatisfiedAltOutlinedIcon />}
-            bgColor="#c39857"
-            onClick={handleHappinessRateClick}
-          />
-        </Grid>
-
-        {/* Attendance Overview and News & Events in a single row on large screens */}
-        <Grid container spacing={3} mt={5}>
-          {/* Attendance Overview */}
-          <Grid item xs={12} md={6}>
-            <Card className="rounded-4 shaped p-3">
-              <Typography variant="h6" mb={2} className="fw-bold">
-                Attendance Overview
-              </Typography>
-              <CardContent>
-                <Bar data={attendanceData} />
-              </CardContent>
-            </Card>
-          </Grid>
-
-          {/* News & Events */}
-          <Grid item xs={12} md={6}>
-            <Card className="rounded-4 shaped p-3">
-              <Typography variant="h6" mb={2} className="fw-bold">
-                News & Events
-              </Typography>
-              <Grid container spacing={3}>
-                {news_and_events.map((event) => (
+        {/* News & Events */}
+        <Grid item xs={12} md={6}>
+          <Card className="rounded-4 shaped p-3">
+            <Typography variant="h6" mb={2} className="fw-bold">
+              News & Events
+            </Typography>
+            <Grid container spacing={3}>
+              {news_and_events.length > 0 ? (
+                news_and_events.map((event) => (
                   <Grid item xs={12} sm={6} key={event.date}>
                     <Box
                       sx={{
@@ -271,13 +249,15 @@ const HrmsDashboard = () => {
                       </Box>
                     </Box>
                   </Grid>
-                ))}
-              </Grid>
-            </Card>
-          </Grid>
+                ))
+              ) : (
+                <Typography className="d-flex-center mt-5 text-danger mb-5">No news and events available</Typography>
+              )}
+            </Grid>
+          </Card>
         </Grid>
-      </Box>
-    </>
+      </Grid>
+    </Box>
   );
 };
 

@@ -400,6 +400,17 @@ const getAllEmployeesList = (payload) => {
   return apiInstance.post(`/fetch_employee_data`, payload);
 };
 
+const updateEmployeeInfo = (payload) => {
+  return apiInstance.post(`/edit_user`, payload);
+};
+
+const getAllDesignationsList = () => {
+  return apiInstance.get('fetch_all_roles');
+}
+
+const deleteUserInfo = (user_id) => {
+  return apiInstance.delete(`delete_user?user_id=${user_id}`);
+}
 
 
 export {
@@ -482,5 +493,8 @@ export {
   getAllMappingsList,
   getAllMappingsMetadata,
   getAllHrmsDashboardData,
-  getAllEmployeesList
+  getAllEmployeesList,
+  updateEmployeeInfo,
+  getAllDesignationsList,
+  deleteUserInfo
 };

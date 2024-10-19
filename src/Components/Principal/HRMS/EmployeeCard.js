@@ -64,11 +64,10 @@ const EmployeeCard = ({ employee, onAction }) => {
             </Box>
             <Box className="text-center">
               <Typography variant="h6" style={{ fontWeight: "bold" }}>
-                {employee.first_name}{" "}{employee.middle_name}{" "}
-                {employee.last_name}
+                {employee.employeename}
               </Typography>
               <Typography variant="subtitle2" color="textSecondary">
-                {employee.designation}
+                {employee.designationname??employee.designationid}
               </Typography>
               <Chip
                 className="mt-2 text-white"

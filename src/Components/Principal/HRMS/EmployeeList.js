@@ -1,15 +1,27 @@
 import React, { useEffect, useState, useMemo, useCallback } from "react";
 import EmployeeCard from "./EmployeeCard";
-import { Box, Button, CircularProgress, Grid, ToggleButton, ToggleButtonGroup } from "@mui/material";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Grid,
+  ToggleButton,
+  ToggleButtonGroup,
+} from "@mui/material";
 import BackButton from "../../../SharedComponents/BackButton";
 import CreateEmployee from "./CreateEmployee";
-import { getAllEmployeesList } from "../../../ApiClient";
+import { deleteUserInfo, getAllEmployeesList } from "../../../ApiClient";
 import { useNavigate, useLocation } from "react-router-dom";
+import AlertDialogSlide from "./AlertDialogSlide";
+import { showAlertMessage } from "../../AlertMessage";
 
 const EmployeeList = () => {
-  const [isAddEmployeeModalVisible, setIsAddEmployeeModalVisible] = useState(false);
+  const [isAddEmployeeModalVisible, setIsAddEmployeeModalVisible] =
+    useState(false);
   const [refreshView, setRefreshView] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isOpenConfirmDialog, setIsOpenConfirmDialog] = useState(false);
+  const [showAlert, setShowAlert] = useState("");
   const [selectedEmployeeDetails, setSelectedEmployeeDetails] = useState(null);
   const [selectedFilter, setSelectedFilter] = useState("all");
   const [employees, setEmployees] = useState([]);
@@ -23,7 +35,7 @@ const EmployeeList = () => {
       setIsLoading(true);
       try {
         const res = await getAllEmployeesList({
-          employee_ids: []
+          user_ids: [],
         });
         const employeeData = res?.data?.employee_data || [];
         setEmployees(employeeData);
@@ -45,9 +57,19 @@ const EmployeeList = () => {
 
   // Handling action with useCallback to prevent unnecessary re-renders
   const handleAction = useCallback((data, action) => {
-    if (action === "edit") {
-      setSelectedEmployeeDetails(data || {});
-      setIsAddEmployeeModalVisible(true);
+    switch (action) {
+      case "edit":
+        setSelectedEmployeeDetails(data);
+        setIsAddEmployeeModalVisible(true);
+        break; // Using break instead of return for clarity
+
+      case "delete":
+        setSelectedEmployeeDetails(data);
+        setIsOpenConfirmDialog(true);
+        break; // Using break instead of return for clarity
+
+      default:
+        alert("Viewing info...");
     }
   }, []);
 
@@ -67,6 +89,15 @@ const EmployeeList = () => {
     navigate(`?activeView=${filter}`, { replace: true });
   };
 
+  // Confirmation dialog
+  const closeDialog = (isConfirmed) => {
+    if (isConfirmed) {
+      getDeleteEmployee();
+    } else {
+      setIsOpenConfirmDialog(false);
+    }
+  };
+
   // Filtering employees based on selected filter using useMemo
   const filteredEmployees = useMemo(() => {
     switch (selectedFilter) {
@@ -82,10 +113,33 @@ const EmployeeList = () => {
         return employees.filter((employee) => employee.is_active);
       case "inactive":
         return employees.filter((employee) => !employee.is_active);
+      case "teaching":
+        return employees.filter((employee) => employee.designationid === 3);
+      case "nonteaching":
+        return employees.filter((employee) => employee.designationid !== 3);
       default:
         return employees;
     }
   }, [employees, selectedFilter]);
+
+  const getDeleteEmployee = () => {
+    deleteUserInfo(selectedEmployeeDetails.employeecode)
+      .then((res) => {
+        setShowAlert(res?.data?.status === "success" ? "success" : "error");
+        setTimeout(() => {
+          setIsOpenConfirmDialog(false);
+          setTimeout(() => {
+            setRefreshView((prev) => !prev);
+            setShowAlert("");
+          }, 2000);
+        }, 1000);
+      })
+      .catch(() => {
+        setShowAlert("error");
+        setTimeout(() => setShowAlert(""), 3000);
+        setIsOpenConfirmDialog(false);
+      });
+  };
 
   return (
     <>
@@ -100,6 +154,8 @@ const EmployeeList = () => {
         >
           <ToggleButton value="all">All</ToggleButton>
           <ToggleButton value="new">New</ToggleButton>
+          <ToggleButton value="teaching">Teaching</ToggleButton>
+          <ToggleButton value="nonteaching">Non-Teaching</ToggleButton>
           <ToggleButton value="active">Active</ToggleButton>
           <ToggleButton value="inactive">In-Active</ToggleButton>
         </ToggleButtonGroup>
@@ -117,16 +173,18 @@ const EmployeeList = () => {
           <Box className="d-flex justify-content-center align-items-center w-100 mt-5">
             <CircularProgress />
           </Box>
+        ) : filteredEmployees && filteredEmployees.length > 0 ? (
+          filteredEmployees.map((employee) => (
+            <EmployeeCard
+              key={employee.employeecode}
+              employee={employee}
+              onAction={handleAction}
+            />
+          ))
         ) : (
-          filteredEmployees && filteredEmployees.length > 0 ?
-            filteredEmployees.map((employee) => (
-              <EmployeeCard
-                key={employee.id}
-                employee={employee}
-                onAction={handleAction}
-              />
-            ))
-          : <Box className="d-flex w-100 justify-content-around mt-5 text-center text-danger">No data available</Box>
+          <Box className="d-flex w-100 justify-content-around mt-5 text-center text-danger">
+            No data available
+          </Box>
         )}
       </Grid>
       {isAddEmployeeModalVisible && (
@@ -136,6 +194,30 @@ const EmployeeList = () => {
           selectedData={selectedEmployeeDetails}
         />
       )}
+
+      {/* Confirmation Dialog */}
+      <AlertDialogSlide
+        isOpen={isOpenConfirmDialog}
+        title={"Are You Sure?"}
+        content={
+          "This will permanently delete the employee's information from our records. Click 'Agree' to confirm."
+        }
+        onAgree={() => {
+          closeDialog(true);
+        }}
+        onDisagree={() => {
+          closeDialog();
+        }}
+      />
+
+      {showAlert &&
+        showAlertMessage({
+          open: true,
+          alertFor: showAlert,
+          message: `The employee deletion ${
+            showAlert === "success" ? "succeeded" : "failed"
+          }.`,
+        })}
     </>
   );
 };
