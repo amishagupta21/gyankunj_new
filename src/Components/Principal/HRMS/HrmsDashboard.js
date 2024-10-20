@@ -52,7 +52,7 @@ const HrmsDashboard = () => {
     total_count: 0,
     present: 0,
     on_leave: [],
-    new_joinee: [],
+    new_joiners: [],
     attendance_overview: [],
     news_and_events: [],
   });
@@ -73,7 +73,7 @@ const HrmsDashboard = () => {
     total_count,
     present,
     on_leave = [],
-    new_joinee = [],
+    new_joiners = [],
     attendance_overview = [],
     news_and_events = [],
   } = hrmsMetadata;
@@ -159,7 +159,7 @@ const HrmsDashboard = () => {
         />
         <StatCard
           title="New Joinee"
-          value={`${new_joinee.length}/${total_count}`}
+          value={`${new_joiners.length}/${total_count}`}
           icon={<GroupAddOutlinedIcon />}
           bgColor="#70938e"
           onClick={handleNewJoineeClick}
@@ -251,7 +251,7 @@ const HrmsDashboard = () => {
                   </Grid>
                 ))
               ) : (
-                <Typography className="d-flex-center mt-5 text-danger mb-5">No news and events available</Typography>
+                <Typography className="d-flex-center mt-5 text-danger mb-5 flex-grow-1">No news and events available</Typography>
               )}
             </Grid>
           </Card>

@@ -400,8 +400,13 @@ const getAllEmployeesList = (payload) => {
   return apiInstance.post(`/fetch_employee_data`, payload);
 };
 
-const updateEmployeeInfo = (payload) => {
-  return apiInstance.post(`/edit_user`, payload);
+const updateEmployeeInfo = (isEditMode, payload) => {
+  if(isEditMode){
+    return apiInstance.post(`/edit_user`, payload);
+  }
+  else{
+    return apiInstance.post(`/register`, payload);
+  }
 };
 
 const getAllDesignationsList = () => {

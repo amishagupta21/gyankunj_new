@@ -13,6 +13,8 @@ import {
   Checkbox,
   FormControlLabel,
   MenuItem,
+  InputAdornment,
+  Autocomplete,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { Controller, useForm } from "react-hook-form";
@@ -22,6 +24,8 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 import { getAllDesignationsList, updateEmployeeInfo } from "../../../ApiClient";
 import { showAlertMessage } from "../../AlertMessage";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { countries } from "countries-list";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -41,10 +45,14 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 
 const CreateEmployee = ({ isOpen, handleClose, selectedData = {} }) => {
   const { handleSubmit, reset, control, watch } = useForm();
-  const [isEditMode, setIsEditMode] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(
+    Object.keys(selectedData).length > 0
+  );
+  const countryList = Object.values(countries).map((country) => country.name);
   const [showAlert, setShowAlert] = useState("");
   const [designationsList, setDesignationsList] = useState([]);
   const isMarried = watch("is_married", false);
+  const [showPassword, setShowPassword] = useState(false);
   const gendersList = [
     { value: "male", title: "Male" },
     { value: "female", title: "Female" },
@@ -53,11 +61,13 @@ const CreateEmployee = ({ isOpen, handleClose, selectedData = {} }) => {
 
   useEffect(() => {
     if (Object.keys(selectedData).length > 0) {
-      setIsEditMode(true);
       const tempSelectedData = {
         ...selectedData,
         dob: selectedData.dob ? dayjs(selectedData.dob) : null,
         doj: selectedData.doj ? dayjs(selectedData.doj) : null,
+        license_expiry_date: selectedData.license_expiry_date
+          ? dayjs(selectedData.license_expiry_date)
+          : null,
       };
       reset(tempSelectedData);
     }
@@ -77,14 +87,53 @@ const CreateEmployee = ({ isOpen, handleClose, selectedData = {} }) => {
       });
   }, []);
 
+  const handleClickShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
+
   const onSubmit = (data) => {
+    // Common fields for both create and edit
     const payload = {
-      ...data,
+      employeename: data.employeename || "",
+      phone: data.phone || null,
+      email: data.email || null,
       dob: data.dob ? dayjs(data.dob).format("YYYY-MM-DD") : null,
       doj: data.doj ? dayjs(data.doj).format("YYYY-MM-DD") : null,
+      gender: data.gender || null,
+      designationid: data.designationid || null,
+      is_active: data.is_active ?? false,
+      is_married: data.is_married ?? false,
+      highestqualification: data.highestqualification || null,
+      pancard: data.pancard || null,
+      aadharnumber: data.aadharnumber || null,
+      bankaccount: data.bankaccount || null,
+      salaryscale: data.salaryscale || null,
+      address: data.address || null,
+      spousename: data.is_married ? data.spousename : undefined,
+      fathers_name: !data.is_married ? data.fathers_name : undefined,
+      country: data.country || null,
+      license_number: data.license_number || null,
+      license_expiry_date: data.license_expiry_date
+        ? dayjs(data.license_expiry_date).format("YYYY-MM-DD")
+        : null,
     };
 
-    updateEmployeeInfo(payload)
+    // Additional fields for create operation
+    if (!isEditMode) {
+      payload.password = data.password || "";
+    } else {
+      // Fields specific to edit
+      payload.employeecode = data.employeecode || "";
+    }
+
+    // Submit the payload
+    console.log(payload);
+    // Perform the API request using the payload here
+    updateEmployeeInfo(isEditMode, payload)
       .then((res) => {
         setShowAlert(res?.data?.status === "success" ? "success" : "error");
         setTimeout(() => {
@@ -119,32 +168,6 @@ const CreateEmployee = ({ isOpen, handleClose, selectedData = {} }) => {
             <Grid item xs={6}>
               <FormControl fullWidth>
                 <Controller
-                  name="employeecode"
-                  control={control}
-                  rules={{ required: false }}
-                  render={({
-                    field: { onChange, value },
-                    fieldState: { error },
-                  }) => (
-                    <TextField
-                      error={!!error}
-                      onChange={onChange}
-                      value={value || ""}
-                      fullWidth
-                      label="Employee Code"
-                      variant="outlined"
-                      placeholder="System-generated value"
-                      InputProps={{
-                        readOnly: true,
-                      }}
-                    />
-                  )}
-                />
-              </FormControl>
-            </Grid>
-            <Grid item xs={6}>
-              <FormControl fullWidth>
-                <Controller
                   name="employeename"
                   control={control}
                   rules={{ required: true }}
@@ -164,6 +187,88 @@ const CreateEmployee = ({ isOpen, handleClose, selectedData = {} }) => {
                 />
               </FormControl>
             </Grid>
+            {isEditMode ? (
+              <Grid item xs={6}>
+                <FormControl fullWidth>
+                  <Controller
+                    name="employeecode"
+                    control={control}
+                    rules={{ required: true }}
+                    render={({
+                      field: { onChange, value },
+                      fieldState: { error },
+                    }) => (
+                      <TextField
+                        error={!!error}
+                        onChange={onChange}
+                        value={value || ""}
+                        fullWidth
+                        label="Employee Code"
+                        variant="outlined"
+                        placeholder="System-generated value"
+                        InputProps={{
+                          readOnly: true,
+                        }}
+                      />
+                    )}
+                  />
+                </FormControl>
+              </Grid>
+            ) : (
+              <Grid item xs={6}>
+                <FormControl fullWidth>
+                  <Controller
+                    name="password"
+                    control={control}
+                    rules={{
+                      required: true,
+                      minLength: {
+                        value: 8,
+                        message: "Password must be at least 8 characters long",
+                      },
+                      // pattern: {
+                      //   value:
+                      //     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                      //   message:
+                      //     "Password must include uppercase, lowercase, number, and special character",
+                      // },
+                    }}
+                    render={({
+                      field: { onChange, value },
+                      fieldState: { error },
+                    }) => (
+                      <TextField
+                        error={!!error}
+                        helperText={error ? error.message : ""}
+                        onChange={onChange}
+                        value={value || ""}
+                        fullWidth
+                        label="Password"
+                        variant="outlined"
+                        type={showPassword ? "text" : "password"}
+                        InputProps={{
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              <IconButton
+                                onClick={handleClickShowPassword}
+                                onMouseDown={handleMouseDownPassword}
+                                edge="end"
+                              >
+                                {showPassword ? (
+                                  <VisibilityOff />
+                                ) : (
+                                  <Visibility />
+                                )}
+                              </IconButton>
+                            </InputAdornment>
+                          ),
+                        }}
+                      />
+                    )}
+                  />
+                </FormControl>
+              </Grid>
+            )}
             {/* Phone with Number Validation */}
             <Grid item xs={6}>
               <FormControl fullWidth>
@@ -445,7 +550,7 @@ const CreateEmployee = ({ isOpen, handleClose, selectedData = {} }) => {
               <Grid item xs={6}>
                 <FormControl fullWidth>
                   <Controller
-                    name="fathersname"
+                    name="fathers_name"
                     control={control}
                     rules={{ required: false }}
                     render={({
@@ -572,6 +677,99 @@ const CreateEmployee = ({ isOpen, handleClose, selectedData = {} }) => {
                       fullWidth
                       label="Salary Scale"
                       variant="outlined"
+                    />
+                  )}
+                />
+              </FormControl>
+            </Grid>
+            <Grid item xs={6}>
+              <FormControl fullWidth>
+                <Controller
+                  name="license_number"
+                  control={control}
+                  rules={{ required: false }}
+                  render={({
+                    field: { onChange, value },
+                    fieldState: { error },
+                  }) => (
+                    <TextField
+                      error={!!error}
+                      onChange={onChange}
+                      value={value || ""}
+                      fullWidth
+                      label="License Number"
+                      variant="outlined"
+                    />
+                  )}
+                />
+              </FormControl>
+            </Grid>
+            <Grid item xs={6}>
+              <FormControl fullWidth>
+                <Controller
+                  name="license_expiry_date"
+                  control={control}
+                  rules={{
+                    required: false,
+                    validate: (value) => {
+                      const selectedDate = dayjs(value);
+                      const today = dayjs();
+                      if (!selectedDate.isValid()) {
+                        return "Invalid date";
+                      }
+                      if (selectedDate.isBefore(today)) {
+                        return "The license expiry date cannot be in the past";
+                      }
+                      return true;
+                    },
+                  }}
+                  render={({
+                    field: { onChange, value },
+                    fieldState: { error },
+                  }) => (
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <DatePicker
+                        format="YYYY-MM-DD"
+                        label="License Expiry Date"
+                        value={value || null}
+                        onChange={onChange}
+                        slotProps={{
+                          textField: {
+                            variant: "outlined",
+                            error: !!error,
+                            helperText: error?.message,
+                          },
+                        }}
+                      />
+                    </LocalizationProvider>
+                  )}
+                />
+              </FormControl>
+            </Grid>
+            <Grid item xs={12}>
+              <FormControl fullWidth>
+                <Controller
+                  name="country"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({
+                    field: { onChange, value },
+                    fieldState: { error },
+                  }) => (
+                    <Autocomplete
+                      options={countryList}
+                      onChange={(e, newValue) => onChange(newValue)}
+                      value={value || ""}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label="Country"
+                          variant="outlined"
+                          error={!!error}
+                          helperText={error ? error.message : ""}
+                          fullWidth
+                        />
+                      )}
                     />
                   )}
                 />
