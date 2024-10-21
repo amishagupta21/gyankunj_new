@@ -396,6 +396,26 @@ const getAllHrmsDashboardData = () => {
   return apiInstance.get(`/fetch_hrms_data`);
 };
 
+const getAllEmployeesList = (payload) => {
+  return apiInstance.post(`/fetch_employee_data`, payload);
+};
+
+const updateEmployeeInfo = (isEditMode, payload) => {
+  if(isEditMode){
+    return apiInstance.post(`/edit_user`, payload);
+  }
+  else{
+    return apiInstance.post(`/register`, payload);
+  }
+};
+
+const getAllDesignationsList = () => {
+  return apiInstance.get('fetch_all_roles');
+}
+
+const deleteUserInfo = (user_id) => {
+  return apiInstance.delete(`delete_user?user_id=${user_id}`);
+}
 
 
 export {
@@ -477,5 +497,9 @@ export {
   updateMapping,
   getAllMappingsList,
   getAllMappingsMetadata,
-  getAllHrmsDashboardData
+  getAllHrmsDashboardData,
+  getAllEmployeesList,
+  updateEmployeeInfo,
+  getAllDesignationsList,
+  deleteUserInfo
 };
