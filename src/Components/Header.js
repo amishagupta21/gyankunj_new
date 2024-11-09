@@ -58,6 +58,10 @@ function Header({ isTabScreen, userData }) {
     window.location.reload();
   };
 
+  const goToProfile = () => {
+    navigate("/profile");
+  };
+
   const handleMouseEnter = () => {
     if(!isMobile){
       setIsHoveredOnUser(true);
@@ -145,6 +149,8 @@ function Header({ isTabScreen, userData }) {
               renderMenuOnMount={true}
             >
               <NavDropdown.Item disabled>{userData.role}</NavDropdown.Item>
+              <NavDropdown.Divider />
+              <NavDropdown.Item onClick={goToProfile}>Profile</NavDropdown.Item>
               <NavDropdown.Divider />
               <NavDropdown.Item onClick={logoutFunction}>
                 Logout
