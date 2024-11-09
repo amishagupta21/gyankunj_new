@@ -27,6 +27,8 @@ const AssignmentSheet = (props) => {
   const [instructionsClosed, setInstructionsClosed] = useState(false);
   const [elapsedTimes, setElapsedTimes] = useState({});
   const { assignmentStatus } = props;
+  const token = JSON.parse(localStorage.getItem("UserData"));
+  const tokenId = token.token;
 
   const areFieldsDisabled = () => {
     return assignmentStatus;
@@ -248,14 +250,12 @@ const AssignmentSheet = (props) => {
       submit_data: submit,
     };
 
-    const accessToken =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdWJsaWNfaWQiOiI0ODJjOTgxNS1iOWQ0LTRlNGYtOGJiNi0zOTRjODUyZDM1NWUiLCJleHAiOjI2NTMxMzc2MDV9.JPYYukYqWOulGx_JBHehSzKMpFalemeBxJsL6jDkWjA"; // Replace 'your-access-token' with the actual access token
-
+    
     fetch("http://3.6.167.80:5005/submit_assignment", {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        "x-access-tokens": accessToken,
+        "x-access-tokens": tokenId,
       },
       body: JSON.stringify(requestBody),
     })

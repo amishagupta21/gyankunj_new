@@ -194,8 +194,12 @@ export default function RoutesContainer({ userData }) {
               path="/teacherDashboard/submissionsReport/:assignmentId"
               element={<ProtectedWrapper Component={Viewreport} />}
             />
-            <Route
+            {/* <Route
               path="/teacherDashboard/evaluteAssignment/:assignmentId/:studentId"
+              element={<ProtectedWrapper Component={EvaluteAssignmentReport} />}
+            /> */}
+            <Route
+              path="/teacherDashboard/evaluteAssignment/:assignmentId/*"
               element={<ProtectedWrapper Component={EvaluteAssignmentReport} />}
             />
           </>

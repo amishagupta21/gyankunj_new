@@ -8,7 +8,9 @@ import { FaCheck, FaTimes } from "react-icons/fa";
 import { Stack, Switch, Typography } from "@mui/material";
 
 const EvaluteAssignmentReport = () => {
-  const { assignmentId, studentId } = useParams();
+  // const { assignmentId, studentId } = useParams();
+  const { assignmentId } = useParams();
+  const studentId = useParams()['*']; // captures everything after :assignmentId/
   const [evaluationData, setEvaluationData] = useState(null);
   const [marksForWriteAnswer, setMarksForWriteAnswer] = useState({});
   const [isPassed, setIsPassed] = useState(true);
