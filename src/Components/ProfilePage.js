@@ -7,378 +7,188 @@ import {
   Box,
   CircularProgress,
 } from "@mui/material";
-import { getAllEmployeesList } from "../ApiClient";
-
-const employeeData = {
-  employeecode: "sfs/27/01/2024",
-  employeename: "Chanchal Sen",
-  phone: null,
-  email: null,
-  dob: "1990-04-01",
-  doj: "2024-08-01",
-  gender: "Male",
-  designationid: 3,
-  designationname: "Teacher",
-  is_active: true,
-  is_married: null,
-  highestqualification: null,
-  pancard: null,
-  aadharnumber: null,
-  bankaccount: null,
-  salaryscale: null,
-  address: null,
-  spousename: null,
-  country: "India",
-  fathers_name: null,
-  license_number: null,
-  license_expiry_date: null,
-};
+import { getAllEmployeesList, getTeacherLeaveApplicationsList } from "../ApiClient";
 
 const ProfilePage = () => {
   const userInfo = JSON.parse(localStorage.getItem("UserData"));
-  const [userDetails, setUserDetails] = useState({});
-  const [isLoading, setIsLoading] = useState(false);
+  const [userDetails, setUserDetails] = useState(null);
+  const [leavesData, setLeavesData] = useState([]);
+  const [loadingProfile, setLoadingProfile] = useState(false);
+  const [loadingLeaves, setLoadingLeaves] = useState(false);
 
   useEffect(() => {
     const fetchEmployees = async () => {
-      setIsLoading(true);
+      setLoadingProfile(true);
       try {
-        const res = await getAllEmployeesList({
-          user_ids: [userInfo.user_id],
-        });
-        const userData =
-          res?.data?.employee_data?.length > 0 ? res.data.employee_data[0] : {};
-        setUserDetails(userData);
-      } catch (err) {
-        console.error(err);
+        const { data } = await getAllEmployeesList({ user_ids: [userInfo.user_id] });
+        setUserDetails(data?.employee_data?.[0] || null);
+      } catch (error) {
+        console.error("Failed to fetch employee data:", error);
       } finally {
-        setIsLoading(false);
+        setLoadingProfile(false);
       }
     };
+
+    const fetchLeaves = async () => {
+      setLoadingLeaves(true);
+      try {
+        const { data } = await getTeacherLeaveApplicationsList(userInfo.user_id);
+        setLeavesData([
+          {
+              "leave_id": 1,
+              "leave_data": "This is a leave application",
+              "parent_id": "6857683456",
+              "student_id": "afs/1/01/2024",
+              "start_date": "2024-10-28",
+              "end_date": "2024-10-30",
+              "assigned_to": "sfs/25/01/2024",
+              "no_of_days": 3,
+              "leave_type": "Casual Leave",
+              "grade_id": 3,
+              "section_id": 1,
+              "is_approved": true,
+              "is_withdrawn": true,
+              "status": "withdrawn"
+          },
+          {
+            "leave_id": 1,
+            "leave_data": "This is a leave application",
+            "parent_id": "6857683456",
+            "student_id": "afs/1/01/2024",
+            "start_date": "2024-10-28",
+            "end_date": "2024-10-30",
+            "assigned_to": "sfs/25/01/2024",
+            "no_of_days": 3,
+            "leave_type": "Casual Leave",
+            "grade_id": 3,
+            "section_id": 1,
+            "is_approved": true,
+            "is_withdrawn": true,
+            "status": "withdrawn"
+        }
+      ]);
+      } catch (error) {
+        console.error("Failed to fetch leave data:", error);
+      } finally {
+        setLoadingLeaves(false);
+      }
+    };
+
     fetchEmployees();
-  }, []);
+    fetchLeaves();
+  }, [userInfo.user_id]);
+
+  const renderDataOrPlaceholder = (data) => data || "N/A";
 
   return (
-    <div className="container mt-5">
-      <Card>
-        {isLoading ? (
-          <Box className="d-flex justify-content-center align-items-center w-100 p-5">
-            <CircularProgress />
-          </Box>
-        ) : (
+    <Grid container spacing={3}>
+      {/* User Profile Card */}
+      <Grid item xs={12} sm={12} md={6}>
+        <Card className="bg-body-tertiary rounded-4">
           <CardContent>
-            <Typography variant="h5" className="mb-4">
+            <Typography variant="h5" gutterBottom>
               User Profile
             </Typography>
             <hr />
-            <Grid container spacing={3}>
-              {/* Name */}
-              <Grid
-                className="d-flex justify-content-between"
-                item
-                xs={12}
-                md={6}
-              >
-                <Typography variant="body1" color="textSecondary">
-                  Name:
-                </Typography>
-                <Typography variant="body1">
-                  {userDetails.employeename}
-                </Typography>
+            {loadingProfile ? (
+              <Box display="flex" justifyContent="center" p={3}>
+                <CircularProgress />
+              </Box>
+            ) : userDetails ? (
+              <Grid container spacing={2}>
+                {[
+                  { label: "Name", value: userDetails.employeename },
+                  { label: "Employee Code", value: userDetails.employeecode },
+                  { label: "Phone", value: userDetails.phone },
+                  { label: "Email", value: userDetails.email },
+                  { label: "Date of Birth", value: userDetails.dob },
+                  { label: "Date of Joining", value: userDetails.doj },
+                  { label: "Gender", value: userDetails.gender },
+                  { label: "Designation", value: userDetails.designationname },
+                  { label: "Active", value: userDetails.is_active ? "Yes" : "No" },
+                  { label: "Married", value: userDetails.is_married ? "Yes" : "No" },
+                  { label: "Spouse's Name", value: userDetails.spousename },
+                  { label: "Father's Name", value: userDetails.fathers_name },
+                  { label: "PAN Number", value: userDetails.pancard },
+                  { label: "Aadhaar Number", value: userDetails.aadharnumber },
+                  { label: "Bank Account", value: userDetails.bankaccount },
+                  { label: "Salary Scale", value: userDetails.salaryscale },
+                  { label: "Highest Qualification", value: userDetails.highestqualification },
+                  { label: "Country", value: userDetails.country },
+                  { label: "License Number", value: userDetails.license_number },
+                  { label: "License Expiry Date", value: userDetails.license_expiry_date },
+                  { label: "Address", value: userDetails.address },
+                ].map(({ label, value }) => (
+                  <Grid item xs={12} md={6} key={label} display="flex" justifyContent="space-between">
+                    <Typography variant="body1" color="textSecondary">{label}:</Typography>
+                    <Typography variant="body1">{renderDataOrPlaceholder(value)}</Typography>
+                  </Grid>
+                ))}
               </Grid>
-
-              {/* Employee Code */}
-              <Grid
-                className="d-flex justify-content-between"
-                item
-                xs={12}
-                md={6}
-              >
-                <Typography variant="body1" color="textSecondary">
-                  Employee Code:
-                </Typography>
-                <Typography variant="body1">
-                  {userDetails.employeecode}
-                </Typography>
-              </Grid>
-
-              {/* Phone */}
-              <Grid
-                className="d-flex justify-content-between"
-                item
-                xs={12}
-                md={6}
-              >
-                <Typography variant="body1" color="textSecondary">
-                  Phone:
-                </Typography>
-                <Typography variant="body1">
-                  {userDetails.phone || "N/A"}
-                </Typography>
-              </Grid>
-
-              {/* Email */}
-              <Grid
-                className="d-flex justify-content-between"
-                item
-                xs={12}
-                md={6}
-              >
-                <Typography variant="body1" color="textSecondary">
-                  Email:
-                </Typography>
-                <Typography variant="body1">
-                  {userDetails.email || "N/A"}
-                </Typography>
-              </Grid>
-
-              {/* Date of Birth */}
-              <Grid
-                className="d-flex justify-content-between"
-                item
-                xs={12}
-                md={6}
-              >
-                <Typography variant="body1" color="textSecondary">
-                  Date of Birth:
-                </Typography>
-                <Typography variant="body1">{userDetails.dob}</Typography>
-              </Grid>
-
-              {/* Date of Joining */}
-              <Grid
-                className="d-flex justify-content-between"
-                item
-                xs={12}
-                md={6}
-              >
-                <Typography variant="body1" color="textSecondary">
-                  Date of Joining:
-                </Typography>
-                <Typography variant="body1">{userDetails.doj}</Typography>
-              </Grid>
-
-              {/* Gender */}
-              <Grid
-                className="d-flex justify-content-between"
-                item
-                xs={12}
-                md={6}
-              >
-                <Typography variant="body1" color="textSecondary">
-                  Gender:
-                </Typography>
-                <Typography variant="body1">{userDetails.gender}</Typography>
-              </Grid>
-
-              {/* Designation */}
-              <Grid
-                className="d-flex justify-content-between"
-                item
-                xs={12}
-                md={6}
-              >
-                <Typography variant="body1" color="textSecondary">
-                  Designation:
-                </Typography>
-                <Typography variant="body1">
-                  {userDetails.designationname}
-                </Typography>
-              </Grid>
-
-              {/* Active Status */}
-              <Grid
-                className="d-flex justify-content-between"
-                item
-                xs={12}
-                md={6}
-              >
-                <Typography variant="body1" color="textSecondary">
-                  Active:
-                </Typography>
-                <Typography variant="body1">
-                  {userDetails.is_active ? "Yes" : "No"}
-                </Typography>
-                {/* <Switch checked={userDetails.is_active} disabled /> */}
-              </Grid>
-
-              {/* Marital Status */}
-              <Grid
-                className="d-flex justify-content-between"
-                item
-                xs={12}
-                md={6}
-              >
-                <Typography variant="body1" color="textSecondary">
-                  Married:
-                </Typography>
-                <Typography variant="body1">
-                  {userDetails.is_married ? "Yes" : "No"}
-                </Typography>
-              </Grid>
-
-              {/* Spouse's Name */}
-              <Grid
-                className="d-flex justify-content-between"
-                item
-                xs={12}
-                md={6}
-              >
-                <Typography variant="body1" color="textSecondary">
-                  Spouse's Name:
-                </Typography>
-                <Typography variant="body1">
-                  {userDetails.spousename || "N/A"}
-                </Typography>
-              </Grid>
-
-              {/* Father's Name */}
-              <Grid
-                className="d-flex justify-content-between"
-                item
-                xs={12}
-                md={6}
-              >
-                <Typography variant="body1" color="textSecondary">
-                  Father's Name:
-                </Typography>
-                <Typography variant="body1">
-                  {userDetails.fathers_name || "N/A"}
-                </Typography>
-              </Grid>
-
-              {/* PAN Card */}
-              <Grid
-                className="d-flex justify-content-between"
-                item
-                xs={12}
-                md={6}
-              >
-                <Typography variant="body1" color="textSecondary">
-                  PAN Number:
-                </Typography>
-                <Typography variant="body1">
-                  {userDetails.pancard || "N/A"}
-                </Typography>
-              </Grid>
-
-              {/* Aadhaar Number */}
-              <Grid
-                className="d-flex justify-content-between"
-                item
-                xs={12}
-                md={6}
-              >
-                <Typography variant="body1" color="textSecondary">
-                  Aadhaar Number:
-                </Typography>
-                <Typography variant="body1">
-                  {userDetails.aadharnumber || "N/A"}
-                </Typography>
-              </Grid>
-
-              {/* Bank Account */}
-              <Grid
-                className="d-flex justify-content-between"
-                item
-                xs={12}
-                md={6}
-              >
-                <Typography variant="body1" color="textSecondary">
-                  Bank Account:
-                </Typography>
-                <Typography variant="body1">
-                  {userDetails.bankaccount || "N/A"}
-                </Typography>
-              </Grid>
-
-              {/* Salary Scale */}
-              <Grid
-                className="d-flex justify-content-between"
-                item
-                xs={12}
-                md={6}
-              >
-                <Typography variant="body1" color="textSecondary">
-                  Salary Scale:
-                </Typography>
-                <Typography variant="body1">
-                  {userDetails.salaryscale || "N/A"}
-                </Typography>
-              </Grid>
-
-              {/* Highest Qualification */}
-              <Grid
-                className="d-flex justify-content-between"
-                item
-                xs={12}
-                md={6}
-              >
-                <Typography variant="body1" color="textSecondary">
-                  Highest Qualification:
-                </Typography>
-                <Typography variant="body1">
-                  {userDetails.highestqualification || "N/A"}
-                </Typography>
-              </Grid>
-
-              {/* Country */}
-              <Grid
-                className="d-flex justify-content-between"
-                item
-                xs={12}
-                md={6}
-              >
-                <Typography variant="body1" color="textSecondary">
-                  Country:
-                </Typography>
-                <Typography variant="body1">{userDetails.country}</Typography>
-              </Grid>
-
-              {/* Address */}
-              <Grid className="d-flex justify-content-between" item xs={12}>
-                <Typography variant="body1" color="textSecondary">
-                  Address:
-                </Typography>
-                <Typography variant="body1">
-                  {userDetails.address || "N/A"}
-                </Typography>
-              </Grid>
-
-              {/* License Number */}
-              <Grid
-                className="d-flex justify-content-between"
-                item
-                xs={12}
-                md={6}
-              >
-                <Typography variant="body1" color="textSecondary">
-                  License Number:
-                </Typography>
-                <Typography variant="body1">
-                  {userDetails.license_number || "N/A"}
-                </Typography>
-              </Grid>
-
-              {/* License Expiry Date */}
-              <Grid
-                className="d-flex justify-content-between"
-                item
-                xs={12}
-                md={6}
-              >
-                <Typography variant="body1" color="textSecondary">
-                  License Expiry Date:
-                </Typography>
-                <Typography variant="body1">
-                  {userDetails.license_expiry_date || "N/A"}
-                </Typography>
-              </Grid>
-            </Grid>
+            ) : (
+              <Typography variant="body1" color="textSecondary" align="center">
+                Profile data not available.
+              </Typography>
+            )}
           </CardContent>
-        )}
-      </Card>
-    </div>
+        </Card>
+      </Grid>
+
+      {/* Leave Details Card */}
+      <Grid item xs={12} sm={12} md={6}>
+        <Card>
+          <CardContent>
+            <Typography variant="h5" gutterBottom>
+              Leave Details
+            </Typography>
+            <hr />
+            {loadingLeaves ? (
+              <Box display="flex" justifyContent="center" p={3}>
+                <CircularProgress />
+              </Box>
+            ) : leavesData.length ? (
+              <Grid container spacing={2}>
+                {leavesData.map((leave) => (
+                  <Grid item xs={12} key={leave.leave_id}>
+                    <Card variant="outlined">
+                      <CardContent>
+                        <Grid container spacing={2}>
+                          {[
+                            { label: "Leave ID", value: leave.leave_id },
+                            { label: "Leave Application", value: leave.leave_data },
+                            { label: "Parent ID", value: leave.parent_id },
+                            { label: "Student ID", value: leave.student_id },
+                            { label: "Start Date", value: leave.start_date },
+                            { label: "End Date", value: leave.end_date },
+                            { label: "Assigned To", value: leave.assigned_to },
+                            { label: "Number of Days", value: leave.no_of_days },
+                            { label: "Leave Type", value: leave.leave_type },
+                            { label: "Grade ID", value: leave.grade_id },
+                            { label: "Section ID", value: leave.section_id },
+                            { label: "Approved", value: leave.is_approved !== null ? (leave.is_approved ? "Yes" : "No") : "Pending" },
+                            { label: "Withdrawn", value: leave.is_withdrawn !== null ? (leave.is_withdrawn ? "Yes" : "No") : "Pending" },
+                            { label: "Status", value: leave.status },
+                          ].map(({ label, value }) => (
+                            <Grid item xs={12} md={6} key={label} display="flex" justifyContent="space-between">
+                              <Typography variant="body1" color="textSecondary">{label}:</Typography>
+                              <Typography variant="body1">{renderDataOrPlaceholder(value)}</Typography>
+                            </Grid>
+                          ))}
+                        </Grid>
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                ))}
+              </Grid>
+            ) : (
+              <Typography variant="body1" color="textSecondary" align="center">
+                Leave data not available.
+              </Typography>
+            )}
+          </CardContent>
+        </Card>
+      </Grid>
+    </Grid>
   );
 };
 
