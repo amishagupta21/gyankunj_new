@@ -320,8 +320,13 @@ const getLeaveApplicationDetails = (leave_id) => {
   return apiInstance.get(`/get_leave_application_data?leave_id=${leave_id}`);
 };
 
-const getParentLeaveApplicationsList = (parent_id) => {
-  return apiInstance.get(`/get_leave_application_data?parent_id=${parent_id}`);
+const getLeaveApplicationsList = (userId, isComingFromProfile) => {
+  if(isComingFromProfile){
+    return apiInstance.get(`/get_leave_application_data?teacher_id=${userId}`);
+  }
+  else{
+    return apiInstance.get(`/get_leave_application_data?parent_id=${userId}`);
+  }
 };
 
 const getTeacherLeaveApplicationsList = (teacher_id) => {
@@ -483,7 +488,7 @@ export {
   getStudentPerformanceReport,
   getStudentAttendanceReport,
   getStudentAssignmentReport,
-  getParentLeaveApplicationsList,
+  getLeaveApplicationsList,
   geAllLeaveTypes,
   submitLeaveApplication,
   getLeaveApplicationDetails,

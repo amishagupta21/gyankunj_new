@@ -52,6 +52,7 @@ const PaApplyLeaveForm = ({
   isOpen,
   handleClose,
   selectedLeaveDetails = {},
+  isComingFromProfile
 }) => {
   const { handleSubmit, setValue, reset, control } = useForm();
   const userInfo = JSON.parse(localStorage.getItem("UserData"));
@@ -92,7 +93,12 @@ const PaApplyLeaveForm = ({
       end_date: formattedEndDate,
       no_of_days: noOfDays,
     };
-    payload["parent_id"] = userInfo.user_id;
+    if(isComingFromProfile){
+      payload["user_id"] = userInfo.user_id;
+    }
+    else{
+      payload["parent_id"] = userInfo.user_id;
+    }
     submitLeaveApplication(payload)
       .then((res) => {
         if (res?.data?.status === "success") {
@@ -148,9 +154,9 @@ const PaApplyLeaveForm = ({
           style={{ height: "calc(100% - 64px)" }}
         >
           <DialogContent dividers>
-            <FormControl className="mb-4" fullWidth>
+            {!isComingFromProfile && <FormControl className="mb-4" fullWidth>
               <Controller
-                name="student_id"
+                name="user_id"
                 control={control}
                 rules={{ required: true }}
                 render={({
@@ -174,7 +180,7 @@ const PaApplyLeaveForm = ({
                   </>
                 )}
               />
-            </FormControl>
+            </FormControl>}
             <Grid container spacing={2} className="mb-4">
               <Grid item xs={12} md={6}>
                 <FormControl fullWidth>
