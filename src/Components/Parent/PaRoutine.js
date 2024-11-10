@@ -52,86 +52,6 @@ const PaRoutine = () => {
     getMasterRoutineMetadataInfo(userInfo.routine_id)
       .then((res) => {
         if (res?.data) {
-          res.data["periods"] = [
-            {
-              period_id: 1,
-              period: "1",
-              start_time: "07:45:00",
-              end_time: "08:25:00",
-            },
-            {
-              period_id: 2,
-              period: "2",
-              start_time: "08:25:00",
-              end_time: "09:05:00",
-            },
-            {
-              period_id: 3,
-              period: "3",
-              start_time: "09:05:00",
-              end_time: "09:45:00",
-            },
-            {
-              period_id: 4,
-              period: "4",
-              start_time: "09:45:00",
-              end_time: "10:25:00",
-            },
-            {
-              period_id: 5,
-              period: "5",
-              start_time: "10:45:00",
-              end_time: "11:25:00",
-            },
-            {
-              period_id: 6,
-              period: "6",
-              start_time: "11:25:00",
-              end_time: "12:05:00",
-            },
-            {
-              period_id: 7,
-              period: "7",
-              start_time: "12:05:00",
-              end_time: "12:45:00",
-            },
-            {
-              period_id: 8,
-              period: "8",
-              start_time: "12:45:00",
-              end_time: "13:25:00",
-            },
-          ];
-          res.data["days"] = [
-            {
-              day_id: 1,
-              day_name: "Monday",
-            },
-            {
-              day_id: 2,
-              day_name: "Tuesday",
-            },
-            {
-              day_id: 3,
-              day_name: "Wednesday",
-            },
-            {
-              day_id: 4,
-              day_name: "Thursday",
-            },
-            {
-              day_id: 5,
-              day_name: "Friday",
-            },
-            {
-              day_id: 6,
-              day_name: "Saturday",
-            },
-            {
-              day_id: 7,
-              day_name: "Sunday",
-            },
-          ];
           if (res.data.periods && res.data.periods.length > 0) {
             const updatedPeriodData = res.data.periods.reduce(
               (acc, period, index) => {
@@ -139,9 +59,6 @@ const PaRoutine = () => {
                 if (index === 3) {
                   acc.push({
                     period: "Break",
-                    // Assuming other properties of period object need to be set
-                    // If not, you can omit other properties
-                    // For example: start_time: null, end_time: null, etc.
                   });
                 }
                 return acc;
