@@ -10,12 +10,16 @@ import {
   Alert,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import { getParentLeaveApplicationsList, withdrawLeaveApplication } from "../../ApiClient";
+import {
+  getLeaveApplicationsList,
+  getParentLeaveApplicationsList,
+  withdrawLeaveApplication,
+} from "../../ApiClient";
 import CommonMatTable from "../../SharedComponents/CommonMatTable";
 import PaApplyLeaveForm from "./PaApplyLeaveForm";
 import BackButton from "../../SharedComponents/BackButton";
 
-const PaFeedback = () => {
+const PaFeedback = (props) => {
   const userInfo = JSON.parse(localStorage.getItem("UserData"));
   const [appliedLeavesList, setAppliedLeavesList] = useState([]);
   const [selectedLeave, setSelectedLeave] = useState(null);
@@ -28,7 +32,7 @@ const PaFeedback = () => {
 
   useEffect(() => {
     setIsLoading(true);
-    getParentLeaveApplicationsList(userInfo.user_id)
+    getLeaveApplicationsList(userInfo.user_id, props.isComingFromProfile)
       .then((res) => {
         setAppliedLeavesList(res?.data?.leave_data || []);
         setTimeout(() => {
@@ -62,7 +66,7 @@ const PaFeedback = () => {
 
   const handleWithdrawConfirm = (isConfirm) => {
     if (isConfirm) {
-      withdrawLeaveApplication({ "leave_id": leaveToWithdraw.leave_id })
+      withdrawLeaveApplication({ leave_id: leaveToWithdraw.leave_id })
         .then((res) => {
           if (res?.data?.status === "success") {
             setShowAlert("success");
@@ -91,26 +95,26 @@ const PaFeedback = () => {
       setLeaveToWithdraw(null);
     }
   };
-  
+
   const accessorFn = (row) => {
     const getStatusClass = (status) => {
       switch (status) {
-        case 'approved':
-          return 'text-success';
-        case 'withdrawn':
-        case 'rejected':
-          return 'text-danger';
+        case "approved":
+          return "text-success";
+        case "withdrawn":
+        case "rejected":
+          return "text-danger";
         default:
-          return '';
+          return "";
       }
     };
-  
+
     return (
       <div className="d-flex align-items-center justify-content-between flex-wrap">
         <div className={`fw-bold ${getStatusClass(row.status)}`}>
           {row.status}
         </div>
-        {row.status !== 'withdrawn' && (
+        {row.status !== "withdrawn" && (
           <Button
             variant="outlined"
             color="error"
@@ -122,7 +126,6 @@ const PaFeedback = () => {
       </div>
     );
   };
-  
 
   // Custom JSX element for the top toolbar
   const RenderTopToolbarCustomActions = () => {
@@ -136,8 +139,8 @@ const PaFeedback = () => {
           justifyContent: "space-between",
         }}
       >
-        <BackButton />
-        <Box className="w-75 d-flex justify-content-end gap-2">
+        {!props.isComingFromProfile && <BackButton />}
+        <Box className="d-flex justify-content-end gap-2">
           <Button className="py-3" onClick={handleAddLeave} variant="contained">
             <AddIcon /> Apply Leave
           </Button>
@@ -194,6 +197,7 @@ const PaFeedback = () => {
           isOpen={isAddLeaveModalVisible}
           handleClose={handleClose}
           selectedLeaveDetails={selectedLeave}
+          isComingFromProfile={props.isComingFromProfile}
         />
       )}
       <Dialog open={isWithdrawDialogOpen}>

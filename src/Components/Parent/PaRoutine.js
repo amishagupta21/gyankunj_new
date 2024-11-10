@@ -143,7 +143,7 @@ const PaRoutine = () => {
                   </td>
                   {periodData.map((item) => {
                     const routine = routineData.find(
-                      (r) => r.period_id === item.period_id
+                      (r) => r.period_id === item.period_id && r.day_id === dayItem.day_id
                     );
                     if (routine) {
                       return (
