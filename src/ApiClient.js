@@ -324,6 +324,10 @@ const getParentLeaveApplicationsList = (parent_id) => {
   return apiInstance.get(`/get_leave_application_data?parent_id=${parent_id}`);
 };
 
+const getTeacherLeaveApplicationsList = (teacher_id) => {
+  return apiInstance.get(`/get_leave_application_data?teacher_id=${teacher_id}`);
+};
+
 const geAllLeaveTypes = () => {
   return apiInstance.get(`/fetch_all_leave_types`);
 };
@@ -501,5 +505,6 @@ export {
   getAllEmployeesList,
   updateEmployeeInfo,
   getAllDesignationsList,
-  deleteUserInfo
+  deleteUserInfo,
+  getTeacherLeaveApplicationsList
 };

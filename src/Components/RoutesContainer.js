@@ -46,6 +46,7 @@ import PSchoolDiary from "./Principal/PSchoolDiary";
 import TransportView from "./Principal/Transport/TransportView";
 import HrmsDashboard from "./Principal/HRMS/HrmsDashboard";
 import EmployeeList from "./Principal/HRMS/EmployeeList";
+import ProfilePage from "./ProfilePage";
 
 // Define routes for different user roles
 const roleRoutes = {
@@ -278,6 +279,10 @@ export default function RoutesContainer({ userData }) {
             />
           </>
         ) : null}
+        <Route
+          path="/profile"
+          element={<ProtectedWrapper Component={ProfilePage} />}
+        />
         {/* 404 Route */}
         <Route
           path="/404"
