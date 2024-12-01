@@ -76,7 +76,7 @@ const AttendanceReview = () => {
 
     setIsLoading(true);
     try {
-      const payload = Array.from(updatedData.values());
+      const payload = {"attendance_data":  Array.from(updatedData.values())};
       await updateStaffAttendanceData(payload);
       alert("Update successful!");
       setUpdatedData(new Map());
