@@ -19,8 +19,14 @@ import {
   Select,
   Typography,
 } from "@mui/material";
+import AttendanceToggle from "../AttendanceToggle";
+import { useMemo } from "react";
 
 const PDashboard = () => {
+  const userInfo = useMemo(
+    () => JSON.parse(localStorage.getItem("UserData")),
+    []
+  );
   const [overallAttendance, setOverallAttendance] = useState({});
   const [teacherData, setTeacherData] = useState([]);
   const [daysData, setDaysData] = useState([]);
@@ -103,6 +109,7 @@ const PDashboard = () => {
 
   return (
     <>
+      { userInfo.role === "PRINCIPAL" && <div className="mb-3"><AttendanceToggle /></div>}
       <Grid container spacing={3}>
         <Grid item xs={12} md={9}>
           <div className="border p-3 rounded mb-5 shadow-sm">

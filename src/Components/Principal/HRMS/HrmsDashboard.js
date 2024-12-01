@@ -14,6 +14,7 @@ import ArticleOutlinedIcon from "@mui/icons-material/ArticleOutlined";
 import GroupOutlinedIcon from "@mui/icons-material/GroupOutlined";
 import { getAllHrmsDashboardData } from "../../../ApiClient";
 import { useNavigate } from "react-router-dom";
+import AttendanceReview from "./AttendanceReview";
 
 // Reusable card component for stats
 const StatCard = ({ title, value, icon, bgColor, onClick }) => (
@@ -256,6 +257,10 @@ const HrmsDashboard = () => {
             </Grid>
           </Card>
         </Grid>
+      </Grid>
+
+      <Grid mt={5}>
+        <AttendanceReview />
       </Grid>
     </Box>
   );

@@ -409,6 +409,10 @@ const getAllEmployeesList = (payload) => {
   return apiInstance.post(`/fetch_employee_data`, payload);
 };
 
+const markStaffAttendance = (payload) => {
+  return apiInstance.post(`/save_staff_attendance_data`, payload);
+};
+
 const updateEmployeeInfo = (isEditMode, payload) => {
   if(isEditMode){
     return apiInstance.post(`/edit_user`, payload);
@@ -425,6 +429,14 @@ const getAllDesignationsList = () => {
 const deleteUserInfo = (user_id) => {
   return apiInstance.delete(`delete_user?user_id=${user_id}`);
 }
+
+const fetchAttendanceDataForReview = () => {
+  return apiInstance.get(`fetch_attendance_data_for_review?input_date=${new Date().toISOString().slice(0, 10)}`);
+}
+
+const updateStaffAttendanceData = (payload) => {
+  return apiInstance.post(`/update_staff_attendance_data`, payload);
+};
 
 
 export {
@@ -511,5 +523,8 @@ export {
   updateEmployeeInfo,
   getAllDesignationsList,
   deleteUserInfo,
-  getTeacherLeaveApplicationsList
+  getTeacherLeaveApplicationsList,
+  markStaffAttendance,
+  fetchAttendanceDataForReview,
+  updateStaffAttendanceData
 };
