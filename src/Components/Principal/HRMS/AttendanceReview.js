@@ -93,7 +93,8 @@ const AttendanceReview = () => {
     () => [
       { accessorKey: "user_name", header: "User Name" },
       { accessorKey: "attendance_date", header: "Attendance Date" },
-      { accessorKey: "attendance_time", header: "Attendance Time" },
+      { accessorKey: "attendance_in_time", header: "Attendance IN Time" },
+      { accessorKey: "attendance_out_time", header: "Attendance Out Time" },
       { accessorKey: "attendance_status", header: "Status" },
       {
         accessorKey: "is_regularized",
@@ -119,7 +120,7 @@ const AttendanceReview = () => {
         ),
       },
     ],
-    [attendanceData, handleCheckboxChange, handleCommentsChange]
+    [handleCheckboxChange, handleCommentsChange]
   );
 
   return (
