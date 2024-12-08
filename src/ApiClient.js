@@ -333,6 +333,14 @@ const getTeacherLeaveApplicationsList = (teacher_id) => {
   return apiInstance.get(`/get_leave_application_data?teacher_id=${teacher_id}`);
 };
 
+const getStaffLeaveApplicationsList = (teacher_id) => {
+  return apiInstance.get(`/get_all_staff_leave_application_data`);
+};
+
+const getAssignedStudentLeaveApplicationsList = () => {
+  return apiInstance.get(`/get_assigned_student_leave_applications`);
+};
+
 const geAllLeaveTypes = () => {
   return apiInstance.get(`/fetch_all_leave_types`);
 };
@@ -526,5 +534,7 @@ export {
   getTeacherLeaveApplicationsList,
   markStaffAttendance,
   fetchAttendanceDataForReview,
-  updateStaffAttendanceData
+  updateStaffAttendanceData,
+  getStaffLeaveApplicationsList,
+  getAssignedStudentLeaveApplicationsList
 };

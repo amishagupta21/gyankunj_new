@@ -59,7 +59,7 @@ function Header({ isTabScreen, userData }) {
   };
 
   const goToProfile = () => {
-    navigate("/profile");
+    navigate(`/profile/${encodeURIComponent(userData.user_id)}`);
   };
 
   const handleMouseEnter = () => {

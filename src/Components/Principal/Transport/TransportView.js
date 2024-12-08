@@ -15,9 +15,9 @@ const TransportView = () => {
         <Grid item xs={12}>
           <VehiclesView />
         </Grid>
-        <Grid item xs={12}>
+        {/* <Grid item xs={12}>
           <FleetStaffView />
-        </Grid>
+        </Grid> */}
         <Grid item xs={12}>
           <MappingsView />
         </Grid>

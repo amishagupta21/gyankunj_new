@@ -116,7 +116,7 @@ const HrmsDashboard = () => {
   };
 
   const handleOnLeaveClick = () => {
-    alert("You clicked On Leave Card!"); // Perform an action for "On Leave"
+    navigate('/principalDashboard/hrmsPortal/leaveView');
   };
 
   const handleNewJoineeClick = () => {

@@ -21,6 +21,7 @@ import {
 } from "@mui/material";
 import AttendanceToggle from "../AttendanceToggle";
 import { useMemo } from "react";
+import TeacherStudentLeaveApplicationsList from "./TeacherStudentLeaveApplicationsList";
 
 const PDashboard = () => {
   const userInfo = useMemo(
@@ -109,7 +110,9 @@ const PDashboard = () => {
 
   return (
     <>
-      { userInfo.role === "PRINCIPAL" && <div className="mb-3"><AttendanceToggle /></div>}
+      { userInfo.role === "PRINCIPAL" && 
+        <div className="mb-3"><AttendanceToggle /></div>
+      }
       <Grid container spacing={3}>
         <Grid item xs={12} md={9}>
           <div className="border p-3 rounded mb-5 shadow-sm">
@@ -247,6 +250,11 @@ const PDashboard = () => {
             </Grid>
           </div>
           <PLogBook />
+          { userInfo.role === "PRINCIPAL" && 
+            <div>
+               <TeacherStudentLeaveApplicationsList />
+            </div>
+          }
         </Grid>
         <Grid item xs={12} md={3}>
           <Box className="border-bottom text-center pb-3 mb-3">
