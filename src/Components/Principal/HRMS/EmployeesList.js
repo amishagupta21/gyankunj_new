@@ -15,7 +15,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import AlertDialogSlide from "./AlertDialogSlide";
 import { showAlertMessage } from "../../AlertMessage";
 
-const EmployeeList = () => {
+const EmployeesList = () => {
   const [isAddEmployeeModalVisible, setIsAddEmployeeModalVisible] =
     useState(false);
   const [refreshView, setRefreshView] = useState(false);
@@ -69,7 +69,7 @@ const EmployeeList = () => {
         break; // Using break instead of return for clarity
 
       default:
-        alert("Viewing info...");
+        goToProfile(data);
     }
   }, []);
 
@@ -139,6 +139,10 @@ const EmployeeList = () => {
         setTimeout(() => setShowAlert(""), 3000);
         setIsOpenConfirmDialog(false);
       });
+  };
+
+  const goToProfile = (userData) => {
+    navigate(`/profile/${encodeURIComponent(userData.employeecode)}`);
   };
 
   return (
@@ -222,4 +226,4 @@ const EmployeeList = () => {
   );
 };
 
-export default EmployeeList;
+export default EmployeesList;

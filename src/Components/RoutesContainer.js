@@ -45,8 +45,9 @@ import APNotifications from "./Principal/APNotifications";
 import PSchoolDiary from "./Principal/PSchoolDiary";
 import TransportView from "./Principal/Transport/TransportView";
 import HrmsDashboard from "./Principal/HRMS/HrmsDashboard";
-import EmployeeList from "./Principal/HRMS/EmployeeList";
 import ProfilePage from "./ProfilePage";
+import EmployeesList from "./Principal/HRMS/EmployeesList";
+import EmployeeLeavesList from "./Principal/HRMS/EmployeeLeavesList";
 
 // Define routes for different user roles
 const roleRoutes = {
@@ -124,7 +125,11 @@ export default function RoutesContainer({ userData }) {
                 />
                 <Route
                   path="/principalDashboard/hrmsPortal/employeeView"
-                  element={<ProtectedWrapper Component={EmployeeList} />}
+                  element={<ProtectedWrapper Component={EmployeesList} />}
+                />
+                <Route
+                  path="/principalDashboard/hrmsPortal/leaveView"
+                  element={<ProtectedWrapper Component={EmployeeLeavesList} />}
                 />
               </>
             )}
@@ -280,7 +285,7 @@ export default function RoutesContainer({ userData }) {
           </>
         ) : null}
         <Route
-          path="/profile"
+          path="/profile/:userId"
           element={<ProtectedWrapper Component={ProfilePage} />}
         />
         {/* 404 Route */}

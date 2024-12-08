@@ -7,6 +7,7 @@ import {
   Box,
   CircularProgress,
 } from "@mui/material";
+import { useParams } from "react-router-dom";
 import { getAllEmployeesList } from "../ApiClient";
 import PaFeedback from "./Parent/PaFeedback";
 import BackButton from "../SharedComponents/BackButton";
@@ -21,30 +22,27 @@ const ProfileInfoField = ({ label, value }) => (
 );
 
 const ProfilePage = () => {
-  const userInfo = useMemo(
-    () => JSON.parse(localStorage.getItem("UserData")),
-    []
-  );
+  const { userId } = useParams(); // Extract userId from query parameters
   const [userDetails, setUserDetails] = useState(null);
   const [loadingProfile, setLoadingProfile] = useState(false);
 
-  const fetchEmployees = useCallback(async () => {
+  const fetchEmployeeDetails = useCallback(async () => {
     setLoadingProfile(true);
     try {
-      const { data } = await getAllEmployeesList({
-        user_ids: [userInfo.user_id],
-      });
+      const { data } = await getAllEmployeesList({ user_ids: [userId] });
       setUserDetails(data?.employee_data?.[0] || null);
     } catch (error) {
       console.error("Failed to fetch employee data:", error);
     } finally {
       setLoadingProfile(false);
     }
-  }, [userInfo.user_id]);
+  }, [userId]);
 
   useEffect(() => {
-    fetchEmployees();
-  }, [fetchEmployees]);
+    if (userId) {
+      fetchEmployeeDetails();
+    }
+  }, [userId, fetchEmployeeDetails]);
 
   const userProfileFields = [
     { label: "Name", value: userDetails?.employeename },
@@ -75,8 +73,8 @@ const ProfilePage = () => {
 
   return (
     <>
-    <BackButton />
-      <Card className="bg-body-tertiary rounded-4 mb-5">
+      <BackButton />
+      <Card className="bg-body-tertiary rounded-4 mb-5 mt-2">
         <CardContent>
           <Typography variant="h5" gutterBottom>
             User Details
@@ -99,7 +97,9 @@ const ProfilePage = () => {
           )}
         </CardContent>
       </Card>
-      {userInfo.role !== "PARENT" && userInfo.role !== "STUDENT" && <PaFeedback isComingFromProfile={true} />}
+      {userDetails?.designationname && userDetails?.designationname !== "Parent" && userDetails?.designationname !== "Student" && (
+        <PaFeedback isComingFromProfile={true} />
+      )}
     </>
   );
 };

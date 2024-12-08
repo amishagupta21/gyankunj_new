@@ -91,21 +91,22 @@ const AttendanceReview = () => {
   // Table Columns
   const columns = useMemo(
     () => [
-      { accessorKey: "user_name", header: "User Name" },
-      { accessorKey: "attendance_date", header: "Attendance Date" },
+      {
+        accessorKey: "user_details",
+        header: "User Details",
+        accessorFn: (row, index) => (
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <Checkbox
+              checked={!!row.is_regularized}
+              onChange={(e) => handleCheckboxChange(index, e.target.checked)}
+              />
+              <span>{row.user_name}</span>
+          </div>
+        ),
+      },
       { accessorKey: "attendance_in_time", header: "Attendance IN Time" },
       { accessorKey: "attendance_out_time", header: "Attendance Out Time" },
       { accessorKey: "attendance_status", header: "Status" },
-      {
-        accessorKey: "is_regularized",
-        header: "Regularized",
-        accessorFn: (row, index) => (
-          <Checkbox
-            checked={!!row.is_regularized}
-            onChange={(e) => handleCheckboxChange(index, e.target.checked)}
-          />
-        ),
-      },
       {
         accessorKey: "comments",
         header: "Comments",
