@@ -6,7 +6,6 @@ import CreateRoutes from "./CreateRoutes";
 
 const RoutesView = () => {
   const [routesList, setRoutesList] = useState([]);
-  const [transformedData, setTransformedData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isAddRoutesModalVisible, setIsAddRoutesModalVisible] = useState(false);
   const [refreshTable, setRefreshTable] = useState(false);
@@ -15,105 +14,108 @@ const RoutesView = () => {
     setIsLoading(true);
     getAllRoutesList()
       .then((res) => {
-        setRoutesList([]);
         if (res?.data?.routes_data?.length > 0) {
-          setRoutesList(res.data.routes_data);
-          const transformed = transformData(res.data.routes_data);
-          setTransformedData(transformed);
+          setRoutesList(res?.data?.routes_data);
         }
-        setTimeout(() => {
-          setIsLoading(false);
-        }, 1000);
+        setTimeout(() => setIsLoading(false), 1000);
       })
       .catch((err) => {
         setIsLoading(false);
-        console.log(err);
+        console.error(err);
       });
   }, [refreshTable]);
-
-  // Transformation logic
-  const transformData = (data) => {
-    const groupedRoutes = data.reduce((acc, item) => {
-      const { route_name, stop_point_name, route_charge } = item;
-
-      if (!acc[route_name]) {
-        acc[route_name] = {
-          route_name,
-          stop_points: [],
-        };
-      }
-
-      acc[route_name].stop_points.push({ stop_point_name, route_charge });
-
-      return acc;
-    }, {});
-
-    return {
-      start_point_name: data[0]?.start_point_name || "Unknown",
-      route_stop_info: Object.values(groupedRoutes),
-    };
-  };
 
   const handleClose = (isSubmit) => {
     setIsAddRoutesModalVisible(false);
     if (isSubmit) {
-      setTimeout(() => {
-        setRefreshTable(!refreshTable);
-      }, 500);
+      setTimeout(() => setRefreshTable(!refreshTable), 500);
     }
   };
 
-  // Columns definition
+  // Columns definition for the main table
   const columns = useMemo(
     () => [
-      { accessorKey: "route_name", header: "Route name" },
-      { accessorKey: "start_point_name", header: "Start point name" },
-      { accessorKey: "stop_point_name", header: "Stop point name" },
-      { accessorKey: "stop_order", header: "Stop order" },
-      { accessorKey: "route_charge", header: "Route charge" },
+      { accessorKey: "route_name", header: "Route Name" },
+      { accessorKey: "start_point_name", header: "Start Point" },
     ],
     []
   );
 
-  // Custom JSX element for the top toolbar
-  const RenderTopToolbarCustomActions = () => {
+  // Detail panel renderer for subrows
+  const renderDetailPanel = ({ row }) => {
+    const subRows = row.original.stop_points_data;
+
     return (
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          gap: 2,
-          marginBottom: 2,
-          justifyContent: "end",
-        }}
-      >
-        <Button
-          variant="contained"
-          onClick={() => setIsAddRoutesModalVisible(true)}
-        >
-          Configure routes
-        </Button>
-      </Box>
+      <table style={{ width: "100%", border: "1px solid #ddd" }}>
+        <thead>
+          <tr>
+            <th style={{ padding: "8px", borderBottom: "1px solid #ddd" }}>
+              Stop Order
+            </th>
+            <th style={{ padding: "8px", borderBottom: "1px solid #ddd" }}>
+              Stop Name
+            </th>
+            <th style={{ padding: "8px", borderBottom: "1px solid #ddd" }}>
+              Charge
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {subRows.map((stop) => (
+            <tr key={stop.stop_point_id}>
+              <td style={{ padding: "8px", borderBottom: "1px solid #ddd" }}>
+                {stop.stop_order}
+              </td>
+              <td style={{ padding: "8px", borderBottom: "1px solid #ddd" }}>
+                {stop.stop_point_name}
+              </td>
+              <td style={{ padding: "8px", borderBottom: "1px solid #ddd" }}>
+                {stop.route_charge}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     );
   };
+
+  const RenderTopToolbarCustomActions = () => (
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        gap: 2,
+        marginBottom: 2,
+        justifyContent: "end",
+      }}
+    >
+      <Button
+        variant="contained"
+        onClick={() => setIsAddRoutesModalVisible(true)}
+      >
+        Configure Routes
+      </Button>
+    </Box>
+  );
 
   return (
     <>
       <RenderTopToolbarCustomActions />
-
       <CommonMatTable
         columns={columns}
         isLoading={isLoading}
+        enableExpanding={true}
         data={routesList || []}
         renderTopToolbar={() => (
           <h1 style={{ fontSize: 18, marginTop: 10 }}>Routes</h1>
         )}
+        renderDetailPanel={renderDetailPanel}
       />
       {isAddRoutesModalVisible && (
         <CreateRoutes
           isOpen={isAddRoutesModalVisible}
           handleClose={handleClose}
-          initialData={transformedData}
+          initialData={routesList}
         />
       )}
     </>

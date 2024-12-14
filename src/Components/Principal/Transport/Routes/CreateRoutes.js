@@ -62,7 +62,15 @@ const CreateRoutes = ({ isOpen, handleClose, initialData = [] }) => {
 
   useEffect(() => {
     if (initialData) {
-      reset(initialData); // Populate form with existing data
+      reset({
+        start_point_name: initialData.start_point_name || "",
+        route_stop_info: initialData.route_stop_info || [
+          {
+            route_name: "",
+            stop_points: [{ stop_point_name: "", route_charge: "" }],
+          },
+        ],
+      });
     }
   }, [initialData, reset]);
 
@@ -72,13 +80,19 @@ const CreateRoutes = ({ isOpen, handleClose, initialData = [] }) => {
       stop_point_name: "",
       route_charge: "",
     });
-    reset({ route_stop_info: updatedRoutes });
+    reset({
+      ...getValues(),
+      route_stop_info: updatedRoutes,
+    });
   };
 
   const handleRemoveStop = (routeIndex, stopIndex) => {
     const updatedRoutes = [...getValues("route_stop_info")];
     updatedRoutes[routeIndex].stop_points.splice(stopIndex, 1);
-    reset({ route_stop_info: updatedRoutes });
+    reset({
+      ...getValues(),
+      route_stop_info: updatedRoutes,
+    });
   };
 
   const onSubmit = (data) => {
@@ -172,22 +186,21 @@ const CreateRoutes = ({ isOpen, handleClose, initialData = [] }) => {
                   {route.stop_points.map((stop, stopIndex) => (
                     <Grid container item xs={12} spacing={2} key={stopIndex}>
                       <Grid item xs={6}>
-                        <Controller
-                          name={`route_stop_info.${routeIndex}.stop_points.${stopIndex}.stop_point_name`}
-                          control={control}
-                          rules={{ required: "Stop Point Name is required" }}
-                          render={({ field }) => (
-                            <TextField
-                              {...field}
-                              fullWidth
-                              label="Stop Point Name"
-                              error={
-                                !!errors.route_stop_info?.[routeIndex]
-                                  ?.stop_points?.[stopIndex]?.stop_point_name
-                              }
-                            />
-                          )}
-                        />
+                      <Controller
+                        name={`route_stop_info.${routeIndex}.stop_points.${stopIndex}.stop_point_name`}
+                        control={control}
+                        defaultValue=""
+                        render={({ field }) => (
+                          <TextField
+                            {...field}
+                            fullWidth
+                            label="Stop Point Name"
+                            error={
+                              !!errors.route_stop_info?.[routeIndex]?.stop_points?.[stopIndex]?.stop_point_name
+                            }
+                          />
+                        )}
+                      />
                       </Grid>
                       <Grid item xs={5}>
                         <Controller
