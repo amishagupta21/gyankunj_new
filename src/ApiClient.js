@@ -450,6 +450,10 @@ const createVehicleType = (payload) => {
   return apiInstance.post(`/create_vehicle_types`, payload);
 };
 
+const fetchAllNonTeachingStaffs = () => {
+  return apiInstance.get(`/fetch_all_non_teaching_staffs`);
+};
+
 
 export {
   //loginUser,
@@ -541,5 +545,6 @@ export {
   updateStaffAttendanceData,
   getStaffLeaveApplicationsList,
   getAssignedStudentLeaveApplicationsList,
-  createVehicleType
+  createVehicleType,
+  fetchAllNonTeachingStaffs
 };

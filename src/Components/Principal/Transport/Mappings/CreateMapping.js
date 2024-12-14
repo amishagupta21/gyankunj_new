@@ -94,7 +94,7 @@ const CreateMapping = ({ isOpen, handleClose, initialData = null }) => {
   const onSubmit = (data) => {
     console.log("Form Data Submitted:", data);
 
-    updateMapping(data)
+    updateMapping([data])
       .then((res) => {
         if (res?.data?.status === "success") {
           setShowAlert("success");
