@@ -446,6 +446,10 @@ const updateStaffAttendanceData = (payload) => {
   return apiInstance.post(`/update_staff_attendance_data`, payload);
 };
 
+const createVehicleType = (payload) => {
+  return apiInstance.post(`/create_vehicle_types`, payload);
+};
+
 
 export {
   //loginUser,
@@ -536,5 +540,6 @@ export {
   fetchAttendanceDataForReview,
   updateStaffAttendanceData,
   getStaffLeaveApplicationsList,
-  getAssignedStudentLeaveApplicationsList
+  getAssignedStudentLeaveApplicationsList,
+  createVehicleType
 };
