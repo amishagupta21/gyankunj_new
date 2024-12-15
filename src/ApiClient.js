@@ -454,6 +454,14 @@ const fetchAllNonTeachingStaffs = () => {
   return apiInstance.get(`/fetch_all_non_teaching_staffs`);
 };
 
+const fetchAllStudentsMetadata = () => {
+  return apiInstance.get(`/fetch_all_students_metadata`);
+};
+
+const fetchMappedStudentRoutes = () => {
+  return apiInstance.get(`/fetch_mapped_student_routes`);
+};
+
 
 export {
   //loginUser,
@@ -546,5 +554,7 @@ export {
   getStaffLeaveApplicationsList,
   getAssignedStudentLeaveApplicationsList,
   createVehicleType,
-  fetchAllNonTeachingStaffs
+  fetchAllNonTeachingStaffs,
+  fetchAllStudentsMetadata,
+  fetchMappedStudentRoutes
 };
