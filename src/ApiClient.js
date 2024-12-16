@@ -462,6 +462,10 @@ const fetchMappedStudentRoutes = () => {
   return apiInstance.get(`/fetch_mapped_student_routes`);
 };
 
+const createStudentRouteMapping = (payload) => {
+  return apiInstance.post('/create_student_routes', payload)
+}
+
 
 export {
   //loginUser,
@@ -556,5 +560,6 @@ export {
   createVehicleType,
   fetchAllNonTeachingStaffs,
   fetchAllStudentsMetadata,
-  fetchMappedStudentRoutes
+  fetchMappedStudentRoutes,
+  createStudentRouteMapping
 };
