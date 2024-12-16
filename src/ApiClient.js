@@ -450,6 +450,22 @@ const createVehicleType = (payload) => {
   return apiInstance.post(`/create_vehicle_types`, payload);
 };
 
+const fetchAllNonTeachingStaffs = () => {
+  return apiInstance.get(`/fetch_all_non_teaching_staffs`);
+};
+
+const fetchAllStudentsMetadata = () => {
+  return apiInstance.get(`/fetch_all_students_metadata`);
+};
+
+const fetchMappedStudentRoutes = () => {
+  return apiInstance.get(`/fetch_mapped_student_routes`);
+};
+
+const createStudentRouteMapping = (payload) => {
+  return apiInstance.post('/create_student_routes', payload)
+}
+
 
 export {
   //loginUser,
@@ -541,5 +557,9 @@ export {
   updateStaffAttendanceData,
   getStaffLeaveApplicationsList,
   getAssignedStudentLeaveApplicationsList,
-  createVehicleType
+  createVehicleType,
+  fetchAllNonTeachingStaffs,
+  fetchAllStudentsMetadata,
+  fetchMappedStudentRoutes,
+  createStudentRouteMapping
 };

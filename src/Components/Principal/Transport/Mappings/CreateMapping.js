@@ -94,7 +94,7 @@ const CreateMapping = ({ isOpen, handleClose, initialData = null }) => {
   const onSubmit = (data) => {
     console.log("Form Data Submitted:", data);
 
-    updateMapping(data)
+    updateMapping([data])
       .then((res) => {
         if (res?.data?.status === "success") {
           setShowAlert("success");
@@ -159,13 +159,8 @@ const CreateMapping = ({ isOpen, handleClose, initialData = null }) => {
                       >
                         {routesData.map((item) => (
                           <MenuItem key={item.route_id} value={item.route_id}>
-                            From{" "}
                             <strong className="ms-1 me-1">
-                              {item.start_point_name}
-                            </strong>{" "}
-                            to{" "}
-                            <strong className="ms-1 me-1">
-                              {item.end_point_name}
+                              {item.route_name}
                             </strong>
                           </MenuItem>
                         ))}
