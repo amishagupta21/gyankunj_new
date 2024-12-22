@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import BackButton from "../../SharedComponents/BackButton";
+import StudentMappingView from "./StudentMappingView";
 
 const PaTransport = () => {
 
@@ -8,7 +9,7 @@ const PaTransport = () => {
   return (
     <>
       <BackButton />
-      <div>Parent transport</div>
+      <StudentMappingView />
     </>
   );
 };

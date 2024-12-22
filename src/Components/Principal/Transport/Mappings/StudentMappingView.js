@@ -1,8 +1,24 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { fetchAllStudentsMetadata, fetchMappedStudentRoutes, getAllRoutesList } from "../../../../ApiClient";
+import {
+  evaluateStudentRouteRequest,
+  fetchAllStudentsMetadata,
+  fetchMappedStudentRoutes,
+  getAllRoutesList,
+} from "../../../../ApiClient";
 import CommonMatTable from "../../../../SharedComponents/CommonMatTable";
-import { Box, Button } from "@mui/material";
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+} from "@mui/material";
 import CreateStudentRouteMapping from "./CreateStudentRouteMapping";
+import { showAlertMessage } from "../../../AlertMessage";
+import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
+import CheckRoundedIcon from "@mui/icons-material/CheckRounded";
 
 const StudentMappingView = () => {
   const [studentRoutesList, setStudentRoutesList] = useState([]);
@@ -12,6 +28,14 @@ const StudentMappingView = () => {
   const [studentList, setStudentList] = useState();
   const [routesList, setRoutesList] = useState();
   const [selectedDataToEdit, setSelectedDataToEdit] = useState();
+  const [showAlert, setShowAlert] = useState("");
+  const [confirmationDialog, setConfirmationDialog] = useState({
+    open: false,
+    route_id: null,
+    stop_point_id: null,
+    student_id: null,
+    is_assigned: null,
+  });
 
   useEffect(() => {
     setIsLoading(true);
@@ -59,6 +83,54 @@ const StudentMappingView = () => {
     }
   };
 
+  const takeActionOnRoute = () => {
+    delete confirmationDialog.open;
+    evaluateStudentRouteRequest(confirmationDialog)
+      .then((res) => {
+        if (res?.data?.status === "success") {
+          setShowAlert("success");
+        } else {
+          setShowAlert("error");
+        }
+        setTimeout(() => {
+          setShowAlert("");
+        }, 2000);
+        setRefreshTable((prev) => !prev);
+      })
+      .catch((err) => {
+        setShowAlert("error");
+        setTimeout(() => {
+          setShowAlert("");
+        }, 3000);
+      });
+    closeConfirmationDialog();
+  };
+
+  const openConfirmationDialog = (
+    route_id,
+    stop_point_id,
+    student_id,
+    is_assigned
+  ) => {
+    setConfirmationDialog({
+      open: true,
+      route_id: route_id,
+      stop_point_id: stop_point_id,
+      student_id: student_id,
+      is_assigned: is_assigned,
+    });
+  };
+
+  const closeConfirmationDialog = () => {
+    setConfirmationDialog({
+      open: false,
+      route_id: null,
+      stop_point_id: null,
+      student_id: null,
+      is_assigned: null,
+    });
+  };
+
   // Columns definition for the main table
   const columns = useMemo(
     () => [{ accessorKey: "route_name", header: "Route Name" }],
@@ -89,13 +161,43 @@ const StudentMappingView = () => {
               </td>
               <td style={{ padding: "8px", borderBottom: "1px solid #ddd" }}>
                 <ul>
-                  {stop.student_ids.map((user) => (
+                  {stop.student_ids.map((user, index) => (
                     <li key={user.student_id}>
-                      <span>
-                        {user.student_name}
-                        {" - "}
-                        {user.student_id}
-                      </span>
+                      <div className="d-flex align-items-center gap-2 py-2">
+                        <div>
+                          {user.student_name}
+                          {" - "}
+                          {user.student_id}
+                        </div>
+                        {user.to_be_reviewed && (
+                          <>
+                            <CheckRoundedIcon
+                              className="cursor mr-1"
+                              color="success"
+                              onClick={() =>
+                                openConfirmationDialog(
+                                  row.original.route_id,
+                                  stop.stop_point_id,
+                                  user.student_id,
+                                  true
+                                )
+                              }
+                            />
+                            <CloseRoundedIcon
+                              className="cursor"
+                              color="error"
+                              onClick={() =>
+                                openConfirmationDialog(
+                                  row.original.route_id,
+                                  stop.stop_point_id,
+                                  user.student_id,
+                                  false
+                                )
+                              }
+                            />
+                          </>
+                        )}
+                      </div>
                     </li>
                   ))}
                 </ul>
@@ -148,6 +250,36 @@ const StudentMappingView = () => {
           initialData={selectedDataToEdit}
         />
       )}
+      {showAlert &&
+        showAlertMessage({
+          open: true,
+          alertFor: showAlert,
+          message: `Evaluation student route ${
+            showAlert === "success" ? "succeeded" : "failed"
+          }.`,
+        })}
+
+      <Dialog open={confirmationDialog.open} onClose={closeConfirmationDialog}>
+        <DialogTitle>Confirm Action</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to{" "}
+            {confirmationDialog.is_assigned ? "approve" : "reject"} this route
+            application?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={closeConfirmationDialog} color="primary">
+            Cancel
+          </Button>
+          <Button
+            onClick={takeActionOnRoute}
+            color={confirmationDialog.is_assigned ? "success" : "error"}
+          >
+            {confirmationDialog.is_assigned ? "Approve" : "Reject"}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };
