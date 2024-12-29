@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import home from "../Images/home.svg";
 import about from "../Images/aboutimg.svg";
 import detail from "../Images/detail.svg";
@@ -7,10 +7,47 @@ import parent from "../Images/parent.jpg";
 import teacher from "../Images/forteacher.svg";
 import student from "../Images/forstudent.svg";
 import Gyankoonj_logo from "../Images/Gyankoonj_logo.png";
-import { Button } from "@mui/material";
+import { Button, Fab } from "@mui/material";
 import UserBasicDetailsForm from "./UserBasicDetailsForm";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 
-const LandingDashboard = () => {
+const LandingDashboard = ({mainContainerRef}) => {
+  const featureSectionRef = useRef(null);
+  const learnMoreSectionRef = useRef(null);
+  const container = mainContainerRef.current;
+  const [showGoToTop, setShowGoToTop] = useState(false);
+
+  const scrollToSection = (sectionRef) => {
+    sectionRef.current.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const scrollToTop = () => {
+    if (container) {
+      container.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (container && container.scrollTop > 300) {
+        setShowGoToTop(true);
+      } else {
+        setShowGoToTop(false);
+      }
+    };
+
+    if (container) {
+      container.addEventListener("scroll", handleScroll);
+    }
+
+    return () => {
+      if (container) {
+        container.removeEventListener("scroll", handleScroll);
+      }
+    };
+  }, []);
+  
+
   return (
     <>
       <div
@@ -37,14 +74,14 @@ const LandingDashboard = () => {
             <Button
               variant="contained"
               className="bg-gradient"
-              onClick={() => (window.location.href = "#learn-feature-section")}
+              onClick={() => scrollToSection(featureSectionRef)}
             >
               Check Module
             </Button>
             <Button
               variant="contained"
               className="bg-gradient"
-              onClick={() => (window.location.href = "#learn-more-section")}
+              onClick={() => scrollToSection(learnMoreSectionRef)}
             >
               Learn more
             </Button>
@@ -102,7 +139,8 @@ const LandingDashboard = () => {
         </div>
       </div>
 
-      <div className="p-3 text-center"
+      <div
+        className="p-3 text-center"
         style={{
           background:
             "linear-gradient(95deg, #e878cf 2.39%, #6171bc 32.45%, #236eb4 97.66%)",
@@ -144,7 +182,7 @@ const LandingDashboard = () => {
         </div>
       </div>
 
-      <div className="p-3 text-center" id="learn-feature-section">
+      <div className="p-3 text-center" ref={featureSectionRef}>
         <p className="display-5">Features of Gyankoonj</p>
         <p className="lead">
           Gyankoonj is a platform that allows educators to create online classes
@@ -230,7 +268,11 @@ const LandingDashboard = () => {
         </div>
       </div>
 
-      <div className="d-flex flex-column flex-lg-row justify-content-around align-items-center px-3" id="learn-more-section" style={{ background: "#f4f4f4" }}>
+      <div
+        className="d-flex flex-column flex-lg-row justify-content-around align-items-center px-3"
+        ref={learnMoreSectionRef}
+        style={{ background: "#f4f4f4" }}
+      >
         <UserBasicDetailsForm />
       </div>
 
@@ -267,6 +309,22 @@ const LandingDashboard = () => {
         </div>
         <p>©2024 Gyankoonj.</p>
       </div>
+
+         {/* Go to Top Button */}
+         {showGoToTop && (
+        <Fab
+          color="primary"
+          aria-label="go to top"
+          style={{
+            position: "fixed",
+            bottom: "20px",
+            right: "20px",
+          }}
+          onClick={scrollToTop}
+        >
+          <KeyboardArrowUpIcon />
+        </Fab>
+      )}
 
       <style jsx="true">
         {`
@@ -330,10 +388,10 @@ const LandingDashboard = () => {
             .img-container img {
               height: 250px !important;
             }
-              .image-container {
+            .image-container {
               margin-bottom: 0 !important;
             }
-               .image-container img {
+            .image-container img {
               height: auto !important;
             }
             .text-container {
@@ -345,9 +403,9 @@ const LandingDashboard = () => {
             .lead {
               font-size: 16px;
             }
-              .w-75{
-                  width: 100% !important;
-              }
+            .w-75 {
+              width: 100% !important;
+            }
           }
         `}
       </style>
