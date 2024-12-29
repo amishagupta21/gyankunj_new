@@ -58,7 +58,7 @@ const roleRoutes = {
   PARENT: "/parentDashboard/dashboard",
 };
 
-export default function RoutesContainer({ userData }) {
+export default function RoutesContainer({ userData, mainContainerRef }) {
   const classTeacherDetails = userData?.class_teacher_details;
   // Function to check if the user has the required role for accessing a route
   const hasPermission = (allowedRoles) => {
@@ -299,5 +299,5 @@ export default function RoutesContainer({ userData }) {
   }
 
   // If user doesn't have permission, show DashboardSectionContent
-  return <LandingDashboard />;
+  return <LandingDashboard mainContainer={mainContainerRef} />;
 }

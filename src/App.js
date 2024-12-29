@@ -3,7 +3,7 @@ import "./App.css";
 import Header from "./Components/Header";
 import RoutesContainer from "./Components/RoutesContainer";
 import SidebarContainer from "./Components/SidebarContainer";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { pdfjs } from 'react-pdf';
 
@@ -18,6 +18,7 @@ function App() {
   const [isPageNotFound, setIsPageNotFound] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const location = useLocation();
+  const mainContainerRef = useRef(null);
 
   useEffect(() => {
     const storedData = localStorage.getItem("UserData");
@@ -62,11 +63,12 @@ function App() {
           </div>
         )}
         <div
+          ref={mainContainerRef}
           className={`main-container ${
             (userData.role === 'PARENT' || isTabScreen || !userData?.token || isPageNotFound) && "w-100"
           } ${isCollapsed && "cont-big"} ${!userData?.token && 'p-0'}`}
         >
-          <RoutesContainer userData={userData} />
+          <RoutesContainer userData={userData} mainContainerRef={mainContainerRef} />
         </div>
       </div>
     </div>
