@@ -8,6 +8,7 @@ import teacher from "../Images/forteacher.svg";
 import student from "../Images/forstudent.svg";
 import Gyankoonj_logo from "../Images/Gyankoonj_logo.png";
 import { Button } from "@mui/material";
+import UserBasicDetailsForm from "./UserBasicDetailsForm";
 
 const LandingDashboard = () => {
   return (
@@ -36,7 +37,7 @@ const LandingDashboard = () => {
             <Button
               variant="contained"
               className="bg-gradient"
-              onClick={() => (window.location.href = "#check-section")}
+              onClick={() => (window.location.href = "#learn-feature-section")}
             >
               Check Module
             </Button>
@@ -101,9 +102,7 @@ const LandingDashboard = () => {
         </div>
       </div>
 
-      <div
-        className="p-3 text-center"
-        id="check-section"
+      <div className="p-3 text-center"
         style={{
           background:
             "linear-gradient(95deg, #e878cf 2.39%, #6171bc 32.45%, #236eb4 97.66%)",
@@ -145,7 +144,7 @@ const LandingDashboard = () => {
         </div>
       </div>
 
-      <div className="p-3 text-center" id="learn-more-section">
+      <div className="p-3 text-center" id="learn-feature-section">
         <p className="display-5">Features of Gyankoonj</p>
         <p className="lead">
           Gyankoonj is a platform that allows educators to create online classes
@@ -231,6 +230,10 @@ const LandingDashboard = () => {
         </div>
       </div>
 
+      <div className="d-flex flex-column flex-lg-row justify-content-around align-items-center px-3" id="learn-more-section" style={{ background: "#f4f4f4" }}>
+        <UserBasicDetailsForm />
+      </div>
+
       <div
         className="text-white text-center p-4"
         style={{ background: "#252641" }}
@@ -264,6 +267,7 @@ const LandingDashboard = () => {
         </div>
         <p>©2024 Gyankoonj.</p>
       </div>
+
       <style jsx="true">
         {`
           .card {
