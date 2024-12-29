@@ -17,12 +17,20 @@ const UserBasicDetailsForm = () => {
     reset,
     formState: { errors },
   } = useForm();
+  const ownerEmailId = "raj.pathar93@gmail.com";
+  const emailSubject = "New Form Submission";
 
   const onSubmit = (data) => {
     console.log("Form submitted:", data);
-    alert("Form submitted successfully!");
+    const { name, email, phone, address } = data;
+    const body = `Name: ${name}\nEmail: ${email}\nPhone: ${phone}\nAddress: ${address}`;
+  
+    // Open the default email client with pre-filled information
+    window.location.href = `mailto:${ownerEmailId}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(body)}`;
     reset(); // Reset the form fields
+    
   };
+  
 
   return (
     <>

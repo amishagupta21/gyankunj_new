@@ -299,5 +299,5 @@ export default function RoutesContainer({ userData, mainContainerRef }) {
   }
 
   // If user doesn't have permission, show DashboardSectionContent
-  return <LandingDashboard mainContainerRef={mainContainerRef} />;
+  return <LandingDashboard mainContainer={mainContainerRef} />;
 }

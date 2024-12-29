@@ -11,10 +11,10 @@ import { Button, Fab } from "@mui/material";
 import UserBasicDetailsForm from "./UserBasicDetailsForm";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 
-const LandingDashboard = ({mainContainerRef}) => {
+const LandingDashboard = ({mainContainer}) => {
   const featureSectionRef = useRef(null);
   const learnMoreSectionRef = useRef(null);
-  const container = mainContainerRef.current;
+  const container = mainContainer?.current;
   const [showGoToTop, setShowGoToTop] = useState(false);
 
   const scrollToSection = (sectionRef) => {
@@ -35,7 +35,7 @@ const LandingDashboard = ({mainContainerRef}) => {
         setShowGoToTop(false);
       }
     };
-
+    
     if (container) {
       container.addEventListener("scroll", handleScroll);
     }
@@ -45,7 +45,7 @@ const LandingDashboard = ({mainContainerRef}) => {
         container.removeEventListener("scroll", handleScroll);
       }
     };
-  }, []);
+  }, [container]);
   
 
   return (
