@@ -10,8 +10,9 @@ import Gyankoonj_logo from "../Images/Gyankoonj_logo.png";
 import { Button, Fab } from "@mui/material";
 import UserBasicDetailsForm from "./UserBasicDetailsForm";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import JDoodleExecutor from "./JDoodleExecutor";
 
-const LandingDashboard = ({mainContainer}) => {
+const LandingDashboard = ({ mainContainer }) => {
   const featureSectionRef = useRef(null);
   const learnMoreSectionRef = useRef(null);
   const container = mainContainer?.current;
@@ -35,7 +36,7 @@ const LandingDashboard = ({mainContainer}) => {
         setShowGoToTop(false);
       }
     };
-    
+
     if (container) {
       container.addEventListener("scroll", handleScroll);
     }
@@ -46,7 +47,6 @@ const LandingDashboard = ({mainContainer}) => {
       }
     };
   }, [container]);
-  
 
   return (
     <>
@@ -275,6 +275,10 @@ const LandingDashboard = ({mainContainer}) => {
       >
         <UserBasicDetailsForm />
       </div>
+      <div className="d-flex flex-column flex-lg-row justify-content-around align-items-center px-3">
+        <h1>Online Code Executor</h1>
+        <JDoodleExecutor />
+      </div>
 
       <div
         className="text-white text-center p-4"
@@ -310,8 +314,8 @@ const LandingDashboard = ({mainContainer}) => {
         <p>©2024 Gyankoonj.</p>
       </div>
 
-         {/* Go to Top Button */}
-         {showGoToTop && (
+      {/* Go to Top Button */}
+      {showGoToTop && (
         <Fab
           color="primary"
           aria-label="go to top"
