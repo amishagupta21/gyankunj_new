@@ -11,6 +11,7 @@ import FeedbackOutlinedIcon from '@mui/icons-material/FeedbackOutlined';
 import LibraryBooksOutlinedIcon from '@mui/icons-material/LibraryBooksOutlined';
 import DirectionsBusFilledOutlinedIcon from '@mui/icons-material/DirectionsBusFilledOutlined';
 import Groups2OutlinedIcon from '@mui/icons-material/Groups2Outlined';
+import AccountBalanceWalletOutlinedIcon from '@mui/icons-material/AccountBalanceWalletOutlined';
 
 export const routesConfig = {
   ADMIN: [
@@ -61,6 +62,12 @@ export const routesConfig = {
       title: "Transport",
       icon: <DirectionsBusFilledOutlinedIcon />,
       route: "/principalDashboard/transportView",
+    },
+    {
+      code: "financeView",
+      title: "Finance",
+      icon: <AccountBalanceWalletOutlinedIcon />,
+      route: "/principalDashboard/financeView",
     },
     {
       code: "hrmsPortal",

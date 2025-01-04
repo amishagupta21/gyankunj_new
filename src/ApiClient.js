@@ -474,6 +474,18 @@ const evaluateStudentRouteRequest = (payload) => {
   return apiInstance.put('/evaluate_student_route_request', payload)
 }
 
+const fetchFeesMetadata = () => {
+  return apiInstance.get(`/fetch_fees_metadata`);
+};
+
+const fetchFeesStructuresList = () => {
+  return apiInstance.get(`/fetch_fees_structure_info`);
+};
+
+const createFeesStructures = (payload) => {
+  return apiInstance.post(`/create_fee_structure`, payload);
+};
+
 
 export {
   //loginUser,
@@ -571,5 +583,8 @@ export {
   fetchMappedStudentRoutes,
   createStudentRouteMapping,
   createPStudentRouteMapping,
-  evaluateStudentRouteRequest
+  evaluateStudentRouteRequest,
+  fetchFeesMetadata,
+  fetchFeesStructuresList,
+  createFeesStructures
 };
