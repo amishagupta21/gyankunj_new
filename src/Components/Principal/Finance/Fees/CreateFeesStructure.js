@@ -17,29 +17,17 @@ import {
   ListItemText,
   FormControl,
   InputLabel,
-  styled,
+  useTheme,
+  useMediaQuery,
 } from "@mui/material";
 import { Add, Delete } from "@mui/icons-material";
 import CloseIcon from "@mui/icons-material/Close";
 import { createFeesStructures } from "../../../../ApiClient";
 import { showAlertMessage } from "../../../AlertMessage";
 
-const BootstrapDialog = styled(Dialog)(({ theme }) => ({
-  "& .MuiDialogContent-root": {
-    padding: theme.spacing(2),
-    height: "calc(100% - 53px)",
-  },
-  "& .MuiDialogActions-root": {
-    padding: theme.spacing(1),
-  },
-  "& .MuiDialog-paper": {
-    maxWidth: "90%",
-    width: "50%",
-    overflow: "hidden",
-  },
-}));
-
 const CreateFeesStructure = ({ isOpen, handleClose, metadata }) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [alert, setAlert] = useState({ type: "", message: "" });
 
   const {
@@ -92,10 +80,17 @@ const CreateFeesStructure = ({ isOpen, handleClose, metadata }) => {
 
   return (
     <React.Fragment>
-      <BootstrapDialog
+      <Dialog
         aria-labelledby="customized-dialog-title"
         open={isOpen}
         scroll="paper"
+        PaperProps={{
+          sx: {
+            maxWidth: isMobile ? "90%" : "60%",
+            width: "100%",
+            margin: isMobile ? 1 : "auto",
+          },
+        }}
       >
         <DialogTitle>
           Create Fees Structure
@@ -334,7 +329,7 @@ const CreateFeesStructure = ({ isOpen, handleClose, metadata }) => {
             </Button>
           </DialogActions>
         </form>
-      </BootstrapDialog>
+      </Dialog>
 
       {/* Alert Message */}
       {alert.type &&

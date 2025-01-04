@@ -109,6 +109,17 @@ const FeesStructureView = () => {
         ),
       },
       {
+        accessorKey: "grade_ids",
+        header: "Grades",
+        Cell: ({ row }) => (
+          <div>
+            {row.original.grade_ids?.map((id) => (
+              <div key={id}>{metadata.grades[id] || "-"}</div>
+            )) || "-"}
+          </div>
+        ),
+      },
+      {
         accessorKey: "frequency_id",
         header: "Frequency",
         Cell: ({ row }) => <span>{metadata.feeFrequencies[row.original.frequency_id] || "-"}</span>,
@@ -121,18 +132,7 @@ const FeesStructureView = () => {
       {
         accessorKey: "charge",
         header: "Charge",
-      },
-      {
-        accessorKey: "grade_ids",
-        header: "Grades",
-        Cell: ({ row }) => (
-          <div>
-            {row.original.grade_ids?.map((id) => (
-              <div key={id}>{metadata.grades[id] || "-"}</div>
-            )) || "-"}
-          </div>
-        ),
-      },
+      }
     ],
     [anchorEl, menuRowId, metadata]
   );
