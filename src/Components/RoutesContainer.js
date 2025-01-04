@@ -48,6 +48,7 @@ import HrmsDashboard from "./Principal/HRMS/HrmsDashboard";
 import ProfilePage from "./ProfilePage";
 import EmployeesList from "./Principal/HRMS/EmployeesList";
 import EmployeeLeavesList from "./Principal/HRMS/EmployeeLeavesList";
+import FinanceView from "./Principal/Finance/FinanceView";
 
 // Define routes for different user roles
 const roleRoutes = {
@@ -118,6 +119,10 @@ export default function RoutesContainer({ userData, mainContainerRef }) {
                 <Route
                   path="/principalDashboard/transportView"
                   element={<ProtectedWrapper Component={TransportView} />}
+                />
+                <Route
+                  path="/principalDashboard/financeView"
+                  element={<ProtectedWrapper Component={FinanceView} />}
                 />
                 <Route
                   path="/principalDashboard/hrmsPortal"
