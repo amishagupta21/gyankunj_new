@@ -275,10 +275,9 @@ const LandingDashboard = ({ mainContainer }) => {
       >
         <UserBasicDetailsForm />
       </div>
-      <div className="d-flex flex-column flex-lg-row justify-content-around align-items-center px-3">
-        <h1>Online Code Executor</h1>
+      {/* <div className="d-flex flex-column flex-lg-row justify-content-around align-items-center px-3">
         <JDoodleExecutor />
-      </div>
+      </div> */}
 
       <div
         className="text-white text-center p-4"

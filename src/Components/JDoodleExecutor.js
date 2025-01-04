@@ -28,6 +28,7 @@ const JDoodleExecutor = () => {
 
   return (
     <div>
+      <h1>Online Code Executor</h1>
       <textarea
         value={code}
         onChange={(e) => setCode(e.target.value)}
