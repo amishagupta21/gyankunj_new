@@ -1,9 +1,19 @@
 import React, { useState, useMemo, useEffect, useCallback } from "react";
-import { Box, Button, IconButton, Menu, MenuItem } from "@mui/material";
-import { fetchFeesMetadata, fetchFeesStructuresList, getGradeDetails } from "../../../../ApiClient";
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, Menu, MenuItem, Modal, Slide } from "@mui/material";
+import {
+  deleteFeesStructure,
+  fetchFeesMetadata,
+  fetchFeesStructuresList,
+  getGradeDetails,
+} from "../../../../ApiClient";
 import CommonMatTable from "../../../../SharedComponents/CommonMatTable";
 import { Delete, MoreVert } from "@mui/icons-material";
 import CreateFeesStructure from "./CreateFeesStructure";
+import { showAlertMessage } from "../../../AlertMessage";
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 
 const FeesStructureView = () => {
   const [metadata, setMetadata] = useState({
@@ -15,10 +25,12 @@ const FeesStructureView = () => {
   const [feesStructuresList, setFeesStructuresList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectedFeesData, setSelectedFeesData] = useState(null);
+  const [selectedFeesStructureId, setSelectedFeesStructureId] = useState(null);
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [menuRowId, setMenuRowId] = useState(null);
   const [refreshTable, setRefreshTable] = useState(false);
+  const [alert, setAlert] = useState({ type: "", message: "" });
 
   const fetchAndSetMetadata = async () => {
     try {
@@ -32,10 +44,26 @@ const FeesStructureView = () => {
         }, {});
 
       setMetadata({
-        feeTypes: parseListToMap(metadataResponse?.data?.fee_types || [], "fee_type_id", "fee_type_name"),
-        feeFrequencies: parseListToMap(metadataResponse?.data?.fee_frequency || [], "fee_frequency_id", "fee_frequency_name"),
-        feeOccurrences: parseListToMap(metadataResponse?.data?.fee_occurrences || [], "fee_occurrence_id", "fee_occurrence_name"),
-        grades: parseListToMap(gradeResponse?.data?.grade_details?.grade_details || [], "grade_id", "grade"),
+        feeTypes: parseListToMap(
+          metadataResponse?.data?.fee_types || [],
+          "fee_type_id",
+          "fee_type_name"
+        ),
+        feeFrequencies: parseListToMap(
+          metadataResponse?.data?.fee_frequency || [],
+          "fee_frequency_id",
+          "fee_frequency_name"
+        ),
+        feeOccurrences: parseListToMap(
+          metadataResponse?.data?.fee_occurrences || [],
+          "fee_occurrence_id",
+          "fee_occurrence_name"
+        ),
+        grades: parseListToMap(
+          gradeResponse?.data?.grade_details?.grade_details || [],
+          "grade_id",
+          "grade"
+        ),
       });
     } catch (err) {
       console.error("Failed to fetch metadata:", err);
@@ -72,14 +100,47 @@ const FeesStructureView = () => {
     setMenuRowId(null);
   }, []);
 
-  const handleDelete = (rowData) => {
-    setSelectedFeesData(rowData);
+  const handleDeleteConfirmation = (id) => {
     handleMenuClose();
+    setSelectedFeesStructureId(id);
+    setShowDeleteConfirmation(true);
+  };
+
+  const handleDeleteCancel = () => {
+    setSelectedFeesStructureId(null);
+    setShowDeleteConfirmation(false);
+  };
+
+  const handleDeleteConfirm = async () => {
+    try {
+      const payload = {
+        "fee_master_ids": selectedFeesStructureId
+     }
+      const response = await deleteFeesStructure(payload);
+      if (response?.data?.status === "success") {
+        setAlert({
+          type: "success",
+          message: "Fee structure deleted successfully.",
+        });
+        setTimeout(() => {
+          setRefreshTable((prev) => !prev);
+          handleDeleteCancel();
+          setAlert({ type: "", message: "" });
+        }, 2000);
+      } else {
+        setAlert({
+          type: "error",
+          message: response?.data?.message || "Something went wrong.",
+        });
+      }
+    } catch (err) {
+      console.error("Failed to delete fees structures:", err);
+    }
   };
 
   const handleModalClose = (isSubmit) => {
     setIsModalVisible(false);
-    setSelectedFeesData(null);
+    setSelectedFeesStructureId(null);
     if (isSubmit) {
       setRefreshTable((prev) => !prev);
     }
@@ -101,7 +162,11 @@ const FeesStructureView = () => {
               open={Boolean(anchorEl) && menuRowId === row.id}
               onClose={handleMenuClose}
             >
-              <MenuItem onClick={() => handleDelete(row.original)}>
+              <MenuItem
+                onClick={() =>
+                  handleDeleteConfirmation(row.original.fee_master_ids)
+                }
+              >
                 <Delete fontSize="small" sx={{ marginRight: 1 }} /> Delete
               </MenuItem>
             </Menu>
@@ -120,26 +185,36 @@ const FeesStructureView = () => {
         ),
       },
       {
-        accessorKey: "frequency_id",
+        accessorKey: "fee_frequency_id",
         header: "Frequency",
-        Cell: ({ row }) => <span>{metadata.feeFrequencies[row.original.frequency_id] || "-"}</span>,
+        Cell: ({ row }) => (
+          <span>
+            {metadata.feeFrequencies[row.original.fee_frequency_id] || "-"}
+          </span>
+        ),
       },
       {
-        accessorKey: "occurrence_id",
+        accessorKey: "fee_occurrence_id",
         header: "Occurrence",
-        Cell: ({ row }) => <span>{metadata.feeOccurrences[row.original.occurrence_id] || "-"}</span>,
+        Cell: ({ row }) => (
+          <span>
+            {metadata.feeOccurrences[row.original.fee_occurrence_id] || "-"}
+          </span>
+        ),
       },
       {
         accessorKey: "charge",
         header: "Charge",
-      }
+      },
     ],
     [anchorEl, menuRowId, metadata]
   );
 
   return (
     <>
-      <Box sx={{ display: "flex", justifyContent: "flex-end", marginBottom: 2 }}>
+      <Box
+        sx={{ display: "flex", justifyContent: "flex-end", marginBottom: 2 }}
+      >
         <Button variant="contained" onClick={() => setIsModalVisible(true)}>
           Create Fees Structure
         </Button>
@@ -149,7 +224,9 @@ const FeesStructureView = () => {
         columns={columns}
         isLoading={isLoading}
         data={feesStructuresList}
-        renderTopToolbar={() => <h1 style={{ fontSize: 18, marginTop: 10 }}>Fees Structure</h1>}
+        renderTopToolbar={() => (
+          <h1 style={{ fontSize: 18, marginTop: 10 }}>Fees Structure</h1>
+        )}
       />
 
       {/* Modal placeholder */}
@@ -160,6 +237,32 @@ const FeesStructureView = () => {
           metadata={metadata}
         />
       )}
+      <Dialog
+        open={showDeleteConfirmation}
+        TransitionComponent={Transition}
+        keepMounted
+        onClose={handleDeleteCancel}
+        aria-describedby="alert-dialog-slide-description"
+      >
+        <DialogTitle>{"Delete Confirmation"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-slide-description">
+          Are you sure you want to delete this fees structure?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDeleteCancel}>Cancel</Button>
+          <Button onClick={handleDeleteConfirm}>Delete</Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Alert Message */}
+      {alert.type &&
+        showAlertMessage({
+          open: true,
+          alertFor: alert.type,
+          message: alert.message,
+        })}
     </>
   );
 };
