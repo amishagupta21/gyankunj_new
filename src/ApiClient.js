@@ -486,6 +486,10 @@ const createFeesStructures = (payload) => {
   return apiInstance.post(`/create_fee_structure`, payload);
 };
 
+const deleteFeesStructure = (payload) => {
+  return apiInstance.delete(`/delete_fee_structure`, { data: payload });
+};
+
 
 export {
   //loginUser,
@@ -586,5 +590,6 @@ export {
   evaluateStudentRouteRequest,
   fetchFeesMetadata,
   fetchFeesStructuresList,
-  createFeesStructures
+  createFeesStructures,
+  deleteFeesStructure
 };
