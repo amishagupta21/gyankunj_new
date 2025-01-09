@@ -48,17 +48,11 @@ const AttendanceToggle = () => {
     async (event, newAlignment) => {
       if (newAlignment === null) return; // Prevent deselection
       setAlignment(newAlignment);
-      const updatedUserInfo = {
-        ...userInfo,
-        attendance_status: newAlignment === "IN" ? true : newAlignment === "OUT" ? false : null,
-      };
-
-      localStorage.setItem("UserData", JSON.stringify(updatedUserInfo));
       const payload = {
         user_id: userInfo.user_id,
         attendance_date: new Date().toISOString().split("T")[0], // Current date
-        attendance_time: new Date().toLocaleTimeString("en-GB"), // Current time in HH:mm:ss format
-        status:  newAlignment === "IN" ? true : newAlignment === "OUT" ? false : null, // IN or OUT
+        attendance_in_time: newAlignment === "IN" ? new Date().toLocaleTimeString("en-GB"): null,
+        attendance_out_time: newAlignment === "OUT" ? new Date().toLocaleTimeString("en-GB"): null
       };
 
       try {
