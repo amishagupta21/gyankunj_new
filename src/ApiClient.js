@@ -490,6 +490,10 @@ const deleteFeesStructure = (payload) => {
   return apiInstance.delete(`/delete_fee_structure`, { data: payload });
 };
 
+const updateLessonPlanStatus = (lessonId) => {
+  return apiInstance.put(`/update_lesson_plan_status`, lessonId);
+};
+
 
 export {
   //loginUser,
@@ -591,5 +595,6 @@ export {
   fetchFeesMetadata,
   fetchFeesStructuresList,
   createFeesStructures,
-  deleteFeesStructure
+  deleteFeesStructure,
+  updateLessonPlanStatus
 };

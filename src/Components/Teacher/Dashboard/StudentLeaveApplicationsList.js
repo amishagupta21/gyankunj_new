@@ -118,16 +118,18 @@ const StudentLeaveApplicationsList = () => {
   const columns = useMemo(
     () => [
       {
+        accessorKey: "user_name",
+        header: "User name",
+      },
+      {
+        accessorKey: "roll_no",
+        header: "Roll no.",
+      },
+      {
         accessorKey: "start_date",
-        header: "Start date",
-      },
-      {
-        accessorKey: "end_date",
-        header: "End date",
-      },
-      {
-        accessorKey: "no_of_days",
-        header: "No of days",
+        header: "Date Range",
+        accessorFn: (row) =>
+          `${row.start_date} To ${row.end_date} (${row.no_of_days} days)`,
       },
       {
         accessorKey: "leave_type",
