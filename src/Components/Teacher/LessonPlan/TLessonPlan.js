@@ -1,11 +1,27 @@
 import React, { useState, useMemo, useEffect } from "react";
 import Box from "@mui/material/Box";
-import { Button, Card, CardContent, Grid } from "@mui/material";
-import { getLessonPlan, lessonPlanAllDetails } from "../../../ApiClient";
+import {
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Grid,
+} from "@mui/material";
+import {
+  getLessonPlan,
+  lessonPlanAllDetails,
+  updateLessonPlanStatus,
+} from "../../../ApiClient";
 import CommonMatTable from "../../../SharedComponents/CommonMatTable";
 import AddIcon from "@mui/icons-material/Add";
 import CreateLessonPlan from "./CreateLessonPlan";
 import Edit from "@mui/icons-material/Edit";
+import { showAlertMessage } from "../../AlertMessage";
 
 const TLessonPlan = () => {
   //const userInfo = JSON.parse(localStorage.getItem("UserData"));
@@ -35,7 +51,7 @@ const TLessonPlan = () => {
         setIsLoading(false);
         console.log(err);
       });
-  }, [userInfo]);
+  }, []);
 
   // Custom JSX element for the top toolbar
   const RenderTopToolbarCustomActions = () => {
@@ -140,6 +156,11 @@ export default TLessonPlan;
 
 const CustomDetailPanel = ({ row }) => {
   const [rowData, setRowData] = useState({});
+  const [isMarkLessonDialogOpen, setIsMarkLessonDialogOpen] = useState(false);
+  const [refreshTable, setRefreshTable] = useState(false);
+  const [showAlert, setShowAlert] = useState("");
+  const [isCompleteActionVissible, setIsCompleteActionVissible] =
+    useState(false);
 
   useEffect(() => {
     if (row.row.getIsExpanded()) {
@@ -150,48 +171,125 @@ const CustomDetailPanel = ({ row }) => {
             res?.data?.lesson_plan_data.length > 0
           ) {
             setRowData(res.data.lesson_plan_data[0]);
+            const endDateObj = new Date(res.data.lesson_plan_data[0]?.end_date);
+            const currentDate = new Date();
+            setIsCompleteActionVissible(endDateObj <= currentDate);
           }
         })
         .catch((err) => console.log("Lesson err - ", err));
     }
-  }, [row]);
+  }, [refreshTable]);
+
+  const handleMarkLessonClick = () => {
+    setIsMarkLessonDialogOpen(true);
+  };
+
+  const handleMarkLessonConfirm = (isConfirm) => {
+    if (isConfirm) {
+      updateLessonPlanStatus({ lesson_id: row.row.original.lesson_id })
+        .then((res) => {
+          if (res?.data?.status === "success") {
+            setShowAlert("success");
+          } else {
+            setShowAlert("error");
+          }
+          setTimeout(() => {
+            setIsMarkLessonDialogOpen(false);
+            setRefreshTable(!refreshTable);
+            setTimeout(() => {
+              setShowAlert("");
+            }, 2000);
+          }, 1000);
+        })
+        .catch((err) => {
+          setShowAlert("error");
+          setTimeout(() => {
+            setShowAlert("");
+          }, 3000);
+          setIsMarkLessonDialogOpen(false);
+        });
+    } else {
+      setIsMarkLessonDialogOpen(false);
+    }
+  };
 
   return (
-    <Card>
-      <CardContent>
-        <Grid container spacing={2}>
-          <Grid item xs={3}>
-            <div className="fw-bold">Topic Name: </div>
+    <>
+      <Card>
+        <CardContent>
+          <Grid container spacing={2}>
+            <Grid item xs={3}>
+              <div className="fw-bold">Topic Name: </div>
+            </Grid>
+            <Grid item xs={9}>
+              <div>{rowData.topic_name}</div>
+            </Grid>
+            <Grid item xs={3}>
+              <div className="fw-bold">Learning Objective: </div>
+            </Grid>
+            <Grid item xs={9}>
+              <div>{rowData.learning_objectives}</div>
+            </Grid>
+            <Grid item xs={3}>
+              <div className="fw-bold">Teaching Methods: </div>
+            </Grid>
+            <Grid item xs={9}>
+              <div>{rowData.teaching_methods}</div>
+            </Grid>
+            <Grid item xs={3}>
+              <div className="fw-bold">Learning Outcome: </div>
+            </Grid>
+            <Grid item xs={9}>
+              <div>{rowData.learning_outcome}</div>
+            </Grid>
+            <Grid item xs={3}>
+              <div className="fw-bold">Teaching Aids: </div>
+            </Grid>
+            <Grid item xs={9}>
+              <div>{rowData.teaching_aid_references}</div>
+            </Grid>
           </Grid>
-          <Grid item xs={9}>
-            <div>{rowData.topic_name}</div>
-          </Grid>
-          <Grid item xs={3}>
-            <div className="fw-bold">Learning Objective: </div>
-          </Grid>
-          <Grid item xs={9}>
-            <div>{rowData.learning_objectives}</div>
-          </Grid>
-          <Grid item xs={3}>
-            <div className="fw-bold">Teaching Methods: </div>
-          </Grid>
-          <Grid item xs={9}>
-            <div>{rowData.teaching_methods}</div>
-          </Grid>
-          <Grid item xs={3}>
-            <div className="fw-bold">Learning Outcome: </div>
-          </Grid>
-          <Grid item xs={9}>
-            <div>{rowData.learning_outcome}</div>
-          </Grid>
-          <Grid item xs={3}>
-            <div className="fw-bold">Teaching Aids: </div>
-          </Grid>
-          <Grid item xs={9}>
-            <div>{rowData.teaching_aid_references}</div>
-          </Grid>
-        </Grid>
-      </CardContent>
-    </Card>
+        </CardContent>
+        {isCompleteActionVissible && (
+          <CardActions className="justify-content-end">
+            <Button
+              size="small"
+              variant="contained"
+              color="primary"
+              onClick={handleMarkLessonClick}
+            >
+              Complete lesson
+            </Button>
+          </CardActions>
+        )}
+      </Card>
+      <Dialog open={isMarkLessonDialogOpen}>
+        <DialogTitle>Complete Lesson</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to complete this lesson?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => handleMarkLessonConfirm(false)}
+            color="error"
+          >
+            Cancel
+          </Button>
+          <Button onClick={() => handleMarkLessonConfirm(true)} color="primary">
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
+      {showAlert &&
+        showAlertMessage({
+          open: true,
+          alertFor: showAlert,
+          message: `Lesson complete marking ${
+            showAlert === "success" ? "succeeded" : "failed"
+          }.`,
+        })}
+    </>
   );
 };
