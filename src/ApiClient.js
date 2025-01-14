@@ -494,6 +494,14 @@ const updateLessonPlanStatus = (lessonId) => {
   return apiInstance.put(`/update_lesson_plan_status`, lessonId);
 };
 
+const createExpenses = (payload) => {
+  return apiInstance.post(`/save_expenses`, payload);
+};
+
+const fetchExpensesList = (startDate, endDate) => {
+  return apiInstance.get(`/fetch_expenses?start_date=${startDate}&end_date=${endDate}`);
+};
+
 
 export {
   //loginUser,
@@ -596,5 +604,7 @@ export {
   fetchFeesStructuresList,
   createFeesStructures,
   deleteFeesStructure,
-  updateLessonPlanStatus
+  updateLessonPlanStatus,
+  createExpenses,
+  fetchExpensesList
 };

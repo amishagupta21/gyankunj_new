@@ -1,12 +1,13 @@
 import React from "react";
 import { Box, Grid, Tab, Tabs } from "@mui/material";
 import FeesStructureView from "./Fees/FeesStructureView";
+import ExpensesView from "./Expenses/ExpensesView";
 
 const FinanceView = () => {
   const tabsList = [
     { code: "report", title: "Report", content: <div className="text-center mt-5 text-danger">No view available right now</div> },
     { code: "earning", title: "Earning", content: <FeesStructureView /> },
-    { code: "expenses", title: "Expenses", content: <div className="text-center mt-5 text-danger">No view available right now</div> },
+    { code: "expenses", title: "Expenses", content: <ExpensesView /> },
   ];
 
   const [selectedTab, setSelectedTab] = React.useState(tabsList[0].code);
