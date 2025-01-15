@@ -502,6 +502,18 @@ const fetchExpensesList = (startDate, endDate) => {
   return apiInstance.get(`/fetch_expenses?start_date=${startDate}&end_date=${endDate}`);
 };
 
+const fetchStudentFeeDetails = (payload) => {
+  return apiInstance.post(`/fetch_student_fee_details`, payload);
+};
+
+const makeFeePayment = (payload) => {
+  return apiInstance.post(`/make_fee_payment`, payload);
+};
+
+const fetchPaymentModes = () => {
+  return apiInstance.get(`/fetch_payment_modes`);
+};
+
 
 export {
   //loginUser,
@@ -606,5 +618,8 @@ export {
   deleteFeesStructure,
   updateLessonPlanStatus,
   createExpenses,
-  fetchExpensesList
+  fetchExpensesList,
+  makeFeePayment,
+  fetchStudentFeeDetails,
+  fetchPaymentModes
 };
