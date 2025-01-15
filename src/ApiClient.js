@@ -510,6 +510,10 @@ const makeFeePayment = (payload) => {
   return apiInstance.post(`/make_fee_payment`, payload);
 };
 
+const fetchPaymentModes = () => {
+  return apiInstance.get(`/fetch_payment_modes`);
+};
+
 
 export {
   //loginUser,
@@ -616,5 +620,6 @@ export {
   createExpenses,
   fetchExpensesList,
   makeFeePayment,
-  fetchStudentFeeDetails
+  fetchStudentFeeDetails,
+  fetchPaymentModes
 };

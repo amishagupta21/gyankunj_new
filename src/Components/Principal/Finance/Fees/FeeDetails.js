@@ -5,10 +5,6 @@ import {
   CardContent,
   Typography,
   TextField,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   Grid,
   Box,
 } from "@mui/material";
@@ -18,7 +14,7 @@ import MakePaymentDialog from "./MakePaymentDialog";
 const FeeDetails = () => {
   const [studentId, setStudentId] = useState("");
   const [feeDetails, setFeeDetails] = useState(null);
-  const [openModal, setOpenModal] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const [isApiCalled, setIsApiCalled] = useState(false);
 
   // Fetch fee details from the API
@@ -42,12 +38,15 @@ const FeeDetails = () => {
 
   // Open the payment modal
   const handleMakePayment = () => {
-    setOpenModal(true);
+    setIsModalVisible(true);
   };
 
   // Close the payment modal
-  const handleCloseModal = () => {
-    setOpenModal(false);
+  const handleModalClose = (isSubmit) => {
+    setIsModalVisible(false);
+    if (isSubmit) {
+      fetchFeeDetails();
+    }
   };
 
   return (
@@ -88,19 +87,19 @@ const FeeDetails = () => {
                   <strong>Month:</strong> {feeDetails.month_name}
                 </Typography>
                 <Typography marginBottom={1}>
-                  <strong>Tuition Fee:</strong> ${feeDetails.tuition_fee}
+                  <strong>Tuition Fee:</strong> {feeDetails.tuition_fee}
                 </Typography>
                 <Typography marginBottom={1}>
-                  <strong>Transportation Fee:</strong> $
+                  <strong>Transportation Fee:</strong>{" "}
                   {feeDetails.transportation_fee}
                 </Typography>
               </Grid>
               <Grid item xs={6}>
                 <Typography marginBottom={1}>
-                  <strong>Fines:</strong> ${feeDetails.fines}
+                  <strong>Fines:</strong> {feeDetails.fines}
                 </Typography>
                 <Typography marginBottom={1}>
-                  <strong>Total Outstanding:</strong> $
+                  <strong>Total Outstanding:</strong>{" "}
                   {feeDetails.total_outstanding}
                 </Typography>
                 <Typography marginBottom={1}>
@@ -132,10 +131,10 @@ const FeeDetails = () => {
         </Typography>
       )}
 
-      {openModal && (
+      {isModalVisible && (
         <MakePaymentDialog
-          openModal={openModal}
-          handleCloseModal={handleCloseModal}
+          isOpen={isModalVisible}
+          handleClose={handleModalClose}
           feeDetails={feeDetails}
         />
       )}
