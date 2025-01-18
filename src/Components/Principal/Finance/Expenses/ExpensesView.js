@@ -82,7 +82,7 @@ const ExpensesView = () => {
     () => [
       {
         accessorKey: "release_date",
-        header: "Release_date"
+        header: "Release date"
       },      
       {
         accessorKey: "item_name",
