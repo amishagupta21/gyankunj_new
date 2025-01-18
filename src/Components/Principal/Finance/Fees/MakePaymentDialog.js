@@ -51,7 +51,6 @@ const MakePaymentDialog = ({ isOpen, handleClose, feeDetails }) => {
     defaultValues: {
       student_id: feeDetails.student_id || "",
       payment_mode_id: "",
-      payment_amount: "",
       transaction_id: "",
       transaction_amount: "",
       normalize_fine: feeDetails.fines ? true : false,
@@ -94,11 +93,8 @@ const MakePaymentDialog = ({ isOpen, handleClose, feeDetails }) => {
 
   const handleModeChange = (e) => {
     setValue("payment_mode_id", e.target.value);
-    if (e.target.value === 1) {
+  if (e.target.value === 1) {
       setValue("transaction_id", "");
-      setValue("transaction_amount", "");
-    } else {
-      setValue("payment_amount", "");
     }
   };
 
@@ -186,8 +182,23 @@ const MakePaymentDialog = ({ isOpen, handleClose, feeDetails }) => {
               </Grid>
 
               {/* Transaction ID (Conditionally Rendered) */}
+              <Grid item xs={12} sm={6}>
+                    <Controller
+                      name="transaction_amount"
+                      control={control}
+                      rules={{ required: paymentModeId !== 1 }}
+                      render={({ field, fieldState: { error } }) => (
+                        <TextField
+                          {...field}
+                          error={!!error}
+                          type="number"
+                          label="Transaction Amount"
+                          fullWidth
+                        />
+                      )}
+                    />
+                  </Grid>
               {paymentModeId !== 1 && (
-                <>
                   <Grid item xs={12} sm={6}>
                     <Controller
                       name="transaction_id"
@@ -204,44 +215,6 @@ const MakePaymentDialog = ({ isOpen, handleClose, feeDetails }) => {
                       )}
                     />
                   </Grid>
-
-                  <Grid item xs={12} sm={6}>
-                    <Controller
-                      name="transaction_amount"
-                      control={control}
-                      rules={{ required: paymentModeId !== 1 }}
-                      render={({ field, fieldState: { error } }) => (
-                        <TextField
-                          {...field}
-                          error={!!error}
-                          type="number"
-                          label="Transaction Amount"
-                          fullWidth
-                        />
-                      )}
-                    />
-                  </Grid>
-                </>
-              )}
-
-              {/* Payment Amount (Conditionally Rendered) */}
-              {paymentModeId === 1 && (
-                <Grid item xs={12}>
-                  <Controller
-                    name="payment_amount"
-                    control={control}
-                    rules={{ required: paymentModeId === 1 }}
-                    render={({ field, fieldState: { error } }) => (
-                      <TextField
-                        {...field}
-                        error={!!error}
-                        type="number"
-                        label="Payment Amount"
-                        fullWidth
-                      />
-                    )}
-                  />
-                </Grid>
               )}
 
               {/* Fee Amount */}
