@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import BackButton from "../../SharedComponents/BackButton";
+import FeeDetails from "../Principal/Finance/Fees/FeeDetails";
 
 const PaFees = () => {
 
@@ -8,7 +9,7 @@ const PaFees = () => {
   return (
     <>
       <BackButton />
-      <div>Parent fees</div>
+      <FeeDetails isParentView={true} />
     </>
   );
 };

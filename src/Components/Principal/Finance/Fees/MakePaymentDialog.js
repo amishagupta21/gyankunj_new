@@ -21,7 +21,12 @@ import CloseIcon from "@mui/icons-material/Close";
 import { fetchPaymentModes, makeFeePayment } from "../../../../ApiClient";
 import { showAlertMessage } from "../../../AlertMessage";
 
-const MakePaymentDialog = ({ isOpen, handleClose, feeDetails }) => {
+const MakePaymentDialog = ({
+  isOpen,
+  handleClose,
+  feeDetails,
+  isParentView,
+}) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [paymentModes, setPaymentModes] = useState([]);
@@ -93,7 +98,7 @@ const MakePaymentDialog = ({ isOpen, handleClose, feeDetails }) => {
 
   const handleModeChange = (e) => {
     setValue("payment_mode_id", e.target.value);
-  if (e.target.value === 1) {
+    if (e.target.value === 1) {
       setValue("transaction_id", "");
     }
   };
@@ -183,38 +188,38 @@ const MakePaymentDialog = ({ isOpen, handleClose, feeDetails }) => {
 
               {/* Transaction ID (Conditionally Rendered) */}
               <Grid item xs={12} sm={6}>
-                    <Controller
-                      name="transaction_amount"
-                      control={control}
-                      rules={{ required: paymentModeId !== 1 }}
-                      render={({ field, fieldState: { error } }) => (
-                        <TextField
-                          {...field}
-                          error={!!error}
-                          type="number"
-                          label="Transaction Amount"
-                          fullWidth
-                        />
-                      )}
+                <Controller
+                  name="transaction_amount"
+                  control={control}
+                  rules={{ required: paymentModeId !== 1 }}
+                  render={({ field, fieldState: { error } }) => (
+                    <TextField
+                      {...field}
+                      error={!!error}
+                      type="number"
+                      label="Transaction Amount"
+                      fullWidth
                     />
-                  </Grid>
+                  )}
+                />
+              </Grid>
               {paymentModeId !== 1 && (
-                  <Grid item xs={12} sm={6}>
-                    <Controller
-                      name="transaction_id"
-                      control={control}
-                      rules={{ required: paymentModeId !== 1 }}
-                      render={({ field, fieldState: { error } }) => (
-                        <TextField
-                          {...field}
-                          error={!!error}
-                          type="text"
-                          label="Transaction ID"
-                          fullWidth
-                        />
-                      )}
-                    />
-                  </Grid>
+                <Grid item xs={12} sm={6}>
+                  <Controller
+                    name="transaction_id"
+                    control={control}
+                    rules={{ required: paymentModeId !== 1 }}
+                    render={({ field, fieldState: { error } }) => (
+                      <TextField
+                        {...field}
+                        error={!!error}
+                        type="text"
+                        label="Transaction ID"
+                        fullWidth
+                      />
+                    )}
+                  />
+                </Grid>
               )}
 
               {/* Fee Amount */}
@@ -236,23 +241,25 @@ const MakePaymentDialog = ({ isOpen, handleClose, feeDetails }) => {
               </Grid>
 
               {/* Normalize Fine */}
-              <Grid item xs={12} sm={6}>
-                <Controller
-                  name="normalize_fine"
-                  control={control}
-                  render={({ field }) => (
-                    <>
-                      <label className="fw-bold text-primary-emphasis">
-                        Normalize Fine
-                      </label>
-                      <Switch
-                        checked={field.value}
-                        onChange={(e) => field.onChange(e.target.checked)}
-                      />
-                    </>
-                  )}
-                />
-              </Grid>
+              {!isParentView && (
+                <Grid item xs={12} sm={6}>
+                  <Controller
+                    name="normalize_fine"
+                    control={control}
+                    render={({ field }) => (
+                      <>
+                        <label className="fw-bold text-primary-emphasis">
+                          Normalize Fine
+                        </label>
+                        <Switch
+                          checked={field.value}
+                          onChange={(e) => field.onChange(e.target.checked)}
+                        />
+                      </>
+                    )}
+                  />
+                </Grid>
+              )}
             </Grid>
           </DialogContent>
           <DialogActions>

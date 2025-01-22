@@ -11,7 +11,7 @@ import {
 import { fetchStudentFeeDetails } from "../../../../ApiClient";
 import MakePaymentDialog from "./MakePaymentDialog";
 
-const FeeDetails = () => {
+const FeeDetails = ({isParentView = false}) => {
   const [studentId, setStudentId] = useState("");
   const [feeDetails, setFeeDetails] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -136,6 +136,7 @@ const FeeDetails = () => {
           isOpen={isModalVisible}
           handleClose={handleModalClose}
           feeDetails={feeDetails}
+          isParentView={isParentView}
         />
       )}
     </Box>

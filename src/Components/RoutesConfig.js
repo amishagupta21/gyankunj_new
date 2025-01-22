@@ -74,6 +74,12 @@ export const routesConfig = {
       title: "HRMS",
       icon: <Groups2OutlinedIcon />,
       route: "/principalDashboard/hrmsPortal",
+    },
+    {
+      code: "admissionView",
+      title: "Admission",
+      icon: <Groups2OutlinedIcon />,
+      route: "/principalDashboard/admissionView",
     }
   ],
   PRINCIPAL: [
