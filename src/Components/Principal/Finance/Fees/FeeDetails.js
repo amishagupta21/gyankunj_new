@@ -7,15 +7,21 @@ import {
   TextField,
   Grid,
   Box,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
 } from "@mui/material";
 import { fetchStudentFeeDetails } from "../../../../ApiClient";
 import MakePaymentDialog from "./MakePaymentDialog";
 
-const FeeDetails = ({isParentView = false}) => {
+const FeeDetails = ({ isParentView = false }) => {
   const [studentId, setStudentId] = useState("");
   const [feeDetails, setFeeDetails] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isApiCalled, setIsApiCalled] = useState(false);
+  const userInfo = JSON.parse(localStorage.getItem("UserData"));
+  console.log(userInfo)
 
   // Fetch fee details from the API
   const fetchFeeDetails = async () => {
@@ -56,19 +62,37 @@ const FeeDetails = ({isParentView = false}) => {
       </Typography>
       <Grid container spacing={2} alignItems="center">
         <Grid item xs={12} sm={9}>
-          <TextField
-            label="Admission ID"
-            placeholder="Type admission id here..."
-            value={studentId}
-            onChange={(e) => setStudentId(e.target.value)}
-            fullWidth
-          />
+          {isParentView ? (
+            <FormControl fullWidth>
+              <InputLabel>Admission ID</InputLabel>
+              <Select
+                label="Admission ID"
+                onChange={(e) => setStudentId(e.target.value)}
+                value={studentId || ""}
+              >
+                {userInfo?.student_info?.map((item, index) => (
+                  <MenuItem key={index} value={item.student_id}>
+                    {item.student_name??item.student_id }
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          ) : (
+            <TextField
+              label="Admission ID"
+              placeholder="Type admission id here..."
+              value={studentId}
+              onChange={(e) => setStudentId(e.target.value)}
+              fullWidth
+            />
+          )}
         </Grid>
+
         <Grid item xs={12} sm={3}>
           <Button
             variant="contained"
-            className="py-3"
             color="primary"
+            className="py-3"
             onClick={fetchFeeDetails}
             fullWidth
             disabled={!studentId.trim()}

@@ -64,6 +64,26 @@ const MakePaymentDialog = ({
     mode: "onChange",
   });
 
+  const handleNormalizeFineChange = (e) => {
+    const checked = e.target.checked;
+    setValue("normalize_fine", checked);
+    if (checked) {
+      setFeeAmountBasedOnFine(); // Subtract fines if normalized
+    } else {
+      setValue("fee_amount", feeDetails.total_outstanding); // Keep fee_amount as is
+    }
+  };
+
+  const setFeeAmountBasedOnFine = () => {
+    if (feeDetails?.fines && feeDetails?.total_outstanding) {
+      if (watch("normalize_fine")) {
+        setValue("fee_amount", feeDetails.total_outstanding - feeDetails.fines);
+      } else {
+        setValue("fee_amount", feeDetails.total_outstanding);
+      }
+    }
+  };
+
   const onSubmit = async (data) => {
     try {
       const res = await makeFeePayment(data);
@@ -253,7 +273,7 @@ const MakePaymentDialog = ({
                         </label>
                         <Switch
                           checked={field.value}
-                          onChange={(e) => field.onChange(e.target.checked)}
+                          onChange={handleNormalizeFineChange}
                         />
                       </>
                     )}
