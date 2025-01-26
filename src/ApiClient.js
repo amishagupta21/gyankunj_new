@@ -430,6 +430,19 @@ const updateEmployeeInfo = (isEditMode, payload) => {
   }
 };
 
+const getStudentsList = (payload) => {
+  return apiInstance.post(`/fetch_student_data`, payload);
+};
+
+const updateStudentInfo = (isEditMode, payload) => {
+  if(isEditMode){
+    return apiInstance.post(`/edit_student`, payload);
+  }
+  else{
+    return apiInstance.post(`/register_student`, payload);
+  }
+};
+
 const getAllDesignationsList = () => {
   return apiInstance.get('fetch_all_roles');
 }
@@ -621,5 +634,7 @@ export {
   fetchExpensesList,
   makeFeePayment,
   fetchStudentFeeDetails,
-  fetchPaymentModes
+  fetchPaymentModes,
+  updateStudentInfo,
+  getStudentsList
 };

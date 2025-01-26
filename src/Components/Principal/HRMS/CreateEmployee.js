@@ -150,7 +150,7 @@ const CreateEmployee = ({ isOpen, handleClose, selectedData = {} }) => {
   return (
     <BootstrapDialog aria-labelledby="customized-dialog-title" open={isOpen}>
       <DialogTitle sx={{ m: 0, p: 2 }}>
-        {isEditMode ? "Edit Employee" : "Create New Employee"}
+        {isEditMode ? "Edit Employee Info" : "Add New Employee"}
         <IconButton
           aria-label="close"
           onClick={() => handleClose(false)}
