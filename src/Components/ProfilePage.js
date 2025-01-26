@@ -8,7 +8,7 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { useParams } from "react-router-dom";
-import { getAllEmployeesList } from "../ApiClient";
+import { getUsersList } from "../ApiClient";
 import PaFeedback from "./Parent/PaFeedback";
 import BackButton from "../SharedComponents/BackButton";
 
@@ -22,48 +22,60 @@ const ProfileInfoField = ({ label, value }) => (
 );
 
 const ProfilePage = () => {
-  const { userId } = useParams(); // Extract userId from query parameters
-  const [userDetails, setUserDetails] = useState(null);
+  const { userId, roleId } = useParams(); // Extract userId from query parameters
+  const [userDetails, setUserDetails] = useState({});
   const [loadingProfile, setLoadingProfile] = useState(false);
+
+  const roleNameById = {
+    1: "Admin",
+    2: "Principal",
+    3: "Teacher",
+    4: "Student",
+    5: "Parent",
+    6: "Non_Teaching_Staff",
+  };
 
   const fetchEmployeeDetails = useCallback(async () => {
     setLoadingProfile(true);
     try {
-      const { data } = await getAllEmployeesList({ user_ids: [userId] });
-      setUserDetails(data?.employee_data?.[0] || null);
+      const { data } = await getUsersList({
+        user_ids: [userId],
+        role_id: parseInt(roleId),
+      });
+      setUserDetails(data?.user_data?.[0] || {});
     } catch (error) {
       console.error("Failed to fetch employee data:", error);
     } finally {
       setLoadingProfile(false);
     }
-  }, [userId]);
+  }, []);
 
   useEffect(() => {
-    if (userId) {
+    if (userId && roleId) {
       fetchEmployeeDetails();
     }
-  }, [userId, fetchEmployeeDetails]);
+  }, [userId, roleId]);
 
   const userProfileFields = [
-    { label: "Name", value: userDetails?.employeename },
-    { label: "Employee Code", value: userDetails?.employeecode },
-    { label: "Phone", value: userDetails?.phone },
-    { label: "Email", value: userDetails?.email },
-    { label: "Date of Birth", value: userDetails?.dob },
-    { label: "Date of Joining", value: userDetails?.doj },
+    { label: "Name", value: userDetails?.name },
+    { label: "Employee Code", value: userDetails?.user_id },
+    { label: "Phone", value: userDetails?.phone_number },
+    { label: "Email", value: userDetails?.email_id },
+    { label: "Date of Birth", value: userDetails?.date_of_birth },
+    { label: "Date of Joining", value: userDetails?.date_of_joining },
     { label: "Gender", value: userDetails?.gender },
-    { label: "Designation", value: userDetails?.designationname },
+    { label: "Designation", value: roleNameById[userDetails?.role_id] },
     { label: "Active", value: userDetails?.is_active ? "Yes" : "No" },
     { label: "Married", value: userDetails?.is_married ? "Yes" : "No" },
-    { label: "Spouse's Name", value: userDetails?.spousename },
+    { label: "Spouse's Name", value: userDetails?.spouse_name },
     { label: "Father's Name", value: userDetails?.fathers_name },
-    { label: "PAN Number", value: userDetails?.pancard },
-    { label: "Aadhaar Number", value: userDetails?.aadharnumber },
-    { label: "Bank Account", value: userDetails?.bankaccount },
-    { label: "Salary Scale", value: userDetails?.salaryscale },
+    { label: "PAN Number", value: userDetails?.pan_card },
+    { label: "Aadhaar Number", value: userDetails?.aadhar_number },
+    { label: "Bank Account", value: userDetails?.bank_account_number },
+    { label: "Salary Scale", value: userDetails?.salary_scale },
     {
       label: "Highest Qualification",
-      value: userDetails?.highestqualification,
+      value: userDetails?.highest_qualification,
     },
     { label: "Country", value: userDetails?.country },
     { label: "License Number", value: userDetails?.license_number },
@@ -97,9 +109,10 @@ const ProfilePage = () => {
           )}
         </CardContent>
       </Card>
-      {userDetails?.designationname && userDetails?.designationname !== "Parent" && userDetails?.designationname !== "Student" && (
-        <PaFeedback isComingFromProfile={true} />
-      )}
+      {roleNameById[userDetails.role_id] !== "Parent" &&
+        roleNameById[userDetails.role_id] !== "Student" && (
+          <PaFeedback isComingFromProfile={true} />
+        )}
     </>
   );
 };

@@ -22,7 +22,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
-import { getAllDesignationsList, updateEmployeeInfo } from "../../../ApiClient";
+import { getAllDesignationsList, updateUserInfo } from "../../../ApiClient";
 import { showAlertMessage } from "../../AlertMessage";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { countries } from "countries-list";
@@ -52,7 +52,6 @@ const CreateEmployee = ({ isOpen, handleClose, selectedData = {} }) => {
   const [showAlert, setShowAlert] = useState("");
   const [designationsList, setDesignationsList] = useState([]);
   const isMarried = watch("is_married", false);
-  const [showPassword, setShowPassword] = useState(false);
   const gendersList = [
     { value: "male", title: "Male" },
     { value: "female", title: "Female" },
@@ -63,8 +62,8 @@ const CreateEmployee = ({ isOpen, handleClose, selectedData = {} }) => {
     if (Object.keys(selectedData).length > 0) {
       const tempSelectedData = {
         ...selectedData,
-        dob: selectedData.dob ? dayjs(selectedData.dob) : null,
-        doj: selectedData.doj ? dayjs(selectedData.doj) : null,
+        date_of_birth: selectedData.date_of_birth ? dayjs(selectedData.date_of_birth) : null,
+        date_of_joining: selectedData.date_of_joining ? dayjs(selectedData.date_of_joining) : null,
         license_expiry_date: selectedData.license_expiry_date
           ? dayjs(selectedData.license_expiry_date)
           : null,
@@ -87,34 +86,26 @@ const CreateEmployee = ({ isOpen, handleClose, selectedData = {} }) => {
       });
   }, []);
 
-  const handleClickShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
-
-  const handleMouseDownPassword = (event) => {
-    event.preventDefault();
-  };
-
   const onSubmit = (data) => {
     // Common fields for both create and edit
     const payload = {
-      employeename: data.employeename || "",
-      phone: data.phone || null,
-      email: data.email || null,
-      dob: data.dob ? dayjs(data.dob).format("YYYY-MM-DD") : null,
-      doj: data.doj ? dayjs(data.doj).format("YYYY-MM-DD") : null,
+      name: data.name || "",
+      phone_number: data.phone_number || null,
+      email_id: data.email_id || null,
+      date_of_birth: data.date_of_birth ? dayjs(data.date_of_birth).format("YYYY-MM-DD") : null,
+      date_of_joining: data.date_of_joining ? dayjs(data.date_of_joining).format("YYYY-MM-DD") : null,
       gender: data.gender || null,
-      designationid: data.designationid || null,
+      role_id: data.role_id || null,
       is_active: data.is_active ?? false,
       is_married: data.is_married ?? false,
-      highestqualification: data.highestqualification || null,
-      pancard: data.pancard || null,
-      aadharnumber: data.aadharnumber || null,
-      bankaccount: data.bankaccount || null,
-      salaryscale: data.salaryscale || null,
+      highest_qualification: data.highest_qualification || null,
+      pan_card: data.pan_card || null,
+      aadhar_number: data.aadhar_number || null,
+      bank_account_number: data.bank_account_number || null,
+      salary_scale: data.salary_scale || null,
       address: data.address || null,
-      spousename: data.is_married ? data.spousename : undefined,
-      fathers_name: !data.is_married ? data.fathers_name : undefined,
+      spouse_name: data.is_married ? data.spouse_name : null,
+      fathers_name: !data.is_married ? data.fathers_name : null,
       country: data.country || null,
       license_number: data.license_number || null,
       license_expiry_date: data.license_expiry_date
@@ -123,17 +114,14 @@ const CreateEmployee = ({ isOpen, handleClose, selectedData = {} }) => {
     };
 
     // Additional fields for create operation
-    if (!isEditMode) {
-      payload.password = data.password || "";
-    } else {
-      // Fields specific to edit
-      payload.employeecode = data.employeecode || "";
+    if (isEditMode) {
+      payload.user_id = data.user_id || "";
     }
 
     // Submit the payload
     console.log(payload);
     // Perform the API request using the payload here
-    updateEmployeeInfo(isEditMode, payload)
+    updateUserInfo(isEditMode, payload)
       .then((res) => {
         setShowAlert(res?.data?.status === "success" ? "success" : "error");
         setTimeout(() => {
@@ -168,7 +156,7 @@ const CreateEmployee = ({ isOpen, handleClose, selectedData = {} }) => {
             <Grid item xs={6}>
               <FormControl fullWidth>
                 <Controller
-                  name="employeename"
+                  name="name"
                   control={control}
                   rules={{ required: true }}
                   render={({
@@ -187,11 +175,11 @@ const CreateEmployee = ({ isOpen, handleClose, selectedData = {} }) => {
                 />
               </FormControl>
             </Grid>
-            {isEditMode ? (
+            {isEditMode && (
               <Grid item xs={6}>
                 <FormControl fullWidth>
                   <Controller
-                    name="employeecode"
+                    name="user_id"
                     control={control}
                     rules={{ required: true }}
                     render={({
@@ -214,66 +202,12 @@ const CreateEmployee = ({ isOpen, handleClose, selectedData = {} }) => {
                   />
                 </FormControl>
               </Grid>
-            ) : (
-              <Grid item xs={6}>
-                <FormControl fullWidth>
-                  <Controller
-                    name="password"
-                    control={control}
-                    rules={{
-                      required: true,
-                      minLength: {
-                        value: 8,
-                        message: "Password must be at least 8 characters long",
-                      },
-                      // pattern: {
-                      //   value:
-                      //     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-                      //   message:
-                      //     "Password must include uppercase, lowercase, number, and special character",
-                      // },
-                    }}
-                    render={({
-                      field: { onChange, value },
-                      fieldState: { error },
-                    }) => (
-                      <TextField
-                        error={!!error}
-                        helperText={error ? error.message : ""}
-                        onChange={onChange}
-                        value={value || ""}
-                        fullWidth
-                        label="Password"
-                        variant="outlined"
-                        type={showPassword ? "text" : "password"}
-                        InputProps={{
-                          endAdornment: (
-                            <InputAdornment position="end">
-                              <IconButton
-                                onClick={handleClickShowPassword}
-                                onMouseDown={handleMouseDownPassword}
-                                edge="end"
-                              >
-                                {showPassword ? (
-                                  <VisibilityOff />
-                                ) : (
-                                  <Visibility />
-                                )}
-                              </IconButton>
-                            </InputAdornment>
-                          ),
-                        }}
-                      />
-                    )}
-                  />
-                </FormControl>
-              </Grid>
             )}
             {/* Phone with Number Validation */}
             <Grid item xs={6}>
               <FormControl fullWidth>
                 <Controller
-                  name="phone"
+                  name="phone_number"
                   control={control}
                   rules={{
                     required: true,
@@ -304,7 +238,7 @@ const CreateEmployee = ({ isOpen, handleClose, selectedData = {} }) => {
             <Grid item xs={6}>
               <FormControl fullWidth>
                 <Controller
-                  name="email"
+                  name="email_id"
                   control={control}
                   rules={{
                     required: true,
@@ -334,7 +268,7 @@ const CreateEmployee = ({ isOpen, handleClose, selectedData = {} }) => {
             <Grid item xs={6}>
               <FormControl fullWidth>
                 <Controller
-                  name="dob"
+                  name="date_of_birth"
                   control={control}
                   rules={{
                     required: true,
@@ -380,7 +314,7 @@ const CreateEmployee = ({ isOpen, handleClose, selectedData = {} }) => {
             <Grid item xs={6}>
               <FormControl fullWidth>
                 <Controller
-                  name="doj"
+                  name="date_of_joining"
                   control={control}
                   rules={{
                     required: true,
@@ -451,7 +385,7 @@ const CreateEmployee = ({ isOpen, handleClose, selectedData = {} }) => {
             <Grid item xs={6}>
               <FormControl fullWidth>
                 <Controller
-                  name="designationid"
+                  name="role_id"
                   control={control}
                   rules={{ required: true }}
                   render={({
@@ -467,11 +401,13 @@ const CreateEmployee = ({ isOpen, handleClose, selectedData = {} }) => {
                       variant="outlined"
                       fullWidth
                     >
-                      {designationsList?.map((item) => (
-                        <MenuItem key={item.role_id} value={item.role_id}>
-                          {item.role_name}
-                        </MenuItem>
-                      ))}
+                     {designationsList?.map((item) =>
+                        item.role_name !== 'Parent' && (
+                          <MenuItem key={item.role_id} value={item.role_id}>
+                            {item.role_name}
+                          </MenuItem>
+                        )
+                      )}
                     </TextField>
                   )}
                 />
@@ -527,7 +463,7 @@ const CreateEmployee = ({ isOpen, handleClose, selectedData = {} }) => {
               <Grid item xs={6}>
                 <FormControl fullWidth>
                   <Controller
-                    name="spousename"
+                    name="spouse_name"
                     control={control}
                     rules={{ required: false }}
                     render={({
@@ -573,7 +509,7 @@ const CreateEmployee = ({ isOpen, handleClose, selectedData = {} }) => {
             <Grid item xs={6}>
               <FormControl fullWidth>
                 <Controller
-                  name="highestqualification"
+                  name="highest_qualification"
                   control={control}
                   rules={{ required: false }}
                   render={({
@@ -595,7 +531,7 @@ const CreateEmployee = ({ isOpen, handleClose, selectedData = {} }) => {
             <Grid item xs={6}>
               <FormControl fullWidth>
                 <Controller
-                  name="pancard"
+                  name="pan_card"
                   control={control}
                   rules={{ required: false }}
                   render={({
@@ -617,7 +553,7 @@ const CreateEmployee = ({ isOpen, handleClose, selectedData = {} }) => {
             <Grid item xs={6}>
               <FormControl fullWidth>
                 <Controller
-                  name="aadharnumber"
+                  name="aadhar_number"
                   control={control}
                   rules={{ required: false }}
                   render={({
@@ -640,7 +576,7 @@ const CreateEmployee = ({ isOpen, handleClose, selectedData = {} }) => {
             <Grid item xs={6}>
               <FormControl fullWidth>
                 <Controller
-                  name="bankaccount"
+                  name="bank_account_number"
                   control={control}
                   rules={{ required: false }}
                   render={({
@@ -663,7 +599,7 @@ const CreateEmployee = ({ isOpen, handleClose, selectedData = {} }) => {
             <Grid item xs={6}>
               <FormControl fullWidth>
                 <Controller
-                  name="salaryscale"
+                  name="salary_scale"
                   control={control}
                   rules={{ required: false }}
                   render={({

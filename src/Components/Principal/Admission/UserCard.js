@@ -66,16 +66,6 @@ const UserCard = ({ userDetails, onAction }) => {
               <Typography variant="h6" style={{ fontWeight: "bold" }}>
                 {userDetails.name}
               </Typography>
-              {/* <Typography variant="subtitle2" color="textSecondary">
-                {userDetails.designationname??userDetails.designationid}
-              </Typography>
-              <Chip
-                className="mt-2 text-white"
-                label={userDetails.is_active ? "ACTIVE" : "INACTIVE"}
-                style={{
-                  backgroundColor: userDetails.is_active ? green[400] : orange[400],
-                }}
-              /> */}
             </Box>
             <hr />
             <Box className="mt-3">
@@ -91,7 +81,7 @@ const UserCard = ({ userDetails, onAction }) => {
                 <EmailOutlinedIcon className="me-1" /> {userDetails.email_id??'N/A'}
               </Typography>
               <Typography variant="body2" className="fw-bold">
-                <LocalPhoneOutlinedIcon className="me-1" /> {userDetails.father_phone??'N/A'}
+                <LocalPhoneOutlinedIcon className="me-1" /> {userDetails.phone_number??'N/A'}
               </Typography>
               <Typography variant="body2" className="fw-bold">
                 <LocationOnOutlinedIcon className="me-1" /> {userDetails.address??'N/A'}

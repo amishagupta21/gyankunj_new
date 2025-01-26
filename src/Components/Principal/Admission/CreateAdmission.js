@@ -22,7 +22,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 import { showAlertMessage } from "../../AlertMessage";
-import {updateStudentInfo } from "../../../ApiClient";
+import {updateUserInfo } from "../../../ApiClient";
 import { useNavigate } from "react-router-dom";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -53,6 +53,7 @@ const CreateAdmission = ({ isOpen, handleClose, selectedData = {}, gradesList = 
       child_hobbies: "",
       email_id: "",
       father_name: "",
+      father_email_id: "",
       father_dob: null,
       father_nationality: "",
       father_qualification: "",
@@ -61,6 +62,7 @@ const CreateAdmission = ({ isOpen, handleClose, selectedData = {}, gradesList = 
       father_aadhar_number: "",
       father_phone: "",
       mother_name: "",
+      mother_email_id: "",
       mother_dob: null,
       mother_nationality: "",
       mother_qualification: "",
@@ -134,6 +136,7 @@ const CreateAdmission = ({ isOpen, handleClose, selectedData = {}, gradesList = 
       ...data,
       phone_number: data[primaryPhone] ?? data.father_phone ?? data.mother_phone,
       user_id: isEditMode ? selectedData.user_id : undefined,
+      role_id: 4,
       date_of_birth: data.date_of_birth ? dayjs(data.date_of_birth).format("YYYY-MM-DD") : null,
       date_of_joining: data.date_of_joining ? dayjs(data.date_of_joining).format("YYYY-MM-DD") : null,
       father_dob: data.father_dob ? dayjs(data.father_dob).format("YYYY-MM-DD") : null,
@@ -143,7 +146,7 @@ const CreateAdmission = ({ isOpen, handleClose, selectedData = {}, gradesList = 
     // Submit the payload
     console.log(payload);
     // Perform the API request using the payload here
-    updateStudentInfo(isEditMode, payload)
+    updateUserInfo(isEditMode, payload)
       .then((res) => {
         setShowAlert(res?.data?.status === "success" ? "success" : "error");
         setTimeout(() => {
@@ -170,6 +173,7 @@ const CreateAdmission = ({ isOpen, handleClose, selectedData = {}, gradesList = 
     { name: "child_hobbies", label: "Child Hobbies", type: "text" },
     { name: "email_id", label: "Email", type: "email", required: true },
     { name: "father_name", label: "Father Name", type: "text", required: true },
+    { name: "father_email_id", label: "Father Email", type: "email" },
     { name: "father_dob", label: "Father DOB", type: "date" },
     { name: "father_nationality", label: "Father Nationality", type: "select", options: metaData.nationalitiesList },
     { name: "father_qualification", label: "Father Qualification", type: "text" },
@@ -178,6 +182,7 @@ const CreateAdmission = ({ isOpen, handleClose, selectedData = {}, gradesList = 
     { name: "father_aadhar_number", label: "Father Aadhar Number", type: "number" },
     { name: "father_phone", label: "Father Phone", type: "number", isPrimary: true },
     { name: "mother_name", label: "Mother Name", type: "text", required: true },
+    { name: "mother_email_id", label: "Mother Email", type: "email" },
     { name: "mother_dob", label: "Mother DOB", type: "date" },
     { name: "mother_nationality", label: "Mother Nationality", type: "select", options: metaData.nationalitiesList },
     { name: "mother_qualification", label: "Mother Qualification", type: "text" },

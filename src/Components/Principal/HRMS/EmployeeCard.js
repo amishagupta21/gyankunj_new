@@ -26,6 +26,14 @@ const dummyImage = "/path/to/dummy/image.png";
 
 const EmployeeCard = ({ employee, onAction }) => {
   const [anchorEl, setAnchorEl] = useState(null);
+  const roleNameById = {
+    1: "Admin",
+    2: "Principal",
+    3: "Teacher",
+    4: "Student",
+    5: "Parent",
+    6: "Non_Teaching_Staff",
+  };
 
   const handleMenuClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -64,10 +72,10 @@ const EmployeeCard = ({ employee, onAction }) => {
             </Box>
             <Box className="text-center">
               <Typography variant="h6" style={{ fontWeight: "bold" }}>
-                {employee.employeename}
+                {employee.name}
               </Typography>
               <Typography variant="subtitle2" color="textSecondary">
-                {employee.designationname??employee.designationid}
+                {roleNameById[employee.role_id]}
               </Typography>
               <Chip
                 className="mt-2 text-white"
@@ -81,17 +89,17 @@ const EmployeeCard = ({ employee, onAction }) => {
             <Box className="mt-3">
               <Typography variant="body2" className="mb-1 fw-bold">
                 <CakeOutlinedIcon className="me-1" />{" "}
-                {new Date(employee.dob).toLocaleDateString()}
+                {new Date(employee.date_of_birth).toLocaleDateString()}
               </Typography>
               <Typography variant="body2" className="mb-1 fw-bold">
                 <HistoryOutlinedIcon className="me-1" />{" "}
-                {new Date(employee.doj).toLocaleDateString()}
+                {new Date(employee.date_of_joining).toLocaleDateString()}
               </Typography>
               <Typography variant="body2" className="mb-1 fw-bold">
-                <EmailOutlinedIcon className="me-1" /> {employee.email??'N/A'}
+                <EmailOutlinedIcon className="me-1" /> {employee.email_id??'N/A'}
               </Typography>
               <Typography variant="body2" className="fw-bold">
-                <LocalPhoneOutlinedIcon className="me-1" /> {employee.phone??'N/A'}
+                <LocalPhoneOutlinedIcon className="me-1" /> {employee.phone_number??'N/A'}
               </Typography>
               <Typography variant="body2" className="fw-bold">
                 <LocationOnOutlinedIcon className="me-1" /> {employee.address??'N/A'}
