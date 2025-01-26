@@ -5,7 +5,7 @@ import CreateAdmission from "./CreateAdmission";
 import {
   deleteUserInfo,
   getGradeDetails,
-  getStudentsList,
+  getUsersList,
 } from "../../../ApiClient";
 import AlertDialogSlide from "../HRMS/AlertDialogSlide";
 import { showAlertMessage } from "../../AlertMessage";
@@ -40,10 +40,11 @@ const AdmissionView = () => {
     const fetchUsersList = async () => {
       setIsLoading(true);
       try {
-        const res = await getStudentsList({
-          user_ids: [],
-        });
-        const usersList = res?.data?.student_data || [];
+        const res = await getUsersList({
+          "user_ids": [],
+          "role_id": 4
+      });
+        const usersList = res?.data?.user_data || [];
         setUsersList(usersList);
       } catch (err) {
         console.error(err);
@@ -110,7 +111,7 @@ const AdmissionView = () => {
   };
 
   const goToProfile = (userData) => {
-    navigate(`/profile/${encodeURIComponent(userData.user_id)}`);
+    navigate(`/profile/${encodeURIComponent(userData.user_id)}/${encodeURIComponent(4)}`);
   };
 
   return (

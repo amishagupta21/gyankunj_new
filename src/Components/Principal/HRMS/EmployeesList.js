@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import BackButton from "../../../SharedComponents/BackButton";
 import CreateEmployee from "./CreateEmployee";
-import { deleteUserInfo, getAllEmployeesList } from "../../../ApiClient";
+import { deleteUserInfo, getUsersList } from "../../../ApiClient";
 import { useNavigate, useLocation } from "react-router-dom";
 import AlertDialogSlide from "./AlertDialogSlide";
 import { showAlertMessage } from "../../AlertMessage";
@@ -34,11 +34,12 @@ const EmployeesList = () => {
     const fetchEmployees = async () => {
       setIsLoading(true);
       try {
-        const res = await getAllEmployeesList({
-          user_ids: [],
+        const res = await getUsersList({
+            "user_ids": [],
+            "role_id": 6
         });
-        const employeeData = res?.data?.employee_data || [];
-        setEmployees(employeeData);
+        const userData = res?.data?.user_data || [];
+        setEmployees(userData);
       } catch (err) {
         console.error(err);
       } finally {
@@ -106,24 +107,24 @@ const EmployeesList = () => {
         const twoMonthsAgo = new Date();
         twoMonthsAgo.setMonth(today.getMonth() - 3); // Changed to 3 months as per original logic
         return employees.filter((employee) => {
-          const doj = new Date(employee.doj);
-          return doj >= twoMonthsAgo && doj <= today;
+          const date_of_joining = new Date(employee.date_of_joining);
+          return date_of_joining >= twoMonthsAgo && date_of_joining <= today;
         });
       case "active":
         return employees.filter((employee) => employee.is_active);
       case "inactive":
         return employees.filter((employee) => !employee.is_active);
       case "teaching":
-        return employees.filter((employee) => employee.designationid === 3);
+        return employees.filter((employee) => employee.role_id === 3);
       case "nonteaching":
-        return employees.filter((employee) => employee.designationid !== 3);
+        return employees.filter((employee) => employee.role_id !== 3);
       default:
         return employees;
     }
   }, [employees, selectedFilter]);
 
   const getDeleteEmployee = () => {
-    deleteUserInfo(selectedEmployeeDetails.employeecode)
+    deleteUserInfo(selectedEmployeeDetails.user_id)
       .then((res) => {
         setShowAlert(res?.data?.status === "success" ? "success" : "error");
         setTimeout(() => {
@@ -142,7 +143,7 @@ const EmployeesList = () => {
   };
 
   const goToProfile = (userData) => {
-    navigate(`/profile/${encodeURIComponent(userData.employeecode)}`);
+    navigate(`/profile/${encodeURIComponent(userData.user_id)}/${encodeURIComponent(userData.role_id)}`);
   };
 
   return (
@@ -180,7 +181,7 @@ const EmployeesList = () => {
         ) : filteredEmployees && filteredEmployees.length > 0 ? (
           filteredEmployees.map((employee) => (
             <EmployeeCard
-              key={employee.employeecode}
+              key={employee.user_id}
               employee={employee}
               onAction={handleAction}
             />

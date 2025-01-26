@@ -413,42 +413,29 @@ const getAllHrmsDashboardData = () => {
   return apiInstance.get(`/fetch_hrms_data`);
 };
 
-const getAllEmployeesList = (payload) => {
-  return apiInstance.post(`/fetch_employee_data`, payload);
-};
-
 const markStaffAttendance = (payload) => {
   return apiInstance.post(`/save_staff_attendance_data`, payload);
 };
 
-const updateEmployeeInfo = (isEditMode, payload) => {
+const getUsersList = (payload) => {
+  return apiInstance.post(`/fetch_user_data`, payload);
+};
+
+const updateUserInfo = (isEditMode, payload) => {
   if(isEditMode){
-    return apiInstance.post(`/edit_user`, payload);
+    return apiInstance.put(`/edit_user`, payload);
   }
   else{
-    return apiInstance.post(`/register`, payload);
+    return apiInstance.post(`/register_user`, payload);
   }
 };
-
-const getStudentsList = (payload) => {
-  return apiInstance.post(`/fetch_student_data`, payload);
-};
-
-const updateStudentInfo = (isEditMode, payload) => {
-  if(isEditMode){
-    return apiInstance.post(`/edit_student`, payload);
-  }
-  else{
-    return apiInstance.post(`/register_student`, payload);
-  }
-};
-
-const getAllDesignationsList = () => {
-  return apiInstance.get('fetch_all_roles');
-}
 
 const deleteUserInfo = (user_id) => {
   return apiInstance.delete(`delete_user?user_id=${user_id}`);
+}
+
+const getAllDesignationsList = () => {
+  return apiInstance.get('fetch_all_roles');
 }
 
 const fetchAttendanceDataForReview = () => {
@@ -608,8 +595,8 @@ export {
   getAllMappingsList,
   getAllMappingsMetadata,
   getAllHrmsDashboardData,
-  getAllEmployeesList,
-  updateEmployeeInfo,
+  getUsersList,
+  updateUserInfo,
   getAllDesignationsList,
   deleteUserInfo,
   getTeacherLeaveApplicationsList,
@@ -634,7 +621,5 @@ export {
   fetchExpensesList,
   makeFeePayment,
   fetchStudentFeeDetails,
-  fetchPaymentModes,
-  updateStudentInfo,
-  getStudentsList
+  fetchPaymentModes
 };

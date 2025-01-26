@@ -58,8 +58,16 @@ function Header({ isTabScreen, userData }) {
     window.location.reload();
   };
 
+  const roleMap = {
+    teacher: 3,
+    admin: 1,
+    principal: 2,
+    student: 4,
+    parent: 5,
+    non_teaching_staff: 6
+};
   const goToProfile = () => {
-    navigate(`/profile/${encodeURIComponent(userData.user_id)}`);
+    navigate(`/profile/${encodeURIComponent(userData.user_id)}/${encodeURIComponent(roleMap[userData.role?.toLowerCase()])}`);
   };
 
   const handleMouseEnter = () => {

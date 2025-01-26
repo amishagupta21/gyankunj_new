@@ -295,7 +295,7 @@ export default function RoutesContainer({ userData, mainContainerRef }) {
           </>
         ) : null}
         <Route
-          path="/profile/:userId"
+          path="/profile/:userId/:roleId"
           element={<ProtectedWrapper Component={ProfilePage} />}
         />
         {/* 404 Route */}
