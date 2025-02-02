@@ -6,6 +6,7 @@ import SidebarContainer from "./Components/SidebarContainer";
 import { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { pdfjs } from 'react-pdf';
+import ChangePasswordDialog from "./Components/ChangePasswordDialog";
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   'pdfjs-dist/build/pdf.worker.min.js',
@@ -19,6 +20,7 @@ function App() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const location = useLocation();
   const mainContainerRef = useRef(null);
+  const [open, setOpen] = useState(userData.show_reset_popup || false);
 
   useEffect(() => {
     const storedData = localStorage.getItem("UserData");
@@ -69,6 +71,7 @@ function App() {
           } ${isCollapsed && "cont-big"} ${!userData?.token && 'p-0'}`}
         >
           <RoutesContainer userData={userData} mainContainerRef={mainContainerRef} />
+          <ChangePasswordDialog open={open} onClose={() => setOpen(false)} userId={userData.user_id} />
         </div>
       </div>
     </div>

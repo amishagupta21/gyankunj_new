@@ -22,7 +22,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 import { showAlertMessage } from "../../AlertMessage";
-import {updateUserInfo } from "../../../ApiClient";
+import { updateUserInfo } from "../../../ApiClient";
 import { useNavigate } from "react-router-dom";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -41,7 +41,12 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
-const CreateAdmission = ({ isOpen, handleClose, selectedData = {}, gradesList = [] }) => {
+const CreateAdmission = ({
+  isOpen,
+  handleClose,
+  selectedData = {},
+  gradesList = [],
+}) => {
   const { handleSubmit, reset, control, watch } = useForm({
     defaultValues: {
       name: "",
@@ -87,42 +92,49 @@ const CreateAdmission = ({ isOpen, handleClose, selectedData = {}, gradesList = 
   const [showAlert, setShowAlert] = useState("");
   const isEditMode = Object.keys(selectedData).length > 0;
   const metaData = {
-    "categoryList": [
-      { "id": "general", "name": "General" },
-      { "id": "sc", "name": "SC" },
-      { "id": "st", "name": "ST" },
-      { "id": "obc", "name": "OBC" }
+    categoryList: [
+      { id: "general", name: "General" },
+      { id: "sc", name: "SC" },
+      { id: "st", name: "ST" },
+      { id: "obc", name: "OBC" },
     ],
-    "languagesList": [
-      { "id": "english", "name": "English" },
-      { "id": "hindi", "name": "Hindi" }
+    languagesList: [
+      { id: "english", name: "English" },
+      { id: "hindi", name: "Hindi" },
     ],
-    "nationalitiesList": [
-      { "id": "india", "name": "India" },
-      { "id": "nri", "name": "NRI" }
+    nationalitiesList: [
+      { id: "india", name: "India" },
+      { id: "nri", name: "NRI" },
     ],
-    "gendersList": [
-      { "id": "male", "name": "Male" },
-      { "id": "female", "name": "Female" },
-      { "id": "other", "name": "Other" }
+    gendersList: [
+      { id: "male", name: "Male" },
+      { id: "female", name: "Female" },
+      { id: "other", name: "Other" },
     ],
-    "gradesList": gradesList
-  }  
+    gradesList: gradesList,
+  };
 
   useEffect(() => {
     if (Object.keys(selectedData).length > 0) {
       reset({
         ...selectedData,
-        date_of_birth: selectedData.date_of_birth ? dayjs(selectedData.date_of_birth) : null,
-        date_of_joining: selectedData.date_of_joining ? dayjs(selectedData.date_of_joining) : null,
-        father_dob: selectedData.father_dob ? dayjs(selectedData.father_dob) : null,
-        mother_dob: selectedData.mother_dob ? dayjs(selectedData.mother_dob) : null,
+        date_of_birth: selectedData.date_of_birth
+          ? dayjs(selectedData.date_of_birth)
+          : null,
+        date_of_joining: selectedData.date_of_joining
+          ? dayjs(selectedData.date_of_joining)
+          : null,
+        father_dob: selectedData.father_dob
+          ? dayjs(selectedData.father_dob)
+          : null,
+        mother_dob: selectedData.mother_dob
+          ? dayjs(selectedData.mother_dob)
+          : null,
       });
     } else {
       reset(); // Reset the form for fresh admission
     }
   }, [selectedData, reset]);
-  
 
   const [primaryPhone, setPrimaryPhone] = useState(null); // Track the primary phone
 
@@ -134,13 +146,22 @@ const CreateAdmission = ({ isOpen, handleClose, selectedData = {}, gradesList = 
   const onSubmit = (data) => {
     const payload = {
       ...data,
-      phone_number: data[primaryPhone] ?? data.father_phone ?? data.mother_phone,
+      phone_number:
+        data[primaryPhone] ?? data.father_phone ?? data.mother_phone,
       user_id: isEditMode ? selectedData.user_id : undefined,
       role_id: 4,
-      date_of_birth: data.date_of_birth ? dayjs(data.date_of_birth).format("YYYY-MM-DD") : null,
-      date_of_joining: data.date_of_joining ? dayjs(data.date_of_joining).format("YYYY-MM-DD") : null,
-      father_dob: data.father_dob ? dayjs(data.father_dob).format("YYYY-MM-DD") : null,
-      mother_dob: data.mother_dob ? dayjs(data.mother_dob).format("YYYY-MM-DD") : null,
+      date_of_birth: data.date_of_birth
+        ? dayjs(data.date_of_birth).format("YYYY-MM-DD")
+        : null,
+      date_of_joining: data.date_of_joining
+        ? dayjs(data.date_of_joining).format("YYYY-MM-DD")
+        : null,
+      father_dob: data.father_dob
+        ? dayjs(data.father_dob).format("YYYY-MM-DD")
+        : null,
+      mother_dob: data.mother_dob
+        ? dayjs(data.mother_dob).format("YYYY-MM-DD")
+        : null,
     };
 
     // Submit the payload
@@ -150,7 +171,7 @@ const CreateAdmission = ({ isOpen, handleClose, selectedData = {}, gradesList = 
       .then((res) => {
         setShowAlert(res?.data?.status === "success" ? "success" : "error");
         setTimeout(() => {
-          if(res?.data?.status === "success"){
+          if (res?.data?.status === "success") {
             navigate(`/principalDashboard/financeView?activeView=earning`);
           }
           handleClose(true);
@@ -165,40 +186,170 @@ const CreateAdmission = ({ isOpen, handleClose, selectedData = {}, gradesList = 
 
   const formFields = [
     { name: "name", label: "Child Name", type: "text", required: true },
-    { name: "gender", label: "Child Gender", type: "select", options: metaData.gendersList, required: true },
-    { name: "date_of_birth", label: "Child DOB", type: "date", required: true },
-    { name: "date_of_joining", label: "Child DOJ", type: "date", required: true },
-    { name: "country", label: "Child Nationality", type: "select", options: metaData.nationalitiesList, required: true },
+    {
+      name: "gender",
+      label: "Child Gender",
+      type: "select",
+      options: metaData.gendersList,
+      required: true,
+    },
+    {
+      name: "date_of_birth",
+      label: "Child DOB",
+      type: "date",
+      required: true,
+      validation: {
+        age: 3,
+        msg: "Student must be at least 3 years old",
+      },
+    },
+    {
+      name: "date_of_joining",
+      label: "Child DOJ",
+      type: "date",
+      required: true,
+    },
+    {
+      name: "country",
+      label: "Child Nationality",
+      type: "select",
+      options: metaData.nationalitiesList,
+      required: true,
+    },
     { name: "child_pan_card", label: "Child PAN Card", type: "text" },
     { name: "child_hobbies", label: "Child Hobbies", type: "text" },
     { name: "email_id", label: "Email", type: "email", required: true },
     { name: "father_name", label: "Father Name", type: "text", required: true },
     { name: "father_email_id", label: "Father Email", type: "email" },
-    { name: "father_dob", label: "Father DOB", type: "date" },
-    { name: "father_nationality", label: "Father Nationality", type: "select", options: metaData.nationalitiesList },
-    { name: "father_qualification", label: "Father Qualification", type: "text" },
+    {
+      name: "father_dob",
+      label: "Father DOB",
+      type: "date",
+      validation: {
+        age: 18,
+        msg: "Father must be at least 18 years old.",
+      },
+    },
+    {
+      name: "father_nationality",
+      label: "Father Nationality",
+      type: "select",
+      options: metaData.nationalitiesList,
+    },
+    {
+      name: "father_qualification",
+      label: "Father Qualification",
+      type: "text",
+    },
     { name: "father_occupation", label: "Father Occupation", type: "text" },
     { name: "father_pan_card", label: "Father PAN Card", type: "text" },
-    { name: "father_aadhar_number", label: "Father Aadhar Number", type: "number" },
-    { name: "father_phone", label: "Father Phone", type: "number", isPrimary: true },
+    {
+      name: "father_aadhar_number",
+      label: "Father Aadhar Number",
+      type: "number",
+    },
+    {
+      name: "father_phone",
+      label: "Father Phone",
+      type: "number",
+      isPrimary: true,
+    },
     { name: "mother_name", label: "Mother Name", type: "text", required: true },
     { name: "mother_email_id", label: "Mother Email", type: "email" },
-    { name: "mother_dob", label: "Mother DOB", type: "date" },
-    { name: "mother_nationality", label: "Mother Nationality", type: "select", options: metaData.nationalitiesList },
-    { name: "mother_qualification", label: "Mother Qualification", type: "text" },
+    {
+      name: "mother_dob",
+      label: "Mother DOB",
+      type: "date",
+      validation: {
+        age: 18,
+        msg: "Mother must be at least 18 years old.",
+      },
+    },
+    {
+      name: "mother_nationality",
+      label: "Mother Nationality",
+      type: "select",
+      options: metaData.nationalitiesList,
+    },
+    {
+      name: "mother_qualification",
+      label: "Mother Qualification",
+      type: "text",
+    },
     { name: "mother_occupation", label: "Mother Occupation", type: "text" },
-    { name: "mother_phone", label: "Mother Phone", type: "number", isPrimary: true },
-    { name: "sibling_admission_number", label: "Sibling Admission Number", type: "text" },
-    { name: "address", label: "Permanent Address", type: "text", multiline: true, required: true },
-    { name: "local_address", label: "Local Address", type: "text", multiline: true },
-    { name: "office_address", label: "Office Address", type: "text", multiline: true },
-    { name: "category", label: "Category", type: "select", options: metaData.categoryList, required: true },
-    { name: "current_school_or_coaching", label: "Current School/Coaching", type: "text" },
-    { name: "current_class", label: "Current Class", type: "select", options: metaData.gradesList },
-    { name: "applying_for_class", label: "Applying For Class", type: "select", options: metaData.gradesList, required: true },
-    { name: "school_transport_required", label: "School Transport Required", type: "boolean" },
-    { name: "mode_of_instruction", label: "Mode of Instruction", type: "select", options: metaData.languagesList },
-    { name: "languages_known", label: "Languages Known", type: "select", options: metaData.languagesList, multiple: true },
+    {
+      name: "mother_phone",
+      label: "Mother Phone",
+      type: "number",
+      isPrimary: true,
+    },
+    {
+      name: "sibling_admission_number",
+      label: "Sibling Admission Number",
+      type: "text",
+    },
+    {
+      name: "address",
+      label: "Permanent Address",
+      type: "text",
+      multiline: true,
+      required: true,
+    },
+    {
+      name: "local_address",
+      label: "Local Address",
+      type: "text",
+      multiline: true,
+    },
+    {
+      name: "office_address",
+      label: "Office Address",
+      type: "text",
+      multiline: true,
+    },
+    {
+      name: "category",
+      label: "Category",
+      type: "select",
+      options: metaData.categoryList,
+      required: true,
+    },
+    {
+      name: "current_school_or_coaching",
+      label: "Current School/Coaching",
+      type: "text",
+    },
+    {
+      name: "current_class",
+      label: "Current Class",
+      type: "select",
+      options: metaData.gradesList,
+    },
+    {
+      name: "applying_for_class",
+      label: "Applying For Class",
+      type: "select",
+      options: metaData.gradesList,
+      required: true,
+    },
+    {
+      name: "school_transport_required",
+      label: "School Transport Required",
+      type: "boolean",
+    },
+    {
+      name: "mode_of_instruction",
+      label: "Mode of Instruction",
+      type: "select",
+      options: metaData.languagesList,
+    },
+    {
+      name: "languages_known",
+      label: "Languages Known",
+      type: "select",
+      options: metaData.languagesList,
+      multiple: true,
+    },
     { name: "any_known_illness", label: "Any Known Illness", type: "boolean" },
     { name: "type_of_illness", label: "Type Of Illness", type: "text" },
   ];
@@ -215,7 +366,10 @@ const CreateAdmission = ({ isOpen, handleClose, selectedData = {}, gradesList = 
           <CloseIcon />
         </IconButton>
       </DialogTitle>
-      <form onSubmit={handleSubmit(onSubmit)} style={{ height: "calc(100% - 64px)" }}>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        style={{ height: "calc(100% - 64px)" }}
+      >
         <DialogContent dividers>
           <Grid container spacing={2}>
             {formFields.map((fieldItem) => (
@@ -236,7 +390,8 @@ const CreateAdmission = ({ isOpen, handleClose, selectedData = {}, gradesList = 
                           error={!!fieldState?.error}
                           value={field.value ?? ""}
                         >
-                          {Array.isArray(fieldItem.options) && fieldItem.options.length > 0 ? (
+                          {Array.isArray(fieldItem.options) &&
+                          fieldItem.options.length > 0 ? (
                             fieldItem.options.map((option) => (
                               <MenuItem key={option.id} value={option.id}>
                                 {option.name}
@@ -247,32 +402,68 @@ const CreateAdmission = ({ isOpen, handleClose, selectedData = {}, gradesList = 
                           )}
                         </TextField>
                       )}
-                    />                  
+                    />
                   ) : fieldItem.type === "date" ? (
                     <Controller
                       name={fieldItem.name}
                       control={control}
-                      rules={{ required: fieldItem.required }}
-                      render={({ field }) => (
+                      rules={{
+                        required: fieldItem.required,
+                        validate: fieldItem.validation
+                          ? (value) => {
+                              if (!value)
+                                return `${fieldItem.label} is required`;
+
+                              const selectedDate = dayjs(value);
+                              if (!selectedDate.isValid()) {
+                                return "Invalid date";
+                              }
+
+                              const today = dayjs();
+                              const age = today.diff(selectedDate, "year");
+
+                              if (age < fieldItem.validation.age) {
+                                return fieldItem.validation.msg;
+                              }
+
+                              return true;
+                            }
+                          : undefined,
+                      }}
+                      render={({
+                        field: { onChange, value },
+                        fieldState: { error },
+                      }) => (
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                           <DatePicker
-                            {...field}
+                            format="YYYY-MM-DD"
                             label={fieldItem.label}
-                            value={field.value || null} // Always controlled
-                            onChange={(newValue) => field.onChange(newValue)}
-                            renderInput={(params) => <TextField {...params} fullWidth />}
+                            value={value || null}
+                            onChange={onChange}
+                            slotProps={{
+                              textField: {
+                                variant: "outlined",
+                                error: !!error,
+                                helperText: error?.message,
+                              },
+                            }}
                           />
                         </LocalizationProvider>
                       )}
                     />
                   ) : fieldItem.type === "boolean" ? (
                     <Controller
-                    rules={{ required: fieldItem.required }}
+                      rules={{ required: fieldItem.required }}
                       name={fieldItem.name}
                       control={control}
                       render={({ field }) => (
                         <FormControlLabel
-                          control={<Checkbox {...field} checked={field.value ?? false} />}
+                          control={
+                            <Checkbox
+                              {...field}
+                              checked={field.value ?? false}
+                            />
+                          }
                           label={fieldItem.label}
                         />
                       )}
@@ -282,43 +473,49 @@ const CreateAdmission = ({ isOpen, handleClose, selectedData = {}, gradesList = 
                       <Controller
                         name={fieldItem.name}
                         rules={{
-                          required: fieldItem.name === 'father_phone'
-                            ? !watch("mother_phone") // Father phone is required if mother phone is not provided
-                            : fieldItem.name === 'mother_phone'
-                            ? !watch("father_phone") // Mother phone is required if father phone is not provided
-                            : fieldItem.required // Default requirement based on the fieldItem
+                          required:
+                            fieldItem.name === "father_phone"
+                              ? !watch("mother_phone") // Father phone is required if mother phone is not provided
+                              : fieldItem.name === "mother_phone"
+                              ? !watch("father_phone") // Mother phone is required if father phone is not provided
+                              : fieldItem.required, // Default requirement based on the fieldItem
                         }}
                         control={control}
                         render={({ field, fieldState }) => (
                           <>
-                          <TextField
-                            {...field}
-                            label={fieldItem.label}
-                            variant="outlined"
-                            fullWidth
-                            multiline={fieldItem.multiline || false}
-                            rows={fieldItem.multiline ? 3 : 1}
-                            type={fieldItem.type === "number" || fieldItem.type === "email" ? fieldItem.type : "text"}
-                            error={!!fieldState?.error}
-                            value={field.value ?? ""}
-                          />
-                          {fieldItem.isPrimary && watch(fieldItem.name) && (
-                            <FormControlLabel
-                            control={
-                              <Radio
-                                checked={primaryPhone === fieldItem.name}
-                                onChange={() => {
-                                  handlePrimaryPhoneChange(fieldItem.name);
-                                }}
+                            <TextField
+                              {...field}
+                              label={fieldItem.label}
+                              variant="outlined"
+                              fullWidth
+                              multiline={fieldItem.multiline || false}
+                              rows={fieldItem.multiline ? 3 : 1}
+                              type={
+                                fieldItem.type === "number" ||
+                                fieldItem.type === "email"
+                                  ? fieldItem.type
+                                  : "text"
+                              }
+                              error={!!fieldState?.error}
+                              value={field.value ?? ""}
+                            />
+                            {fieldItem.isPrimary && watch(fieldItem.name) && (
+                              <FormControlLabel
+                                control={
+                                  <Radio
+                                    checked={primaryPhone === fieldItem.name}
+                                    onChange={() => {
+                                      handlePrimaryPhoneChange(fieldItem.name);
+                                    }}
+                                  />
+                                }
+                                label="Mark as Primary Phone Number"
                               />
-                            }
-                            label="Mark as Primary Phone Number"
-                          />
-                          )}
-                        </>
+                            )}
+                          </>
                         )}
                       />
-                  </>
+                    </>
                   )}
                 </FormControl>
               </Grid>
@@ -326,17 +523,23 @@ const CreateAdmission = ({ isOpen, handleClose, selectedData = {}, gradesList = 
           </Grid>
         </DialogContent>
         <DialogActions>
-          <Button variant="outlined" type="reset" onClick={() => reset()}>Reset</Button>
-          <Button variant="contained" color="primary" type="submit">Submit</Button>
+          <Button variant="outlined" type="reset" onClick={() => reset()}>
+            Reset
+          </Button>
+          <Button variant="contained" color="primary" type="submit">
+            Submit
+          </Button>
         </DialogActions>
       </form>
       {showAlert &&
         showAlertMessage({
           open: true,
           alertFor: showAlert,
-          message: showAlert === "success" ? "Admission Created successfully!" : "Failed to create admission.",
-        })
-      }
+          message:
+            showAlert === "success"
+              ? "Admission Created successfully!"
+              : "Failed to create admission.",
+        })}
     </BootstrapDialog>
   );
 };

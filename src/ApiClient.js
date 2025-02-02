@@ -514,6 +514,14 @@ const fetchPaymentModes = () => {
   return apiInstance.get(`/fetch_payment_modes`);
 };
 
+const changeUserPassword = (payload) => {
+  return apiInstance.post(`/change_password`, payload);
+};
+
+const fetchSecurityQuestions = () => {
+  return apiInstance.get(`/get_security_questions`);
+};
+
 
 export {
   //loginUser,
@@ -621,5 +629,7 @@ export {
   fetchExpensesList,
   makeFeePayment,
   fetchStudentFeeDetails,
-  fetchPaymentModes
+  fetchPaymentModes,
+  changeUserPassword,
+  fetchSecurityQuestions
 };
