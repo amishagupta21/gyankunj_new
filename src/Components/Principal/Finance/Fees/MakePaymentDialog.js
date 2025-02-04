@@ -31,6 +31,7 @@ const MakePaymentDialog = ({
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [paymentModes, setPaymentModes] = useState([]);
   const [alert, setAlert] = useState({ type: "", message: "" });
+  const [isNormalizeFine, setIsNormalizeFine] = useState(false);
 
   useEffect(() => {
     fetchPaymentModesList();
@@ -60,6 +61,7 @@ const MakePaymentDialog = ({
       transaction_amount: "",
       normalize_fine: feeDetails.fines ? true : false,
       fee_amount: feeDetails.total_outstanding || "",
+      normalized_fine_amount: "",
     },
     mode: "onChange",
   });
@@ -67,26 +69,33 @@ const MakePaymentDialog = ({
   const handleNormalizeFineChange = (e) => {
     const checked = e.target.checked;
     setValue("normalize_fine", checked);
-    if (checked) {
-      setFeeAmountBasedOnFine(); // Subtract fines if normalized
-    } else {
-      setValue("fee_amount", feeDetails.total_outstanding); // Keep fee_amount as is
-    }
+    setIsNormalizeFine(checked);
   };
 
-  const setFeeAmountBasedOnFine = () => {
-    if (feeDetails?.fines && feeDetails?.total_outstanding) {
-      if (watch("normalize_fine")) {
-        setValue("fee_amount", feeDetails.total_outstanding - feeDetails.fines);
-      } else {
-        setValue("fee_amount", feeDetails.total_outstanding);
-      }
+  const setFeeAmountBasedOnFine = (e) => {
+    setValue("normalized_fine_amount", e.target.value);
+    if (feeDetails?.total_outstanding) {
+      const adjustedFeeAmount = e.target.value
+        ? feeDetails.total_outstanding - e.target.value
+        : feeDetails.total_outstanding;
+      setValue("fee_amount", adjustedFeeAmount);
     }
   };
 
   const onSubmit = async (data) => {
     try {
-      const res = await makeFeePayment(data);
+      let paylaod = {
+        ...data,
+        transaction_amount: parseInt(data.transaction_amount),  // Convert to number
+        fee_amount: parseInt(data.fee_amount), // Convert fee_amount to number
+        normalized_fine_amount: data.normalized_fine_amount
+          ? parseInt(data.normalized_fine_amount) // Convert normalized fine to number if it exists
+          : undefined, 
+      };
+  
+      // Delete fee_amount from the payload if it's not needed
+      delete paylaod.fee_amount; 
+      const res = await makeFeePayment(paylaod);
       if (res?.data?.status === "success") {
         setAlert({
           type: "success",
@@ -117,8 +126,9 @@ const MakePaymentDialog = ({
   const paymentModeId = watch("payment_mode_id");
 
   const handleModeChange = (e) => {
-    setValue("payment_mode_id", e.target.value);
-    if (e.target.value === 1) {
+    const value = e.target.value;
+    setValue("payment_mode_id", value);
+    if (value === 1) {
       setValue("transaction_id", "");
     }
   };
@@ -165,7 +175,6 @@ const MakePaymentDialog = ({
                     <TextField
                       {...field}
                       error={!!error}
-                      type="text"
                       label="Admission ID"
                       disabled
                       fullWidth
@@ -206,7 +215,7 @@ const MakePaymentDialog = ({
                 </FormControl>
               </Grid>
 
-              {/* Transaction ID (Conditionally Rendered) */}
+              {/* Transaction Amount */}
               <Grid item xs={12} sm={6}>
                 <Controller
                   name="transaction_amount"
@@ -217,12 +226,16 @@ const MakePaymentDialog = ({
                       {...field}
                       error={!!error}
                       type="number"
+                      onChange={field.onChange}
+                      value={field.value || ""}
                       label="Transaction Amount"
                       fullWidth
                     />
                   )}
                 />
               </Grid>
+
+              {/* Transaction ID (Conditionally Rendered) */}
               {paymentModeId !== 1 && (
                 <Grid item xs={12} sm={6}>
                   <Controller
@@ -233,6 +246,8 @@ const MakePaymentDialog = ({
                       <TextField
                         {...field}
                         error={!!error}
+                        onChange={field.onChange}
+                        value={field.value || ""}
                         type="text"
                         label="Transaction ID"
                         fullWidth
@@ -253,7 +268,9 @@ const MakePaymentDialog = ({
                       {...field}
                       error={!!error}
                       type="number"
-                      label="Fee Amount"
+                      label="Total Outstanding Amount"
+                      onChange={field.onChange}
+                      value={field.value || ""}
                       fullWidth
                     />
                   )}
@@ -276,6 +293,28 @@ const MakePaymentDialog = ({
                           onChange={handleNormalizeFineChange}
                         />
                       </>
+                    )}
+                  />
+                </Grid>
+              )}
+
+              {/* Normalized Fine Amount */}
+              {!isParentView && isNormalizeFine && (
+                <Grid item xs={12} sm={6}>
+                  <Controller
+                    name="normalized_fine_amount"
+                    control={control}
+                    rules={{ required: isNormalizeFine }}
+                    render={({ field, fieldState: { error } }) => (
+                      <TextField
+                        {...field}
+                        error={!!error}
+                        type="number"
+                        label="Normalized Fine Amount"
+                        onChange={setFeeAmountBasedOnFine}
+                        value={field.value || ""}
+                        fullWidth
+                      />
                     )}
                   />
                 </Grid>
