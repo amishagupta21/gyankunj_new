@@ -28,7 +28,7 @@ const AssignmentSheet = (props) => {
   const [elapsedTimes, setElapsedTimes] = useState({});
   const { assignmentStatus } = props;
   const token = JSON.parse(localStorage.getItem("UserData"));
-  const tokenId = token.token;
+  const tokenId = token?.token;
 
   const areFieldsDisabled = () => {
     return assignmentStatus;

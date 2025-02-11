@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import CreateAdmission from "./CreateAdmission";
 import {
   deleteUserInfo,
+  fetchFeesStructuresList,
   getGradeDetails,
   getUsersList,
 } from "../../../ApiClient";
@@ -21,10 +22,12 @@ const AdmissionView = () => {
   const [selectedUserDetails, setSelectedUserDetails] = useState(null);
   const [usersList, setUsersList] = useState([]);
   const [gradesList, setGradesList] = useState([]);
+  const [feesStructuresList, setFeesStructuresList] = useState([]);
 
   const navigate = useNavigate();
 
   useEffect(() => {
+    fetchAndSetFeesStructures();
     getGradeDetails()
       .then((res) => {
         const gradeDetails = res?.data?.grade_details?.grade_details;
@@ -34,6 +37,15 @@ const AdmissionView = () => {
       })
       .catch(console.error);
   }, []);  
+
+  const fetchAndSetFeesStructures = async () => {
+    try {
+      const response = await fetchFeesStructuresList();
+      setFeesStructuresList(response?.data?.fees_structure_info || []);
+    } catch (err) {
+      console.error("Failed to fetch fees structures:", err);
+    }
+  };
 
   // Fetching user list with async/await for better readability
   useEffect(() => {
@@ -151,6 +163,7 @@ const AdmissionView = () => {
           handleClose={handleClose}
           selectedData={selectedUserDetails}
           gradesList={gradesList}
+          feesStructuresList={feesStructuresList}
         />
       )}
 
