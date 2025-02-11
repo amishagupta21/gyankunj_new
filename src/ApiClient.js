@@ -10,7 +10,7 @@ const apiInstance = axios.create({
 async function handleAPI(recdConfig) {
   const config = recdConfig;
   const token = JSON.parse(localStorage.getItem("UserData"));
-  const tokenId = token.token;
+  const tokenId = token?.token;
   try {
     config.headers["x-access-tokens"] = tokenId;
     return config;
@@ -522,6 +522,10 @@ const fetchSecurityQuestions = () => {
   return apiInstance.get(`/get_security_questions`);
 };
 
+const saveAdmissionFeesInfo = (payload) => {
+  return apiInstance.post(`/save_admission_fees_info`, payload);
+};
+
 
 export {
   //loginUser,
@@ -631,5 +635,6 @@ export {
   fetchStudentFeeDetails,
   fetchPaymentModes,
   changeUserPassword,
-  fetchSecurityQuestions
+  fetchSecurityQuestions,
+  saveAdmissionFeesInfo
 };

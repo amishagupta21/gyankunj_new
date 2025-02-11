@@ -71,7 +71,7 @@ function App() {
           } ${isCollapsed && "cont-big"} ${!userData?.token && 'p-0'}`}
         >
           <RoutesContainer userData={userData} mainContainerRef={mainContainerRef} />
-          <ChangePasswordDialog open={open} onClose={() => setOpen(false)} userId={userData.user_id} />
+          {open && <ChangePasswordDialog open={open} onClose={() => setOpen(false)} userId={userData.user_id} />}
         </div>
       </div>
     </div>

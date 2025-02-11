@@ -14,15 +14,16 @@ import {
   Checkbox,
   FormControlLabel,
   Radio,
+  Typography,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useForm, useWatch } from "react-hook-form";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 import { showAlertMessage } from "../../AlertMessage";
-import { updateUserInfo } from "../../../ApiClient";
+import { saveAdmissionFeesInfo, updateUserInfo } from "../../../ApiClient";
 import { useNavigate } from "react-router-dom";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -46,6 +47,7 @@ const CreateAdmission = ({
   handleClose,
   selectedData = {},
   gradesList = [],
+  feesStructuresList = [],
 }) => {
   const { handleSubmit, reset, control, watch } = useForm({
     defaultValues: {
@@ -88,8 +90,28 @@ const CreateAdmission = ({
       type_of_illness: "",
     },
   });
+  const {
+    control: controlSecond,
+    handleSubmit: handleSubmitSecond,
+    reset: resetSecond,
+    setValue: setValueSecond,
+    watch: watchSecond,
+  } = useForm({
+    defaultValues: {
+      user_id: "",
+      total_admission_charge: 0,
+      deposited_fees: 0,
+      discounted_amount: 0,
+      is_emi_enabled: false,
+      total_emi_amount: 0,
+      number_of_installments: "",
+      installment_amount: 0,
+      first_installment_due_date: null,
+    },
+  });
   const navigate = useNavigate();
   const [showAlert, setShowAlert] = useState("");
+  const [showSecondForm, setShowSecondForm] = useState(false);
   const isEditMode = Object.keys(selectedData).length > 0;
   const metaData = {
     categoryList: [
@@ -112,6 +134,7 @@ const CreateAdmission = ({
       { id: "other", name: "Other" },
     ],
     gradesList: gradesList,
+    emiOptionsList: [1, 2, 3, 4, 5, 6],
   };
 
   useEffect(() => {
@@ -143,6 +166,41 @@ const CreateAdmission = ({
     setPrimaryPhone(fieldName);
   };
 
+  useEffect(() => {
+    const totalAdmission = watchSecond("total_admission_charge") || 0;
+    const depositedFees = watchSecond("deposited_fees") || 0;
+    const discountedAmount = watchSecond("discounted_amount") || 0;
+    const numInstallments = watchSecond("number_of_installments") || 0;
+    const isEmiEnabled = watchSecond("is_emi_enabled");
+
+    if (isEmiEnabled) {
+      // Calculate total_emi_amount
+      const totalEmiAmount = Math.max(totalAdmission - depositedFees - discountedAmount, 0);
+
+      if (totalEmiAmount !== watchSecond("total_emi_amount")) {
+        setValueSecond("total_emi_amount", totalEmiAmount);
+      }
+
+      // Calculate installment_amount only if number_of_installments is set
+      const installmentAmount = numInstallments > 0 ? totalEmiAmount / numInstallments : 0;
+      if (installmentAmount !== watchSecond("installment_amount")) {
+        setValueSecond("installment_amount", installmentAmount);
+      }
+    } else {
+      // Reset EMI fields if EMI is disabled
+      if (watchSecond("total_emi_amount") !== 0) setValueSecond("total_emi_amount", 0);
+      if (watchSecond("installment_amount") !== 0) setValueSecond("installment_amount", 0);
+    }
+  }, [
+    watchSecond("total_admission_charge"),
+    watchSecond("deposited_fees"),
+    watchSecond("discounted_amount"),
+    watchSecond("number_of_installments"),
+    watchSecond("is_emi_enabled"),
+    setValueSecond,
+  ]);
+
+
   const onSubmit = (data) => {
     const payload = {
       ...data,
@@ -169,6 +227,51 @@ const CreateAdmission = ({
     // Perform the API request using the payload here
     updateUserInfo(isEditMode, payload)
       .then((res) => {
+        const isSuccess = res?.data?.status === "success";
+        setShowAlert(isSuccess ? "success" : "error");
+        if (isSuccess) {
+          const match = res?.data.message?.match(/afs\/\d+\/\d+\/\d+/);
+          const studentId = match ? match[0] : null;
+          setValueSecond("user_id", studentId);
+
+          if (Array.isArray(feesStructuresList) && feesStructuresList.length > 0) {
+            const totalAdmissionCharge = feesStructuresList.reduce(
+              (sum, item) => item.fee_frequency_id === 2 && item.fee_occurrence_id === 1
+                ? sum + item.charge
+                : sum,
+              0
+            );
+
+            setValueSecond("total_admission_charge", totalAdmissionCharge);
+            setShowSecondForm(true);
+          }
+        }
+
+        setTimeout(() => setShowAlert(""), 2000);
+      })
+      .catch(() => {
+        setShowAlert("error");
+        setTimeout(() => setShowAlert(""), 3000);
+      });
+
+  };
+
+  const onSubmitSecond = (data) => {
+    const payload = {
+      ...data,
+      first_installment_due_date: data.first_installment_due_date
+        ? dayjs(data.first_installment_due_date).format("YYYY-MM-DD")
+        : null,
+      total_emi_amount: data.is_emi_enabled ? data.total_emi_amount : undefined,
+      first_installment_due_date: data.is_emi_enabled ? data.first_installment_due_date : undefined,
+      number_of_installments: data.is_emi_enabled ? data.number_of_installments : undefined,
+      installment_amount: data.is_emi_enabled ? data.installment_amount : undefined,
+    };
+    // Submit the payload
+    console.log(payload);
+    // Perform the API request using the payload here
+    saveAdmissionFeesInfo(payload)
+      .then((res) => {
         setShowAlert(res?.data?.status === "success" ? "success" : "error");
         setTimeout(() => {
           if (res?.data?.status === "success") {
@@ -184,175 +287,55 @@ const CreateAdmission = ({
       });
   };
 
-  const formFields = [
-    { name: "name", label: "Child Name", type: "text", required: true },
-    {
-      name: "gender",
-      label: "Child Gender",
-      type: "select",
-      options: metaData.gendersList,
-      required: true,
-    },
-    {
-      name: "date_of_birth",
-      label: "Child DOB",
-      type: "date",
-      required: true,
-      validation: {
-        age: 3,
-        msg: "Student must be at least 3 years old",
-      },
-    },
-    {
-      name: "date_of_joining",
-      label: "Child DOJ",
-      type: "date",
-      required: true,
-    },
-    {
-      name: "country",
-      label: "Child Nationality",
-      type: "select",
-      options: metaData.nationalitiesList,
-      required: true,
-    },
-    { name: "child_pan_card", label: "Child PAN Card", type: "text" },
-    { name: "child_hobbies", label: "Child Hobbies", type: "text" },
-    { name: "email_id", label: "Email", type: "email", required: true },
-    { name: "father_name", label: "Father Name", type: "text", required: true },
-    { name: "father_email_id", label: "Father Email", type: "email" },
-    {
-      name: "father_dob",
-      label: "Father DOB",
-      type: "date",
-      validation: {
-        age: 18,
-        msg: "Father must be at least 18 years old.",
-      },
-    },
-    {
-      name: "father_nationality",
-      label: "Father Nationality",
-      type: "select",
-      options: metaData.nationalitiesList,
-    },
-    {
-      name: "father_qualification",
-      label: "Father Qualification",
-      type: "text",
-    },
-    { name: "father_occupation", label: "Father Occupation", type: "text" },
-    { name: "father_pan_card", label: "Father PAN Card", type: "text" },
-    {
-      name: "father_aadhar_number",
-      label: "Father Aadhar Number",
-      type: "number",
-    },
-    {
-      name: "father_phone",
-      label: "Father Phone",
-      type: "number",
-      isPrimary: true,
-    },
-    { name: "mother_name", label: "Mother Name", type: "text", required: true },
-    { name: "mother_email_id", label: "Mother Email", type: "email" },
-    {
-      name: "mother_dob",
-      label: "Mother DOB",
-      type: "date",
-      validation: {
-        age: 18,
-        msg: "Mother must be at least 18 years old.",
-      },
-    },
-    {
-      name: "mother_nationality",
-      label: "Mother Nationality",
-      type: "select",
-      options: metaData.nationalitiesList,
-    },
-    {
-      name: "mother_qualification",
-      label: "Mother Qualification",
-      type: "text",
-    },
-    { name: "mother_occupation", label: "Mother Occupation", type: "text" },
-    {
-      name: "mother_phone",
-      label: "Mother Phone",
-      type: "number",
-      isPrimary: true,
-    },
-    {
-      name: "sibling_admission_number",
-      label: "Sibling Admission Number",
-      type: "text",
-    },
-    {
-      name: "address",
-      label: "Permanent Address",
-      type: "text",
-      multiline: true,
-      required: true,
-    },
-    {
-      name: "local_address",
-      label: "Local Address",
-      type: "text",
-      multiline: true,
-    },
-    {
-      name: "office_address",
-      label: "Office Address",
-      type: "text",
-      multiline: true,
-    },
-    {
-      name: "category",
-      label: "Category",
-      type: "select",
-      options: metaData.categoryList,
-      required: true,
-    },
-    {
-      name: "current_school_or_coaching",
-      label: "Current School/Coaching",
-      type: "text",
-    },
-    {
-      name: "current_class",
-      label: "Current Class",
-      type: "select",
-      options: metaData.gradesList,
-    },
-    {
-      name: "applying_for_class",
-      label: "Applying For Class",
-      type: "select",
-      options: metaData.gradesList,
-      required: true,
-    },
-    {
-      name: "school_transport_required",
-      label: "School Transport Required",
-      type: "boolean",
-    },
-    {
-      name: "mode_of_instruction",
-      label: "Mode of Instruction",
-      type: "select",
-      options: metaData.languagesList,
-    },
-    {
-      name: "languages_known",
-      label: "Languages Known",
-      type: "select",
-      options: metaData.languagesList,
-      multiple: true,
-    },
-    { name: "any_known_illness", label: "Any Known Illness", type: "boolean" },
-    { name: "type_of_illness", label: "Type Of Illness", type: "text" },
-  ];
+  const formFields = {
+    "Student Details": [
+      { name: "name", label: "Child Name", type: "text", required: true },
+      { name: "gender", label: "Child Gender", type: "select", options: metaData.gendersList, required: true },
+      { name: "date_of_birth", label: "Child DOB", type: "date", required: true, validation: { age: 3, msg: "Student must be at least 3 years old" } },
+      { name: "date_of_joining", label: "Child DOJ", type: "date", required: true },
+      { name: "country", label: "Child Nationality", type: "select", options: metaData.nationalitiesList, required: true },
+      { name: "child_hobbies", label: "Child Hobbies", type: "text" },
+      { name: "email_id", label: "Email", type: "email", required: true },
+      { name: "sibling_admission_number", label: "Sibling Admission Number", type: "text" },
+      { name: "address", label: "Permanent Address", type: "text", required: true, multiline: true },
+      { name: "local_address", label: "Local Address", type: "text", multiline: true },
+      { name: "office_address", label: "Office Address", type: "text", multiline: true },
+      { name: "category", label: "Category", type: "select", options: metaData.categoryList, required: true },
+      { name: "current_school_or_coaching", label: "Current School/Coaching", type: "text" },
+      { name: "current_class", label: "Current Class", type: "select", options: metaData.gradesList },
+      { name: "applying_for_class", label: "Applying For Class", type: "select", options: metaData.gradesList, required: true },
+      { name: "school_transport_required", label: "School Transport Required", type: "boolean" },
+      { name: "mode_of_instruction", label: "Mode of Instruction", type: "select", options: metaData.languagesList },
+      { name: "languages_known", label: "Languages Known", type: "select", options: metaData.languagesList, multiple: true },
+      { name: "any_known_illness", label: "Any Known Illness", type: "boolean" },
+      { name: "type_of_illness", label: "Type Of Illness", type: "text" },
+    ],
+
+    "Parent Details": [
+      { name: "father_name", label: "Father Name", type: "text", required: true },
+      { name: "father_email_id", label: "Father Email", type: "email" },
+      { name: "father_dob", label: "Father DOB", type: "date", validation: { age: 18, msg: "Father must be at least 18 years old." } },
+      { name: "father_nationality", label: "Father Nationality", type: "select", options: metaData.nationalitiesList },
+      { name: "father_qualification", label: "Father Qualification", type: "text" },
+      { name: "father_occupation", label: "Father Occupation", type: "text" },
+      { name: "father_phone", label: "Father Phone", type: "number", required: true, isPrimary: true },
+
+      { name: "mother_name", label: "Mother Name", type: "text", required: true },
+      { name: "mother_email_id", label: "Mother Email", type: "email" },
+      { name: "mother_dob", label: "Mother DOB", type: "date", validation: { age: 18, msg: "Mother must be at least 18 years old." } },
+      { name: "mother_nationality", label: "Mother Nationality", type: "select", options: metaData.nationalitiesList },
+      { name: "mother_qualification", label: "Mother Qualification", type: "text" },
+      { name: "mother_occupation", label: "Mother Occupation", type: "text" },
+      { name: "mother_phone", label: "Mother Phone", type: "number", required: true, isPrimary: true },
+    ],
+
+    "Document Details": [
+      { name: "child_pan_card", label: "Child PAN Card", type: "text" },
+      { name: "father_pan_card", label: "Father PAN Card", type: "text" },
+      { name: "father_aadhar_number", label: "Father Aadhar Number", type: "number" },
+    ],
+  };
+
 
   return (
     <BootstrapDialog aria-labelledby="customized-dialog-title" open={isOpen}>
@@ -367,78 +350,313 @@ const CreateAdmission = ({
         </IconButton>
       </DialogTitle>
       <form
-        onSubmit={handleSubmit(onSubmit)}
+        onSubmit={showSecondForm ? handleSubmitSecond(onSubmitSecond) : handleSubmit(onSubmit)}
         style={{ height: "calc(100% - 64px)" }}
       >
-        <DialogContent dividers>
+        {!showSecondForm ? (
+          <DialogContent dividers>
+            {Object.entries(formFields).map(([section, fields]) => (
+              <Grid container spacing={2} key={section}>
+                <Grid item xs={12}>
+                  <Typography variant="h6" sx={{ fontWeight: "bold", my: 2 }}>
+                    {section}
+                  </Typography>
+                </Grid>
+                {fields.map((fieldItem) => (
+                  <Grid item xs={6} key={fieldItem.name}>
+                    <FormControl fullWidth>
+                      {fieldItem.type === "select" ? (
+                        <Controller
+                          name={fieldItem.name}
+                          control={control}
+                          rules={{ required: fieldItem.required }}
+                          render={({ field, fieldState }) => (
+                            <TextField
+                              {...field}
+                              label={fieldItem.label}
+                              select
+                              variant="outlined"
+                              fullWidth
+                              error={!!fieldState?.error}
+                              value={field.value ?? ""}
+                            >
+                              {Array.isArray(fieldItem.options) &&
+                                fieldItem.options.length > 0 ? (
+                                fieldItem.options.map((option) => (
+                                  <MenuItem key={option.id} value={option.id}>
+                                    {option.name}
+                                  </MenuItem>
+                                ))
+                              ) : (
+                                <MenuItem value="">No options available</MenuItem>
+                              )}
+                            </TextField>
+                          )}
+                        />
+                      ) : fieldItem.type === "date" ? (
+                        <Controller
+                          name={fieldItem.name}
+                          control={control}
+                          rules={{
+                            required: fieldItem.required,
+                            validate: fieldItem.validation
+                              ? (value) => {
+                                if (!value)
+                                  return `${fieldItem.label} is required`;
+
+                                const selectedDate = dayjs(value);
+                                if (!selectedDate.isValid()) {
+                                  return "Invalid date";
+                                }
+
+                                const today = dayjs();
+                                const age = today.diff(selectedDate, "year");
+
+                                if (age < fieldItem.validation.age) {
+                                  return fieldItem.validation.msg;
+                                }
+
+                                return true;
+                              }
+                              : undefined,
+                          }}
+                          render={({
+                            field: { onChange, value },
+                            fieldState: { error },
+                          }) => (
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                              <DatePicker
+                                format="YYYY-MM-DD"
+                                label={fieldItem.label}
+                                value={value || null}
+                                onChange={onChange}
+                                slotProps={{
+                                  textField: {
+                                    variant: "outlined",
+                                    error: !!error,
+                                    helperText: error?.message,
+                                  },
+                                }}
+                              />
+                            </LocalizationProvider>
+                          )}
+                        />
+                      ) : fieldItem.type === "boolean" ? (
+                        <Controller
+                          rules={{ required: fieldItem.required }}
+                          name={fieldItem.name}
+                          control={control}
+                          render={({ field }) => (
+                            <FormControlLabel
+                              control={
+                                <Checkbox
+                                  {...field}
+                                  checked={field.value ?? false}
+                                />
+                              }
+                              label={fieldItem.label}
+                            />
+                          )}
+                        />
+                      ) : (
+                        <>
+                          <Controller
+                            name={fieldItem.name}
+                            rules={{
+                              required:
+                                fieldItem.name === "father_phone"
+                                  ? !watch("mother_phone") // Father phone is required if mother phone is not provided
+                                  : fieldItem.name === "mother_phone"
+                                    ? !watch("father_phone") // Mother phone is required if father phone is not provided
+                                    : fieldItem.required, // Default requirement based on the fieldItem
+                            }}
+                            control={control}
+                            render={({ field, fieldState }) => (
+                              <>
+                                <TextField
+                                  {...field}
+                                  label={fieldItem.label}
+                                  variant="outlined"
+                                  fullWidth
+                                  multiline={fieldItem.multiline || false}
+                                  rows={fieldItem.multiline ? 3 : 1}
+                                  type={
+                                    fieldItem.type === "number" ||
+                                      fieldItem.type === "email"
+                                      ? fieldItem.type
+                                      : "text"
+                                  }
+                                  error={!!fieldState?.error}
+                                  value={field.value ?? ""}
+                                />
+                                {fieldItem.isPrimary && watch(fieldItem.name) && (
+                                  <FormControlLabel
+                                    control={
+                                      <Radio
+                                        checked={primaryPhone === fieldItem.name}
+                                        onChange={() => {
+                                          handlePrimaryPhoneChange(fieldItem.name);
+                                        }}
+                                      />
+                                    }
+                                    label="Mark as Primary Phone Number"
+                                  />
+                                )}
+                              </>
+                            )}
+                          />
+                        </>
+                      )}
+                    </FormControl>
+                  </Grid>
+                ))}
+              </Grid>
+            ))}
+          </DialogContent>
+        ) : <DialogContent dividers>
+          <Typography variant="h6" sx={{ fontWeight: "bold", my: 2 }}>
+            Fee details
+          </Typography>
           <Grid container spacing={2}>
-            {formFields.map((fieldItem) => (
-              <Grid item xs={6} key={fieldItem.name}>
-                <FormControl fullWidth>
-                  {fieldItem.type === "select" ? (
+            {/* User ID */}
+            <Grid item xs={12} md={6}>
+              <FormControl fullWidth>
+                <Controller
+                  name="user_id"
+                  control={controlSecond}
+                  render={({ field }) => <TextField {...field} label="User ID" margin="normal" required disabled />}
+                />
+              </FormControl>
+            </Grid>
+
+            {/* Total Admission Charge */}
+            <Grid item xs={12} md={6}>
+              <FormControl fullWidth>
+                <Controller
+                  name="total_admission_charge"
+                  control={controlSecond}
+                  render={({ field }) => (
+                    <TextField {...field} type="number" label="Total Admission Charge" margin="normal" required disabled />
+                  )}
+                />
+              </FormControl>
+            </Grid>
+
+            {/* Deposited Fees */}
+            <Grid item xs={12} md={6}>
+              <FormControl fullWidth>
+                <Controller
+                  name="deposited_fees"
+                  control={controlSecond}
+                  render={({ field }) => <TextField {...field} type="number" label="Deposited Fees" margin="normal" />}
+                />
+              </FormControl>
+            </Grid>
+
+            {/* Discounted Amount */}
+            <Grid item xs={12} md={6}>
+              <FormControl fullWidth>
+                <Controller
+                  name="discounted_amount"
+                  control={controlSecond}
+                  render={({ field }) => <TextField {...field} type="number" label="Discounted Amount" margin="normal" />}
+                />
+              </FormControl>
+            </Grid>
+
+            {/* Enable EMI Checkbox */}
+            <Grid item xs={12}>
+              <FormControl>
+                <Controller
+                  name="is_emi_enabled"
+                  control={controlSecond}
+                  render={({ field }) => (
+                    <FormControlLabel control={<Checkbox {...field} checked={field.value} />} label="Enable EMI" />
+                  )}
+                />
+              </FormControl>
+            </Grid>
+
+            {/* EMI Fields - Shown Only If EMI is Enabled */}
+            {watchSecond("is_emi_enabled") && (
+              <>
+                {/* Total EMI Amount (Auto-Calculated) */}
+                <Grid item xs={12} md={6}>
+                  <FormControl fullWidth>
                     <Controller
-                      name={fieldItem.name}
-                      control={control}
-                      rules={{ required: fieldItem.required }}
-                      render={({ field, fieldState }) => (
+                      name="total_emi_amount"
+                      control={controlSecond}
+                      render={({ field }) => (
+                        <TextField {...field} type="number" label="Total EMI Amount" margin="normal" required disabled />
+                      )}
+                    />
+                  </FormControl>
+                </Grid>
+
+                {/* Number of Installments */}
+                <Grid item xs={12} md={6}>
+                  <FormControl fullWidth>
+                    <Controller
+                      name="number_of_installments"
+                      control={controlSecond}
+                      render={({ field }) => (
                         <TextField
                           {...field}
-                          label={fieldItem.label}
+                          label="Number of Installments"
                           select
                           variant="outlined"
-                          fullWidth
-                          error={!!fieldState?.error}
-                          value={field.value ?? ""}
+                          margin="normal"
                         >
-                          {Array.isArray(fieldItem.options) &&
-                          fieldItem.options.length > 0 ? (
-                            fieldItem.options.map((option) => (
-                              <MenuItem key={option.id} value={option.id}>
-                                {option.name}
-                              </MenuItem>
-                            ))
-                          ) : (
-                            <MenuItem value="">No options available</MenuItem>
-                          )}
+                          {[3, 6, 9, 12].map((option) => (
+                            <MenuItem key={option} value={option}>
+                              {option} Months
+                            </MenuItem>
+                          ))}
                         </TextField>
                       )}
                     />
-                  ) : fieldItem.type === "date" ? (
+                  </FormControl>
+                </Grid>
+
+                {/* Installment Amount (Auto-Calculated) */}
+                <Grid item xs={12} md={6}>
+                  <FormControl fullWidth>
                     <Controller
-                      name={fieldItem.name}
-                      control={control}
+                      name="installment_amount"
+                      control={controlSecond}
+                      render={({ field }) => (
+                        <TextField {...field} type="number" label="Installment Amount" margin="normal" required disabled />
+                      )}
+                    />
+                  </FormControl>
+                </Grid>
+
+                {/* First Installment Due Date */}
+                <Grid item xs={12} md={6}>
+                  <FormControl fullWidth>
+                    <Controller
+                      name="first_installment_due_date"
+                      control={controlSecond}
                       rules={{
-                        required: fieldItem.required,
-                        validate: fieldItem.validation
-                          ? (value) => {
-                              if (!value)
-                                return `${fieldItem.label} is required`;
-
-                              const selectedDate = dayjs(value);
-                              if (!selectedDate.isValid()) {
-                                return "Invalid date";
-                              }
-
-                              const today = dayjs();
-                              const age = today.diff(selectedDate, "year");
-
-                              if (age < fieldItem.validation.age) {
-                                return fieldItem.validation.msg;
-                              }
-
-                              return true;
-                            }
-                          : undefined,
+                        required: "Start EMI date is required",
+                        validate: (value) => {
+                          const selectedDate = dayjs(value);
+                          if (!selectedDate.isValid()) {
+                            return "Invalid date";
+                          }
+                          const today = dayjs().startOf("day");
+                          if (selectedDate.isBefore(today, "day")) {
+                            return "Start EMI date can't be in past";
+                          }
+                          return true;
+                        },
                       }}
-                      render={({
-                        field: { onChange, value },
-                        fieldState: { error },
-                      }) => (
+                      render={({ field: { onChange, value }, fieldState: { error } }) => (
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                           <DatePicker
                             format="YYYY-MM-DD"
-                            label={fieldItem.label}
-                            value={value || null}
+                            label="Start EMI Date"
+                            value={value ? dayjs(value) : null}
                             onChange={onChange}
                             slotProps={{
                               textField: {
@@ -451,79 +669,17 @@ const CreateAdmission = ({
                         </LocalizationProvider>
                       )}
                     />
-                  ) : fieldItem.type === "boolean" ? (
-                    <Controller
-                      rules={{ required: fieldItem.required }}
-                      name={fieldItem.name}
-                      control={control}
-                      render={({ field }) => (
-                        <FormControlLabel
-                          control={
-                            <Checkbox
-                              {...field}
-                              checked={field.value ?? false}
-                            />
-                          }
-                          label={fieldItem.label}
-                        />
-                      )}
-                    />
-                  ) : (
-                    <>
-                      <Controller
-                        name={fieldItem.name}
-                        rules={{
-                          required:
-                            fieldItem.name === "father_phone"
-                              ? !watch("mother_phone") // Father phone is required if mother phone is not provided
-                              : fieldItem.name === "mother_phone"
-                              ? !watch("father_phone") // Mother phone is required if father phone is not provided
-                              : fieldItem.required, // Default requirement based on the fieldItem
-                        }}
-                        control={control}
-                        render={({ field, fieldState }) => (
-                          <>
-                            <TextField
-                              {...field}
-                              label={fieldItem.label}
-                              variant="outlined"
-                              fullWidth
-                              multiline={fieldItem.multiline || false}
-                              rows={fieldItem.multiline ? 3 : 1}
-                              type={
-                                fieldItem.type === "number" ||
-                                fieldItem.type === "email"
-                                  ? fieldItem.type
-                                  : "text"
-                              }
-                              error={!!fieldState?.error}
-                              value={field.value ?? ""}
-                            />
-                            {fieldItem.isPrimary && watch(fieldItem.name) && (
-                              <FormControlLabel
-                                control={
-                                  <Radio
-                                    checked={primaryPhone === fieldItem.name}
-                                    onChange={() => {
-                                      handlePrimaryPhoneChange(fieldItem.name);
-                                    }}
-                                  />
-                                }
-                                label="Mark as Primary Phone Number"
-                              />
-                            )}
-                          </>
-                        )}
-                      />
-                    </>
-                  )}
-                </FormControl>
-              </Grid>
-            ))}
+                  </FormControl>
+                </Grid>
+              </>
+            )}
           </Grid>
+
         </DialogContent>
+        }
+
         <DialogActions>
-          <Button variant="outlined" type="reset" onClick={() => reset()}>
+          <Button variant="outlined" type="reset" onClick={showSecondForm ? resetSecond : reset}>
             Reset
           </Button>
           <Button variant="contained" color="primary" type="submit">
@@ -531,6 +687,7 @@ const CreateAdmission = ({
           </Button>
         </DialogActions>
       </form>
+
       {showAlert &&
         showAlertMessage({
           open: true,
