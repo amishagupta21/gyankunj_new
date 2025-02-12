@@ -257,13 +257,12 @@ const CreateAdmission = ({
   };
 
   const onSubmitSecond = (data) => {
+    const formattedStartDate = dayjs(data.first_installment_due_date).format("YYYY-MM-DD");
+     
     const payload = {
       ...data,
-      first_installment_due_date: data.first_installment_due_date
-        ? dayjs(data.first_installment_due_date).format("YYYY-MM-DD")
-        : null,
       total_emi_amount: data.is_emi_enabled ? data.total_emi_amount : undefined,
-      first_installment_due_date: data.is_emi_enabled ? data.first_installment_due_date : undefined,
+      first_installment_due_date: data.is_emi_enabled ? formattedStartDate : undefined,
       number_of_installments: data.is_emi_enabled ? data.number_of_installments : undefined,
       installment_amount: data.is_emi_enabled ? data.installment_amount : undefined,
     };
@@ -299,7 +298,6 @@ const CreateAdmission = ({
       { name: "sibling_admission_number", label: "Sibling Admission Number", type: "text" },
       { name: "address", label: "Permanent Address", type: "text", required: true, multiline: true },
       { name: "local_address", label: "Local Address", type: "text", multiline: true },
-      { name: "office_address", label: "Office Address", type: "text", multiline: true },
       { name: "category", label: "Category", type: "select", options: metaData.categoryList, required: true },
       { name: "current_school_or_coaching", label: "Current School/Coaching", type: "text" },
       { name: "current_class", label: "Current Class", type: "select", options: metaData.gradesList },
@@ -319,6 +317,7 @@ const CreateAdmission = ({
       { name: "father_qualification", label: "Father Qualification", type: "text" },
       { name: "father_occupation", label: "Father Occupation", type: "text" },
       { name: "father_phone", label: "Father Phone", type: "number", required: true, isPrimary: true },
+      { name: "office_address", label: "Office Address", type: "text", multiline: true },
 
       { name: "mother_name", label: "Mother Name", type: "text", required: true },
       { name: "mother_email_id", label: "Mother Email", type: "email" },
@@ -548,7 +547,7 @@ const CreateAdmission = ({
                 <Controller
                   name="deposited_fees"
                   control={controlSecond}
-                  render={({ field }) => <TextField {...field} type="number" label="Deposited Fees" margin="normal" />}
+                  render={({ field }) => <TextField {...field} type="number" label="Deposited Fees" margin="normal" onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : "")} />}
                 />
               </FormControl>
             </Grid>
@@ -559,7 +558,7 @@ const CreateAdmission = ({
                 <Controller
                   name="discounted_amount"
                   control={controlSecond}
-                  render={({ field }) => <TextField {...field} type="number" label="Discounted Amount" margin="normal" />}
+                  render={({ field }) => <TextField {...field} type="number" label="Discounted Amount" margin="normal" onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : "")} />}
                 />
               </FormControl>
             </Grid>
@@ -656,7 +655,7 @@ const CreateAdmission = ({
                           <DatePicker
                             format="YYYY-MM-DD"
                             label="Start EMI Date"
-                            value={value ? dayjs(value) : null}
+                            value={value || null}
                             onChange={onChange}
                             slotProps={{
                               textField: {
