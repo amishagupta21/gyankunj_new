@@ -46,7 +46,7 @@ const CreateAdmission = ({
   isOpen,
   handleClose,
   selectedData = {},
-  gradesList = [],
+  metadataList = {},
   feesStructuresList = [],
   role_id = null,
 }) => {
@@ -114,29 +114,6 @@ const CreateAdmission = ({
   const [showAlert, setShowAlert] = useState("");
   const [showSecondForm, setShowSecondForm] = useState(false);
   const isEditMode = Object.keys(selectedData).length > 0;
-  const metaData = {
-    categoryList: [
-      { id: "general", name: "General" },
-      { id: "sc", name: "SC" },
-      { id: "st", name: "ST" },
-      { id: "obc", name: "OBC" },
-    ],
-    languagesList: [
-      { id: "english", name: "English" },
-      { id: "hindi", name: "Hindi" },
-    ],
-    nationalitiesList: [
-      { id: "india", name: "India" },
-      { id: "nri", name: "NRI" },
-    ],
-    gendersList: [
-      { id: "male", name: "Male" },
-      { id: "female", name: "Female" },
-      { id: "other", name: "Other" },
-    ],
-    gradesList: gradesList,
-    emiOptionsList: [1, 2, 3, 4, 5, 6],
-  };
 
   useEffect(() => {
     if (Object.keys(selectedData).length > 0) {
@@ -290,22 +267,22 @@ const CreateAdmission = ({
   const formFields = {
     "Student Details": [
       { name: "name", label: "Child Name", type: "text", required: true },
-      { name: "gender", label: "Child Gender", type: "select", options: metaData.gendersList, required: true },
+      { name: "gender", label: "Child Gender", type: "select", options: metadataList.genders, required: true },
       { name: "date_of_birth", label: "Child DOB", type: "date", required: true, validation: { age: 3, msg: "Student must be at least 3 years old" } },
       { name: "date_of_joining", label: "Child DOJ", type: "date", required: true },
-      { name: "country", label: "Child Nationality", type: "select", options: metaData.nationalitiesList, required: true },
+      { name: "country", label: "Child Nationality", type: "select", options: metadataList.nationalities, required: true },
       { name: "child_hobbies", label: "Child Hobbies", type: "text" },
       { name: "email_id", label: "Email", type: "email", required: true },
       { name: "sibling_admission_number", label: "Sibling Admission Number", type: "text" },
       { name: "address", label: "Permanent Address", type: "text", required: true, multiline: true },
       { name: "local_address", label: "Local Address", type: "text", multiline: true },
-      { name: "category", label: "Category", type: "select", options: metaData.categoryList, required: true },
+      { name: "category", label: "Category", type: "select", options: metadataList.categories, required: true },
       { name: "current_school_or_coaching", label: "Current School/Coaching", type: "text" },
-      { name: "current_class", label: "Current Class", type: "select", options: metaData.gradesList },
-      { name: "applying_for_class", label: "Applying For Class", type: "select", options: metaData.gradesList, required: true },
+      { name: "current_class", label: "Current Class", type: "select", options: metadataList.grades },
+      { name: "applying_for_class", label: "Applying For Class", type: "select", options: metadataList.grades, required: true },
       { name: "school_transport_required", label: "School Transport Required", type: "boolean" },
-      { name: "mode_of_instruction", label: "Mode of Instruction", type: "select", options: metaData.languagesList },
-      { name: "languages_known", label: "Languages Known", type: "select", options: metaData.languagesList, multiple: true },
+      { name: "mode_of_instruction", label: "Mode of Instruction", type: "select", options: metadataList.languages },
+      { name: "languages_known", label: "Languages Known", type: "select", options: metadataList.languages, multiple: true },
       { name: "any_known_illness", label: "Any Known Illness", type: "boolean" },
       { name: "type_of_illness", label: "Type Of Illness", type: "text" },
     ],
@@ -314,7 +291,7 @@ const CreateAdmission = ({
       { name: "father_name", label: "Father Name", type: "text", required: true },
       { name: "father_email_id", label: "Father Email", type: "email" },
       { name: "father_dob", label: "Father DOB", type: "date", validation: { age: 18, msg: "Father must be at least 18 years old." } },
-      { name: "father_nationality", label: "Father Nationality", type: "select", options: metaData.nationalitiesList },
+      { name: "father_nationality", label: "Father Nationality", type: "select", options: metadataList.nationalities },
       { name: "father_qualification", label: "Father Qualification", type: "text" },
       { name: "father_occupation", label: "Father Occupation", type: "text" },
       { name: "father_phone", label: "Father Phone", type: "number", required: true, isPrimary: true },
@@ -323,7 +300,7 @@ const CreateAdmission = ({
       { name: "mother_name", label: "Mother Name", type: "text", required: true },
       { name: "mother_email_id", label: "Mother Email", type: "email" },
       { name: "mother_dob", label: "Mother DOB", type: "date", validation: { age: 18, msg: "Mother must be at least 18 years old." } },
-      { name: "mother_nationality", label: "Mother Nationality", type: "select", options: metaData.nationalitiesList },
+      { name: "mother_nationality", label: "Mother Nationality", type: "select", options: metadataList.nationalities },
       { name: "mother_qualification", label: "Mother Qualification", type: "text" },
       { name: "mother_occupation", label: "Mother Occupation", type: "text" },
       { name: "mother_phone", label: "Mother Phone", type: "number", required: true, isPrimary: true },

@@ -5,7 +5,7 @@ import CreateAdmission from "./CreateAdmission";
 import {
   deleteUserInfo,
   fetchFeesStructuresList,
-  getGradeDetails,
+  fetchMetadataInfo,
   getUsersList,
 } from "../../../ApiClient";
 import AlertDialogSlide from "../HRMS/AlertDialogSlide";
@@ -21,33 +21,81 @@ const AdmissionView = () => {
   const [showAlert, setShowAlert] = useState("");
   const [selectedUserDetails, setSelectedUserDetails] = useState(null);
   const [usersList, setUsersList] = useState([]);
-  const [gradesList, setGradesList] = useState([]);
+  const [metadataList, setMetadataList] = useState({});
   const [feesStructuresList, setFeesStructuresList] = useState([]);
   const designationsList = JSON.parse(localStorage.getItem("UserRoles") || "[]");
   const role_id = designationsList.find((item) => item.role_name === "Student")?.role_id || null;
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    fetchAndSetFeesStructures();
-    getGradeDetails()
-      .then((res) => {
-        const gradeDetails = res?.data?.grade_details?.grade_details;
-        if (Array.isArray(gradeDetails)) {
-          setGradesList(gradeDetails.map(({ grade_id, grade }) => ({ id: grade_id, name: grade })));
-        }
-      })
-      .catch(console.error);
-  }, []);  
-
-  const fetchAndSetFeesStructures = async () => {
+  const fetchAndSetFeesStructures = useCallback(async () => {
     try {
       const response = await fetchFeesStructuresList();
       setFeesStructuresList(response?.data?.fees_structure_info || []);
     } catch (err) {
       console.error("Failed to fetch fees structures:", err);
     }
-  };
+  }, []);
+
+  const fetchMetadataList = useCallback(async () => {
+    const payload = {
+      "fetch_all_categories": {},
+      "fetch_all_languages": {},
+      "fetch_all_nationalities": {},
+      "fetch_all_genders": {},
+      "get_all_grade_details": {}
+    }
+    try {
+      const res = await fetchMetadataInfo(payload);
+      const metadata = res?.data?.metadata_info || {};
+
+      // Extract data safely with fallback values
+      const {
+        fetch_all_categories = {},
+        fetch_all_languages = {},
+        fetch_all_nationalities = {},
+        fetch_all_genders = {},
+        get_all_grade_details = {}
+      } = metadata;
+
+      const formattedData = {
+        categories: fetch_all_categories.category_data?.map(({ category_id, category_value }) => ({
+          id: category_id,
+          name: category_value
+        })) ?? [],
+
+        languages: fetch_all_languages.language_data?.map(({ language_id, language_value }) => ({
+          id: language_id,
+          name: language_value
+        })) ?? [],
+
+        nationalities: fetch_all_nationalities.nationality_data?.map(({ nationality_id, nationality_value }) => ({
+          id: nationality_id,
+          name: nationality_value
+        })) ?? [],
+
+        genders: fetch_all_genders.gender_data?.map(({ gender_id, gender_value }) => ({
+          id: gender_id,
+          name: gender_value
+        })) ?? [],
+
+        grades: get_all_grade_details.grade_details?.grade_details?.map(({ grade_id, grade }) => ({
+          id: grade_id,
+          name: grade
+        })) ?? []
+      };
+
+      setMetadataList(formattedData);
+    } catch (error) {
+      console.error("Failed to fetch metadata list:", error);
+    }
+  }, []); // Ensures the function updates if `fetchMetadataInfo` changes
+
+
+  useEffect(() => {
+    // Fetch both lists in parallel
+    Promise.all([fetchAndSetFeesStructures(), fetchMetadataList()]).catch(console.error);
+  }, [fetchAndSetFeesStructures, fetchMetadataList]);
 
   // Fetching user list with async/await for better readability
   useEffect(() => {
@@ -57,7 +105,7 @@ const AdmissionView = () => {
         const res = await getUsersList({
           "user_ids": [],
           "role_id": role_id
-      });
+        });
         const usersList = res?.data?.user_data || [];
         setUsersList(usersList);
       } catch (err) {
@@ -164,7 +212,7 @@ const AdmissionView = () => {
           isOpen={isAddUserModalVisible}
           handleClose={handleClose}
           selectedData={selectedUserDetails}
-          gradesList={gradesList}
+          metadataList={metadataList}
           feesStructuresList={feesStructuresList}
           role_id={role_id}
         />
@@ -189,9 +237,8 @@ const AdmissionView = () => {
         showAlertMessage({
           open: true,
           alertFor: showAlert,
-          message: `The user deletion ${
-            showAlert === "success" ? "succeeded" : "failed"
-          }.`,
+          message: `The user deletion ${showAlert === "success" ? "succeeded" : "failed"
+            }.`,
         })}
     </>
   );
