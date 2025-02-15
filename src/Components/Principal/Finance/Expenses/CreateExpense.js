@@ -19,6 +19,7 @@ import { createExpense, createExpenses } from "../../../../ApiClient";
 import { showAlertMessage } from "../../../AlertMessage";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
 
 const CreateExpense = ({ isOpen, handleClose }) => {
   const theme = useTheme();
@@ -43,8 +44,14 @@ const CreateExpense = ({ isOpen, handleClose }) => {
   });
 
   const onSubmit = async (data) => {
+    const formattedRelease_date = dayjs(data.release_date).format("YYYY-MM-DD");
+
+    let payload = {
+      ...data,
+      release_date: formattedRelease_date,
+    };
     try {
-      const res = await createExpenses(data);
+      const res = await createExpenses(payload);
       if (res?.data?.status === "success") {
         setAlert({
           type: "success",
@@ -198,7 +205,7 @@ const CreateExpense = ({ isOpen, handleClose }) => {
                 }) => (
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
-                    className="w-100"
+                      className="w-100"
                       label="Release Date"
                       value={value || null}
                       onChange={(newValue) => onChange(newValue)}

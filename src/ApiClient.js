@@ -526,6 +526,14 @@ const saveAdmissionFeesInfo = (payload) => {
   return apiInstance.post(`/save_admission_fees_info`, payload);
 };
 
+const fetchAdmissionFeesInfo = (payload) => {
+  return apiInstance.post(`/fetch_admission_fees_info`, payload);
+};
+
+const fetchMetadataInfo = (payload) => {
+  return apiInstance.post(`/fetch_metadata_info`, payload);
+};
+
 
 export {
   //loginUser,
@@ -636,5 +644,7 @@ export {
   fetchPaymentModes,
   changeUserPassword,
   fetchSecurityQuestions,
-  saveAdmissionFeesInfo
+  saveAdmissionFeesInfo,
+  fetchAdmissionFeesInfo,
+  fetchMetadataInfo
 };

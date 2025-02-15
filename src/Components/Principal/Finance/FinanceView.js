@@ -4,19 +4,18 @@ import FeesStructureView from "./Fees/FeesStructureView";
 import ExpensesView from "./Expenses/ExpensesView";
 import FeeDetails from "./Fees/FeeDetails";
 import { useLocation, useNavigate } from "react-router-dom";
+import AdmissionFeesView from "./Report/AdmissionFeesView";
 
 const FinanceView = () => {
-    const location = useLocation();
-    const navigate = useNavigate();
-    const [selectedTab, setSelectedTab] = React.useState();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [selectedTab, setSelectedTab] = React.useState();
   const tabsList = [
     {
       code: "report",
       title: "Report",
       content: (
-        <div className="text-center mt-5 text-danger">
-          No view available right now
-        </div>
+        <AdmissionFeesView />
       ),
     },
     {

@@ -25,6 +25,9 @@ const EmployeesList = () => {
   const [selectedEmployeeDetails, setSelectedEmployeeDetails] = useState(null);
   const [selectedFilter, setSelectedFilter] = useState("all");
   const [employees, setEmployees] = useState([]);
+  const designationsList = JSON.parse(localStorage.getItem("UserRoles") || "[]");
+  const role_id = designationsList.find((item) => item.role_name === "Non_Teaching_Staff")?.role_id || null;
+
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -36,7 +39,7 @@ const EmployeesList = () => {
       try {
         const res = await getUsersList({
             "user_ids": [],
-            "role_id": 6
+            "role_id": role_id
         });
         const userData = res?.data?.user_data || [];
         setEmployees(userData);
