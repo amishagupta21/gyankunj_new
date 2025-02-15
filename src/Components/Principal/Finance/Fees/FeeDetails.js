@@ -56,8 +56,8 @@ const FeeDetails = ({ isParentView = false }) => {
   };
 
   return (
-    <Box padding={3}>
-      <Typography variant="h6" fontWeight="bold" marginBottom={3}>
+    <Box mt={4}>
+      <Typography variant="h6" fontWeight="bold" marginBottom={1}>
         Get Fee Details
       </Typography>
       <Grid container spacing={2} alignItems="center">
