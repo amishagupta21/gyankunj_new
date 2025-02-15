@@ -23,6 +23,8 @@ const AdmissionView = () => {
   const [usersList, setUsersList] = useState([]);
   const [gradesList, setGradesList] = useState([]);
   const [feesStructuresList, setFeesStructuresList] = useState([]);
+  const designationsList = JSON.parse(localStorage.getItem("UserRoles") || "[]");
+  const role_id = designationsList.find((item) => item.role_name === "Student")?.role_id || null;
 
   const navigate = useNavigate();
 
@@ -54,7 +56,7 @@ const AdmissionView = () => {
       try {
         const res = await getUsersList({
           "user_ids": [],
-          "role_id": 4
+          "role_id": role_id
       });
         const usersList = res?.data?.user_data || [];
         setUsersList(usersList);
@@ -164,6 +166,7 @@ const AdmissionView = () => {
           selectedData={selectedUserDetails}
           gradesList={gradesList}
           feesStructuresList={feesStructuresList}
+          role_id={role_id}
         />
       )}
 

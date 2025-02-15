@@ -18,6 +18,7 @@ import InputAdornment from "@mui/material/InputAdornment";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import Box from "@mui/material/Box";
+import { getAllDesignationsList } from "../ApiClient";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -69,6 +70,7 @@ export default function SignInSide(props) {
       const data = await response.json();
 
       if (data.status === "success") {
+        fetchDesignationsList();  
         localStorage.setItem("UserData", JSON.stringify(data));
         props.onHide();
 
@@ -98,6 +100,22 @@ export default function SignInSide(props) {
       console.error(error);
     }
   };
+
+  const fetchDesignationsList = () => {
+    getAllDesignationsList()
+      .then((res) => {
+        if (res?.data?.roles_data?.length > 0) {
+          localStorage.setItem("UserRoles", JSON.stringify(res.data.roles_data));
+        }
+        else{
+          localStorage.setItem("UserRoles", []);
+        }
+      })
+      .catch(() => {
+        console.log("Error while fetching designations list");
+        localStorage.setItem("UserRoles", []);
+      });
+  }
 
   return (
     <Dialog

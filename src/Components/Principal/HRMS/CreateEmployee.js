@@ -22,9 +22,8 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
-import { getAllDesignationsList, updateUserInfo } from "../../../ApiClient";
+import { updateUserInfo } from "../../../ApiClient";
 import { showAlertMessage } from "../../AlertMessage";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { countries } from "countries-list";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -50,7 +49,7 @@ const CreateEmployee = ({ isOpen, handleClose, selectedData = {} }) => {
   );
   const countryList = Object.values(countries).map((country) => country.name);
   const [showAlert, setShowAlert] = useState("");
-  const [designationsList, setDesignationsList] = useState([]);
+  const designationsList = localStorage.getItem("UserRoles") ? JSON.parse(localStorage.getItem("UserRoles")) : [];
   const isMarried = watch("is_married", false);
   const gendersList = [
     { value: "male", title: "Male" },
@@ -71,20 +70,6 @@ const CreateEmployee = ({ isOpen, handleClose, selectedData = {} }) => {
       reset(tempSelectedData);
     }
   }, [selectedData, reset]);
-
-  useEffect(() => {
-    getAllDesignationsList()
-      .then((res) => {
-        setDesignationsList([]);
-        if (res?.data?.roles_data?.length > 0) {
-          setDesignationsList(res.data.roles_data);
-        }
-      })
-      .catch(() => {
-        setShowAlert("error");
-        setTimeout(() => setShowAlert(""), 3000);
-      });
-  }, []);
 
   const onSubmit = (data) => {
     // Common fields for both create and edit

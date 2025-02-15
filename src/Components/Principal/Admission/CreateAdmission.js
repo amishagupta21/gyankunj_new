@@ -48,6 +48,7 @@ const CreateAdmission = ({
   selectedData = {},
   gradesList = [],
   feesStructuresList = [],
+  role_id = null,
 }) => {
   const { handleSubmit, reset, control, watch } = useForm({
     defaultValues: {
@@ -207,7 +208,7 @@ const CreateAdmission = ({
       phone_number:
         data[primaryPhone] ?? data.father_phone ?? data.mother_phone,
       user_id: isEditMode ? selectedData.user_id : undefined,
-      role_id: 4,
+      role_id: role_id,
       date_of_birth: data.date_of_birth
         ? dayjs(data.date_of_birth).format("YYYY-MM-DD")
         : null,
