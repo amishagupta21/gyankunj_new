@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
@@ -12,8 +12,10 @@ import {
   Button,
   Card,
   CardContent,
+  Checkbox,
   Dialog,
   FormControl,
+  FormControlLabel,
   Grid,
   InputLabel,
   MenuItem,
@@ -24,7 +26,7 @@ import {
 } from "@mui/material";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
-import { getMasterRoutineMetadataInfo, upsertMasterSchedule } from "../../ApiClient";
+import { fetchAllRoutines, getMasterRoutineMetadataInfo, updateMasterRoutineType, upsertMasterSchedule } from "../../ApiClient";
 import { showAlertMessage } from "../AlertMessage";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -43,75 +45,26 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 }));
 
 const PRoutineMetadataDetails = () => {
-  const [routineDetails, setRoutineDetails] = useState();
+  const userInfo = useMemo(
+    () => JSON.parse(localStorage.getItem("UserData")),
+    []
+  );
+  const [routinesList, setRoutinesList] = useState([]);
   const { handleSubmit, reset, control, setValue, getValues } = useForm();
-  const userInfo = JSON.parse(localStorage.getItem("UserData"));
-  const [isEditMode, setIsEditMode] = useState(false);
   const [showAlert, setShowAlert] = useState("");
-  const [isAddScheduleModalVisible, setIsAddScheduleModalVisible] =
-    useState(false);
+  const [isAddScheduleModalVisible, setIsAddScheduleModalVisible] = useState(false);
   const periodDurationsList = [15, 30, 45, 60];
 
   useEffect(() => {
     getRoutineMetadata();
   }, []);
 
-  useEffect(() => {
-    if(isAddScheduleModalVisible){
-     setTimeout(() => {
-      if (routineDetails && Object.keys(routineDetails).length > 0) {
-        setValue("routine_type", routineDetails.routine_type);
-        setValue(
-          "start_time",
-          routineDetails.start_time
-            ? dayjs(routineDetails.start_time, "HH:mm:ss")
-            : null
-        );
-        setValue(
-          "end_time",
-          routineDetails.end_time ? dayjs(routineDetails.end_time, "HH:mm:ss") : null
-        );
-        setValue("period_count", routineDetails.period_count);
-        setValue("period_duration", routineDetails.period_duration);
-        setValue(
-          "break_start_time",
-          routineDetails.break_start_time
-            ? dayjs(routineDetails.break_start_time, "HH:mm:ss")
-            : null
-        );
-        setValue(
-          "break_end_time",
-          routineDetails.break_end_time
-            ? dayjs(routineDetails.break_end_time, "HH:mm:ss")
-            : null
-        );
-        setValue(
-          "assembly_start_time",
-          routineDetails.assembly_start_time
-            ? dayjs(routineDetails.assembly_start_time, "HH:mm:ss")
-            : null
-        );
-        setValue(
-          "assembly_end_time",
-          routineDetails.assembly_end_time
-            ? dayjs(routineDetails.assembly_end_time, "HH:mm:ss")
-            : null
-        );
-      }
-     }, 100);
-    }
-  }, [isAddScheduleModalVisible, setValue, routineDetails]);
-
-  const getRoutineMetadata = () => {
-    if (userInfo.routine_id) {
-      getMasterRoutineMetadataInfo(userInfo.routine_id)
-        .then((res) => {
-          if (res?.data?.routine_details?.length > 0) {
-            setRoutineDetails(res.data.routine_details[0]);
-            setIsEditMode(true);
-          }
-        })
-        .catch((err) => console.error(err));
+  const getRoutineMetadata = async () => {
+    try {
+      const res = await fetchAllRoutines();
+      setRoutinesList(res?.data?.routines || []);
+    } catch (err) {
+      console.error("Failed to fetch routine metadata:", err);
     }
   };
 
@@ -138,7 +91,7 @@ const PRoutineMetadataDetails = () => {
     };
 
     // Send payload to server
-    upsertMasterSchedule(payload, isEditMode)
+    upsertMasterSchedule(payload)
       .then((res) => {
         if (res?.data?.status === "success") {
           setShowAlert("success");
@@ -158,6 +111,38 @@ const PRoutineMetadataDetails = () => {
           setShowAlert("");
         }, 3000);
       });
+  };
+
+  const handleRoutineTypeChange = (isChecked, routine) => {
+    if (!isChecked) return false;
+
+    routinesList.map((item) => {
+      item.is_active = item.routine_id === routine.routine_id ? true : false;
+    });
+    const payload = {
+      "routine_id": routine.routine_id
+    }
+    updateMasterRoutineType(payload)
+      .then((res) => {
+        if (res?.data?.status === "success") {
+          setShowAlert("success");
+          userInfo.routine_id = routine.routine_id;
+          userInfo.routine_type = routine.routine_type;
+          localStorage.setItem("UserData", JSON.stringify(userInfo));
+        } else {
+          setShowAlert("error");
+        }
+        setTimeout(() => {
+          setShowAlert("");
+        }, 1000);
+      })
+      .catch((err) => {
+        setShowAlert("error");
+        setTimeout(() => {
+          setShowAlert("");
+        }, 3000);
+      });
+
   };
 
   const renderTimePicker = (name, label, dependentField) => (
@@ -210,83 +195,101 @@ const PRoutineMetadataDetails = () => {
         <Typography variant="h5" component="div" gutterBottom>
           Routine metadata
         </Typography>
-        <Button variant="contained" onClick={() => setIsAddScheduleModalVisible(true)}>Configure routine</Button>
+        <Button variant="contained" onClick={() => setIsAddScheduleModalVisible(true)}>Create routine</Button>
       </Box>
-      <Card className="bg-info-subtle" sx={{ maxWidth: "100%", margin: "0 auto", mt: 2 }}>
-        <CardContent>
-          {routineDetails ? (
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
-                <Typography variant="body1">
-                  <strong>Routine Type:</strong> {routineDetails.routine_type}
-                </Typography>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <Typography variant="body1">
-                  <strong>Is Active:</strong>{" "}
-                  {routineDetails.is_active ? "Yes" : "No"}
-                </Typography>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <Typography variant="body1">
-                  <strong>Period Count:</strong> {routineDetails.period_count}
-                </Typography>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <Typography variant="body1">
-                  <strong>Period Duration:</strong>{" "}
-                  {routineDetails.period_duration}
-                </Typography>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <Typography variant="body1">
-                  <strong>Start Time:</strong> {routineDetails.start_time}
-                </Typography>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <Typography variant="body1">
-                  <strong>End Time:</strong> {routineDetails.end_time}
-                </Typography>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <Typography variant="body1">
-                  <strong>Break Start Time:</strong>{" "}
-                  {routineDetails.break_start_time}
-                </Typography>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <Typography variant="body1">
-                  <strong>Break End Time:</strong>{" "}
-                  {routineDetails.break_end_time}
-                </Typography>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <Typography variant="body1">
-                  <strong>Assembly Start Time:</strong>{" "}
-                  {routineDetails.assembly_start_time}
-                </Typography>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <Typography variant="body1">
-                  <strong>Assembly End Time:</strong>{" "}
-                  {routineDetails.assembly_end_time}
-                </Typography>
-              </Grid>
-            </Grid>
-          ) : (
-            <Typography variant="h6" className="text-danger text-center">
-              No details available
-            </Typography>
-          )}
-        </CardContent>
-      </Card>
+      {routinesList.length > 0 && (
+        routinesList.map((routine, index) => {
+          return (
+            <Card key={routine.routine_id} className="bg-info-subtle" sx={{ maxWidth: "100%", margin: "0 auto", mt: 2 }}>
+              <CardContent>
+                <Grid container spacing={2}>
+                  <Grid item xs={12} sm={6}>
+                    <Typography variant="body1">
+                      <strong>Routine Type:</strong> {routine.routine_type || 'N|A'}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <Typography className="d-flex align-items-center" variant="body1">
+                      <strong>Is Active:</strong>{" "}
+                      <FormControl>
+                        <FormControlLabel
+                          label={routine?.is_active ? "Yes" : "No"}
+                          labelPlacement="start"
+                          control={
+                            <Checkbox
+                              checked={!!routine?.is_active} // Ensure it's always a boolean
+                              onChange={(e) => handleRoutineTypeChange(e.target.checked, routine)}
+                            />
+                          }
+                        />
+                      </FormControl>
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <Typography variant="body1">
+                      <strong>Period Count:</strong> {routine.period_count || 'N|A'}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <Typography variant="body1">
+                      <strong>Period Duration:</strong>{" "}
+                      {routine.period_duration || 'N|A'}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <Typography variant="body1">
+                      <strong>Start Time:</strong> {routine.start_time || 'N|A'}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <Typography variant="body1">
+                      <strong>End Time:</strong> {routine.end_time || 'N|A'}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <Typography variant="body1">
+                      <strong>Break Start Time:</strong>{" "}
+                      {routine.break_start_time || 'N|A'}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <Typography variant="body1">
+                      <strong>Break End Time:</strong>{" "}
+                      {routine.break_end_time || 'N|A'}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <Typography variant="body1">
+                      <strong>Assembly Start Time:</strong>{" "}
+                      {routine.assembly_start_time || 'N|A'}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <Typography variant="body1">
+                      <strong>Assembly End Time:</strong>{" "}
+                      {routine.assembly_end_time || 'N|A'}
+                    </Typography>
+                  </Grid>
+                </Grid>
+              </CardContent>
+            </Card >
+          )
+        })
+      )}
+      {
+        routinesList.length === 0 &&
+        <Typography variant="h6" className="text-danger text-center">
+          No details available
+        </Typography>
+      }
+
       <BootstrapDialog
         aria-labelledby="customized-dialog-title"
         open={isAddScheduleModalVisible}
         scroll="paper"
       >
         <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
-          {isEditMode ? "Edit Schedule" : "Create New Schedule"}
+          Create New Schedule
           <IconButton
             aria-label="close"
             onClick={() => handleClose(false)}
@@ -325,9 +328,6 @@ const PRoutineMetadataDetails = () => {
                         fullWidth
                         label="Routine Type"
                         variant="outlined"
-                        InputProps={{
-                          readOnly: true,
-                        }}
                       />
                     )}
                   />
@@ -439,9 +439,8 @@ const PRoutineMetadataDetails = () => {
           showAlertMessage({
             open: true,
             alertFor: showAlert,
-            message: `The routine ${isEditMode ? "updation" : "creation"} ${
-              showAlert === "success" ? "succeeded" : "failed"
-            }.`,
+            message: `The routine creation ${showAlert === "success" ? "succeeded" : "failed"
+              }.`,
           })}
       </BootstrapDialog>
     </>

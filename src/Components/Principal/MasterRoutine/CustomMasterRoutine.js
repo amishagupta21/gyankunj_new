@@ -32,13 +32,11 @@ const CustomMasterRoutine = () => {
   const [selectedSectionData, setSelectedSectionData] = useState([]);
   const [selectedSectionByGrade, setSelectedSectionByGrade] = useState({});
   const [isAddRoutineModalVisible, setIsAddRoutineModalVisible] = useState(false);
-  const [isAddScheduleModalVisible, setIsAddScheduleModalVisible] = useState(false);
   const [periodData, setPeriodData] = useState([]);
   const [teacherData, setTeacherData] = useState([]);
   const [subjectsList, setSubjectsList] = useState([]);
   const [daysData, setDaysData] = useState([]);
   const [dayFilter, setDayFilter] = useState("");
-  const [routineTypeFilter, setRoutineTypeFilter] = useState();
   const [showAlert, setShowAlert] = useState("");
 
   useEffect(() => {
@@ -46,7 +44,6 @@ const CustomMasterRoutine = () => {
     getAllSubjectsData();
     getAllTeachersData();
     getGradesList();
-    setRoutineTypeFilter(userInfo.routine_id??1);
   }, []);
 
   useEffect(() => {
@@ -142,41 +139,6 @@ const CustomMasterRoutine = () => {
     if (isSubmit) getMasterRoutineData();
     setIsAddRoutineModalVisible(false);
   };
-  
-  const handleCloseForRoutine = (isSubmit) => {
-    setIsAddScheduleModalVisible(false);
-    getMasterRoutineMetadata();
-    getMasterRoutineData();
-  };
-
-  const handleRoutineTypeChange = (e) => {
-    setRoutineTypeFilter(e.target.checked?2: 1);
-    const payload = {
-      "routine_id": e.target.checked?2: 1
-  }
-    updateMasterRoutineType(payload)
-      .then((res) => {
-        if (res?.data?.status === "success") {
-          setShowAlert("success");
-        } else {
-          setShowAlert("error");
-        }
-        setTimeout(() => {
-          setShowAlert("");
-          userInfo.routine_id = payload.routine_id;
-          userInfo.routine_type = payload.routine_id === 1 ? 'summer': 'winter';
-          localStorage.setItem("UserData", JSON.stringify(userInfo));
-          setIsAddScheduleModalVisible(true);
-        }, 1000);
-      })
-      .catch((err) => {
-        setShowAlert("error");
-        setTimeout(() => {
-          setShowAlert("");
-        }, 3000);
-      });
-
-  };
 
   const handleSectionChange = (gradeId, sectionId) => {
     setSelectedSectionByGrade((prevData) => ({
@@ -208,21 +170,6 @@ const CustomMasterRoutine = () => {
             </MenuItem>
           ))}
         </Select>
-      </FormControl>
-      <FormControl>
-        <FormControlLabel
-          className="justify-content-end m-0"
-          control={
-            <>
-              <label className={`${routineTypeFilter === 1 ? 'fw-bold text-primary-emphasis':''}`}>Summer</label>
-              <Switch
-                checked={routineTypeFilter === 2?true:false}
-                onChange={handleRoutineTypeChange}
-              />
-              <label className={`${routineTypeFilter === 2 ? 'fw-bold text-primary-emphasis':''}`}>Winter</label>
-            </>
-          }
-        />
       </FormControl>
     </Box>
   );
@@ -300,7 +247,7 @@ const CustomMasterRoutine = () => {
                     console.log(gradeItem.grade_id, selectedSectionId)
                     if (routine) {
                       return (
-                        <td className="p-0" key={item.period_id}>
+                        <td key={item.period_id}>
                           <div
                             className="p-1 rounded text-center text-white cell selected-cell"
                             onClick={() =>
@@ -361,12 +308,6 @@ const CustomMasterRoutine = () => {
           sectionsList={selectedSectionData}
           teachersList={teacherData}
           subjectsList={subjectsList}
-        />
-      )}
-      {isAddScheduleModalVisible && (
-        <CreateMasterSchedule
-          isOpen={isAddScheduleModalVisible}
-          handleClose={handleCloseForRoutine}
         />
       )}
       {showAlert &&
