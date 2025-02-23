@@ -534,6 +534,10 @@ const fetchMetadataInfo = (payload) => {
   return apiInstance.post(`/fetch_metadata_info`, payload);
 };
 
+const fetchAllRoutines = () => {
+  return apiInstance.get(`/fetch_routines`);
+};
+
 
 export {
   //loginUser,
@@ -646,5 +650,6 @@ export {
   fetchSecurityQuestions,
   saveAdmissionFeesInfo,
   fetchAdmissionFeesInfo,
-  fetchMetadataInfo
+  fetchMetadataInfo,
+  fetchAllRoutines
 };

@@ -80,7 +80,7 @@ a {
 .cell{
   cursor: pointer;
   height: 75px;
-  max-width: 125px;
+  /* max-width: 125px; */
   font-size: 14px;
 }
 .cell p{
